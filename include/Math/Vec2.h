@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <exception>
 
 #include "Consts.h"
 
@@ -79,48 +80,48 @@ namespace HarvestHavoc
 			/// </summary>
 			/// <param name="other">The other Vec2 object whose values will be assigned to this Vec2 object.</param>
 			/// <returns>A reference to this Vec2 object, after the assignment.</returns>
-			inline Vec2& operator=(const Vec2& other);
+			Vec2& operator=(const Vec2& other);
 
 			/// <summary>
 			/// Checks if this Vec2 is equal to the specified Vec2.
 			/// </summary>
 			/// <param name="other">The Vec2 to compare with.</param>
 			/// <returns>True if the Vec2s are equal, false otherwise.</returns>
-			inline bool operator==(const Vec2& other) const;
+			bool operator==(const Vec2& other) const;
 
 			/// <summary>
 			/// Checks if this Vec2 is not equal to the specified Vec2.
 			/// </summary>
 			/// <param name="other">The Vec2 to compare with.</param>
 			/// <returns>True if the Vec2s are not equal, false otherwise.</returns>
-			inline bool operator!=(const Vec2& other) const;
+			bool operator!=(const Vec2& other) const;
 
 			/// <summary>
 			/// Negates this Vec2 object, producing a new Vec2 object with the negated values.
 			/// </summary>
 			/// <returns>A new Vec2 object with the negated values of this Vec2 object.</returns>
-			inline Vec2 operator-() const;
+			Vec2 operator-() const;
 
 			/// <summary>
 			/// Adds another Vec2 to this Vec2.
 			/// </summary>
 			/// <param name="other">The other Vec2.</param>
 			/// <returns>A new Vec2 that is the sum of this Vec2 and the other Vec2.</returns>
-			inline Vec2 operator+(const Vec2& other) const;
+			Vec2 operator+(const Vec2& other) const;
 
 			/// <summary>
 			/// Subtracts another Vec2 from this Vec2.
 			/// </summary>
 			/// <param name="other">The other Vec2.</param>
 			/// <returns>A new Vec2 that is the difference of this Vec2 and the other Vec2.</returns>
-			inline Vec2 operator-(const Vec2& other) const;
+			Vec2 operator-(const Vec2& other) const;
 
 			/// <summary>
 			/// Multiplies this Vec2 by a scalar.
 			/// </summary>
 			/// <param name="scalar">The scalar value.</param>
 			/// <returns>A new Vec2 that is the product of this Vec2 and the scalar.</returns>
-			inline Vec2 operator*(const float scalar) const;
+			Vec2 operator*(const float scalar) const;
 
 			friend Vec2 operator*(float scalar, const Vec2& vec);
 
@@ -129,7 +130,7 @@ namespace HarvestHavoc
 			/// </summary>
 			/// <param name="scalar">The scalar value.</param>
 			/// <returns>A new Vec2 that is the quotient of this Vec2 and the scalar.</returns>
-			inline Vec2 operator/(const float scalar) const;
+			Vec2 operator/(const float scalar) const;
 
 			friend Vec2 operator/(float scalar, const Vec2& vec);
 
@@ -138,46 +139,46 @@ namespace HarvestHavoc
 			/// </summary>
 			/// <param name="other">The other Vec2.</param>
 			/// <returns>A reference to this Vec2.</returns>
-			inline Vec2& operator+=(const Vec2& other);
+			Vec2& operator+=(const Vec2& other);
 
 			/// <summary>
 			/// Subtracts another Vec2 from this Vec2 and assigns the result to this Vec2.
 			/// </summary>
 			/// <param name="other">The other Vec2.</param>
 			/// <returns>A reference to this Vec2.</returns>
-			inline Vec2& operator-=(const Vec2& other);
+			Vec2& operator-=(const Vec2& other);
 
 			/// <summary>
 			/// Multiplies this Vec2 by a scalar and assigns the result to this Vec2.
 			/// </summary>
 			/// <param name="scalar">The scalar value.</param>
 			/// <returns>A reference to this Vec2.</returns>
-			inline Vec2& operator*=(const float scalar);
+			Vec2& operator*=(const float scalar);
 
 			/// <summary>
 			/// Divides this Vec2 by a scalar and assigns the result to this Vec2.
 			/// </summary>
 			/// <param name="scalar">The scalar value.</param>
 			/// <returns>A reference to this Vec2.</returns>
-			inline Vec2& operator/=(const float scalar);
+			Vec2& operator/=(const float scalar);
 
 			/// <summary>
 			/// Computes the L0 norm of this Vec2, which is the count of non-zero components.
 			/// </summary>
 			/// <returns>The L0 norm.</returns>
-			inline unsigned int L0Norm() const;
+			unsigned int L0Norm() const;
 
 			/// <summary>
 			/// Computes the L1 norm of this Vec2, which is the sum of the absolute values of the components.
 			/// </summary>
 			/// <returns>The L1 norm.</returns>
-			inline float L1Norm() const;
+			float L1Norm() const;
 
 			/// <summary>
 			/// Computes the L2 norm (magnitude) of this Vec2.
 			/// </summary>
 			/// <returns>The L2 norm.</returns>
-			inline float L2Norm() const;
+			float L2Norm() const;
 
 			/// <summary>
 			/// Alias for L2Norm, computes the L2 norm (magnitude) of this Vec2.
@@ -195,7 +196,19 @@ namespace HarvestHavoc
 			/// Normalizes this Vec2, making its magnitude equal to 1.
 			/// </summary>
 			/// <returns>The normalized Vec2.</returns>
-			inline Vec2 Normalize() const;
+			Vec2 Normalize() const;
+
+			/// <summary>
+			/// Projects the vector onto the i basis vector (x-axis).
+			/// </summary>
+			/// <returns>The projection of the vector onto the i basis vector.</returns>
+			Vec2 ProjOntoI() const;
+
+			/// <summary>
+			/// Projects the vector onto the j basis vector (y-axis).
+			/// </summary>
+			/// <returns>The projection of the vector onto the j basis vector.</returns>
+			Vec2 ProjOntoJ() const;
 
 			/// <summary>
 			/// Computes the dot product of two Vec2 objects.
@@ -227,7 +240,7 @@ namespace HarvestHavoc
 			/// <param name="a">The first Vec2.</param>
 			/// <param name="b">The second Vec2.</param>
 			/// <returns>The element-wise multiplication of the two Vec2s.</returns>
-			static Vec2 ElementwiseMultiply(const Vec2& a, const Vec2& b);
+			inline static Vec2 ElementwiseMultiply(const Vec2& a, const Vec2& b) { return Hadamard(a, b); }
 
 			/// <summary>
 			/// Clamps the components of a Vec2 between the corresponding components of two other Vec2s.
@@ -349,6 +362,18 @@ namespace HarvestHavoc
 				static const Vec2 instance = Vec2::one().Normalize();
 				return instance;
 			}
+
+			/// <summary>
+			/// Gets the unit vector along the x-axis (right).
+			/// </summary>
+			/// <returns>The unit vector [1, 0].</returns>
+			inline static Vec2 i() { return right(); }
+
+			/// <summary>
+			/// Gets the unit vector along the y-axis (up).
+			/// </summary>
+			/// <returns>The unit vector [0, 1].</returns>
+			inline static Vec2 j() { return up(); }
 
 			/// <summary>
 			/// Outputs a Vec2 object to an output stream in a formatted manner.

@@ -1,6 +1,12 @@
+#include <vector>
+
 #include <Windows.h>
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
+
+#include "Math/Vec2.h"
+
+using namespace HarvestHavoc::Math;
 
 int main(int argc, char* argv[])
 {
@@ -26,6 +32,24 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    Vec2 a = Vec2::one();
+    Vec2 b = a.ProjOntoI() + -a.ProjOntoJ();
+    std::cout << "a: " << a << std::endl;
+    std::cout << "b: " << b << std::endl;
+    std::cout << "a + b = " << a + b << std::endl;
+
+    std::vector<float> vertices = {
+        -0.5f, -0.5f,  // bottom left corner
+         0.5f, -0.5f,  // bottom right corner
+         0.5f,  0.5f,  // top right corner
+        -0.5f,  0.5f   // top left corner
+    };
+
+    std::vector<uint16_t> indices = {
+        0, 1, 2,  // first triangle
+        2, 3, 0   // second triangle
+    };
+
     SDL_Event event;
     bool quit = false;
     while (!quit)
@@ -44,7 +68,6 @@ int main(int argc, char* argv[])
         }
         SDL_Delay(10);
     }
-    SDL_Delay(1000);
 
     // Clean up
     SDL_DestroyWindow(window);

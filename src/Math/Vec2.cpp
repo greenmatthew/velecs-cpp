@@ -109,24 +109,32 @@ namespace HarvestHavoc
 			return (magnitude != 0) ? Vec2(x / magnitude, y / magnitude) : Vec2(0, 0);
 		}
 
-		inline float Vec2::Dot(const Vec2& a, const Vec2& b)
+		Vec2 Vec2::ProjOntoI() const
+		{
+			return Vec2(this->x, 0.0f);
+		}
+
+		Vec2 Vec2::ProjOntoJ() const
+		{
+			return Vec2(0.0f, this->y);
+		}
+
+		float Vec2::Dot(const Vec2& a, const Vec2& b)
 		{
 			return a.x * b.x + a.y * b.y;
 		}
 
-		inline float Vec2::Cross(const Vec2& a, const Vec2& b)
+		float Vec2::Cross(const Vec2& a, const Vec2& b)
 		{
 			return a.x * b.y - a.y * b.x;
 		}
 
-		inline Vec2 Vec2::Hadamard(const Vec2& a, const Vec2& b)
+		Vec2 Vec2::Hadamard(const Vec2& a, const Vec2& b)
 		{
 			return Vec2(a.x * b.x, a.y * b.y);
 		}
 
-		inline Vec2 Vec2::ElementwiseMultiply(const Vec2& a, const Vec2& b) { return Hadamard(a, b); }
-
-		inline Vec2 Vec2::Clamp(const Vec2& vec, const Vec2& min, const Vec2& max)
+		Vec2 Vec2::Clamp(const Vec2& vec, const Vec2& min, const Vec2& max)
 		{
 			return Vec2(
 				std::clamp(vec.x, min.x, max.x),
@@ -134,7 +142,7 @@ namespace HarvestHavoc
 			);
 		}
 
-		inline Vec2 Vec2::Lerp(const Vec2& vec1, const Vec2& vec2, float t)
+		Vec2 Vec2::Lerp(const Vec2& vec1, const Vec2& vec2, float t)
 		{
 			return Vec2(
 				vec1.x + t * (vec2.x - vec1.x),

@@ -71,8 +71,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VULKAN_SDK)\Include;include;$(IncludePath)</IncludePath>
+    <IncludePath>$(IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
     <LibraryPath>D:\Programs\SDKs\VulkanSDK\1.3.261.1\Lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -80,10 +89,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,12 +106,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -108,13 +123,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -125,12 +140,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
