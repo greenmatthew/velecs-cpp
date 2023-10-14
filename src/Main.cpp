@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <vulkan/vulkan.h>
 
-int SDL_main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -26,7 +26,24 @@ int SDL_main(int argc, char* argv[])
         return 1;
     }
 
-    // Your game code here
+    SDL_Event event;
+    bool quit = false;
+    while (!quit)
+    {
+        while (SDL_PollEvent(&event) != 0)
+        {  
+            // Poll for events
+            if (event.type == SDL_QUIT)
+            {
+                quit = true;  // Exit the loop if the window is closed
+            }
+            else if (event.type == SDL_KEYDOWN)
+            {
+                quit = true;  // Exit the loop if a key is pressed
+            }
+        }
+        SDL_Delay(10);
+    }
     SDL_Delay(1000);
 
     // Clean up
