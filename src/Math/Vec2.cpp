@@ -1,5 +1,9 @@
 #include "Math/Vec2.h"
 
+#include <sstream>
+#include <algorithm>
+#include <exception>
+
 namespace HarvestHavoc
 {
 	namespace Math

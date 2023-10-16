@@ -1,11 +1,10 @@
 #pragma once
 
-#include <iostream>
-#include <sstream>
-#include <algorithm>
-#include <exception>
+#include "Math/Consts.h"
 
-#include "Consts.h"
+#include <string>
+#include <ostream>
+#include <cmath>
 
 namespace HarvestHavoc
 {
