@@ -18,10 +18,78 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\IEnableDisable.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imconfig.h" />
+    <ClInclude Include="include\imgui\imgui.h" />
+    <ClInclude Include="include\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="include\imgui\imgui_impl_vulkan.h" />
+    <ClInclude Include="include\imgui\imgui_internal.h" />
+    <ClInclude Include="include\imgui\imstb_rectpack.h" />
+    <ClInclude Include="include\imgui\imstb_textedit.h" />
+    <ClInclude Include="include\imgui\imstb_truetype.h" />
+    <ClInclude Include="include\Input\Event.h" />
+    <ClInclude Include="include\Input\Input.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Input\InputAction.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Input\InputActionMap.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Input\MenuInputActionMap.h" />
+    <ClInclude Include="include\Input\PlayerInputActionMap.h" />
+    <ClInclude Include="include\Math\Consts.h" />
+    <ClInclude Include="include\Math\Vec2.h" />
+    <ClInclude Include="include\VkBootstrap\VkBootstrap.h" />
+    <ClInclude Include="include\VkBootstrap\VkBootstrapDispatch.h" />
+    <ClInclude Include="include\vk_engine.h" />
+    <ClInclude Include="include\vk_initializers.h" />
+    <ClInclude Include="include\vk_types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\IEnableDisable.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Input\Input.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Input\InputAction.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Input\InputActionMap.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\imgui\imgui.cpp" />
+    <ClCompile Include="src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="src\imgui\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="src\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Input\MenuInputActionMap.cpp" />
+    <ClCompile Include="src\Input\PlayerInputActionMap.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Math\Vec2.cpp" />
+    <ClCompile Include="src\VkBootstrap\VkBootstrap.cpp" />
+    <ClCompile Include="src\vk_engine.cpp" />
+    <ClCompile Include="src\vk_initializers.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d1475e78-4968-4d02-801a-1e5ce00f0304}</ProjectGuid>
+    <ProjectGuid>{4c2bed99-101f-4c86-b43d-43b7437a4ff6}</ProjectGuid>
     <RootNamespace>HarvestHavoc</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -70,18 +138,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
-    <LibraryPath>D:\Programs\SDKs\VulkanSDK\1.3.261.1\Lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,13 +164,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -106,15 +181,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,13 +198,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -140,23 +215,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>;$(VULKAN_SDK)\Include;$(SDL2_DIR)\Include;include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\**\*.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\**\*.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
