@@ -48,21 +48,21 @@ void Input::Init()
 //    }
 //}
 
-void Input::TryOnPressed(SDL_Keycode keycode)
+void Input::TryOnPressed(const SDL_Keycode keycode)
 {
     if (GetIsEnabled())
     {
         ForEachMap([keycode](std::shared_ptr<InputActionMap> inputActionMapPtr) { inputActionMapPtr->TryOnPressed(keycode); });
     }
 }
-void Input::TryOnHeld(SDL_Keycode keycode)
+void Input::TryOnHeld()
 {
     if (GetIsEnabled())
     {
-        ForEachMap([keycode](std::shared_ptr<InputActionMap> inputActionMapPtr) { inputActionMapPtr->TryOnHeld(keycode); });
+        ForEachMap([](std::shared_ptr<InputActionMap> inputActionMapPtr) { inputActionMapPtr->TryOnHeld(); });
     }
 }
-void Input::TryOnReleased(SDL_Keycode keycode)
+void Input::TryOnReleased(const SDL_Keycode keycode)
 {
     if (GetIsEnabled())
     {

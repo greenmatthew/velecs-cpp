@@ -40,9 +40,9 @@ public:
 
     std::shared_ptr<InputAction> CreateBinding(const SDL_Keycode keycode);
 
-    void TryOnPressed(SDL_Keycode keycode);
-    void TryOnHeld(SDL_Keycode keycode);
-    void TryOnReleased(SDL_Keycode keycode);
+    void TryOnPressed(const SDL_Keycode keycode);
+    void TryOnHeld();
+    void TryOnReleased(const SDL_Keycode keycode);
 
 protected:
     // Protected Fields
@@ -51,7 +51,8 @@ protected:
 
 private:
     // Private Fields
-    std::unordered_map<SDL_Keycode, std::shared_ptr<InputAction>> map = std::unordered_map<SDL_Keycode, std::shared_ptr<InputAction>>();
+    std::unordered_map<SDL_Keycode, std::shared_ptr<InputAction>> keyBinds = std::unordered_map<SDL_Keycode, std::shared_ptr<InputAction>>();
+    std::vector<std::pair<SDL_Keycode, std::shared_ptr<InputAction>>> activeKeyBinds = std::vector<std::pair<SDL_Keycode, std::shared_ptr<InputAction>>>();
 
     bool isEnabled = true;
 

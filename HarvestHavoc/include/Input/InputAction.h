@@ -19,6 +19,14 @@
 
 namespace HarvestHavoc::Input {
 
+enum class ButtonState
+{
+    Idle,
+    Pressed,
+    Held,
+    Released,
+};
+
 /// <summary>
 /// Summary of class
 /// </summary>
@@ -41,6 +49,10 @@ public:
     // Public Methods
     static std::shared_ptr<InputAction> Create(const SDL_Keycode keycode);
 
+    void TryInvokeOnPressed();
+    void TryInvokeOnHeld();
+    void TryInvokeOnReleased();
+
 protected:
     // Protected Fields
 
@@ -49,6 +61,7 @@ protected:
 private:
     // Private Fields
     const SDL_Keycode keycode;
+    ButtonState state = ButtonState::Idle;
 
     // Constructors
     

@@ -25,10 +25,10 @@ InputActionMap::~InputActionMap() = default;
 // Public Methods
 std::shared_ptr<InputAction> InputActionMap::CreateBinding(const SDL_Keycode keycode)
 {
-    const auto& it = map.find(keycode);
-    if (it == map.end())
+    const auto& it = keyBinds.find(keycode);
+    if (it == keyBinds.end())
     {
-        map[keycode] = InputAction::Create(keycode);
+        keyBinds[keycode] = InputAction::Create(keycode);
     }
     else
     {
@@ -40,42 +40,42 @@ std::shared_ptr<InputAction> InputActionMap::CreateBinding(const SDL_Keycode key
         throw std::runtime_error(errMsg.str());
     }
     
-    return map[keycode];
+    return keyBinds[keycode];
 }
 
 
-void InputActionMap::TryOnPressed(SDL_Keycode keycode)
+void InputActionMap::TryOnPressed(const SDL_Keycode keycode)
 {
     if (GetIsEnabled())
     {
         auto inputActionPtr = TryFindKeyBind(keycode);
         if (inputActionPtr)
         {
-            inputActionPtr->OnPressed.Invoke();
+            inputActionPtr->TryInvokeOnPressed();
         }
     }
 }
 
-void InputActionMap::TryOnHeld(SDL_Keycode keycode)
+void InputActionMap::TryOnHeld()
 {
     if (GetIsEnabled())
     {
-        auto inputActionPtr = TryFindKeyBind(keycode);
-        if (inputActionPtr)
-        {
-            inputActionPtr->OnHeld.Invoke();
-        }
+        // auto inputActionPtr = TryFindKeyBind(keycode);
+        // if (inputActionPtr)
+        // {
+        //     inputActionPtr->TryInvokeOnHeld();
+        // }
     }
 }
 
-void InputActionMap::TryOnReleased(SDL_Keycode keycode)
+void InputActionMap::TryOnReleased(const SDL_Keycode keycode)
 {
     if (GetIsEnabled())
     {
         auto inputActionPtr = TryFindKeyBind(keycode);
         if (inputActionPtr)
         {
-            inputActionPtr->OnReleased.Invoke();
+            inputActionPtr->TryInvokeOnReleased();
         }        
     }
 }
@@ -89,7 +89,7 @@ void InputActionMap::TryOnReleased(SDL_Keycode keycode)
 // Private Methods
 void InputActionMap::ForEachItem(std::function<void(const SDL_Keycode, std::shared_ptr<InputAction>)> callback)
 {
-    for (auto& [keycode, inputActionPtr] : map)
+    for (auto& [keycode, inputActionPtr] : keyBinds)
     {
         callback(keycode, inputActionPtr);
     }
@@ -97,8 +97,8 @@ void InputActionMap::ForEachItem(std::function<void(const SDL_Keycode, std::shar
 
 std::shared_ptr<InputAction> InputActionMap::TryFindKeyBind(SDL_Keycode keycode) const
 {
-    auto it = map.find(keycode);
-    if (it != map.end())
+    auto it = keyBinds.find(keycode);
+    if (it != keyBinds.end())
     {
         return it->second;
     }

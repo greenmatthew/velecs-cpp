@@ -61,9 +61,9 @@ public:
 
     //std::shared_ptr<InputAction> CreateBinding(const SDL_Keycode keycode);
 
-    void TryOnPressed(SDL_Keycode keycode);
-    void TryOnHeld(SDL_Keycode keycode);
-    void TryOnReleased(SDL_Keycode keycode);
+    void TryOnPressed(const SDL_Keycode keycode);
+    void TryOnHeld();
+    void TryOnReleased(const SDL_Keycode keycode);
 
 protected:
     // Protected Fields

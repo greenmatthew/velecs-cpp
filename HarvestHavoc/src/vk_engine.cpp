@@ -69,14 +69,12 @@ void VulkanEngine::run()
             case SDL_KEYDOWN:
             {
                 SDL_Keycode keycode = event.key.keysym.sym;
-                std::cout << "Key pressed: " << SDL_GetKeyName(keycode) << " (0x" << std::hex << std::uppercase << keycode << ')' << std::endl;
                 Input::GetInstance().TryOnPressed(keycode);
                 break;
             }
             case SDL_KEYUP:
             {
                 SDL_Keycode keycode = event.key.keysym.sym;
-                std::cout << "Key released: " << SDL_GetKeyName(keycode) << " (0x" << std::hex << std::uppercase << keycode << ')' << std::endl;
                 Input::GetInstance().TryOnReleased(keycode);
                 break;
             }
@@ -85,7 +83,7 @@ void VulkanEngine::run()
             }
         }
 
-        // Input::GetInstance().TryOnHeld(keycode);
+        Input::GetInstance().TryOnHeld();
 
         draw();
     }
