@@ -1,12 +1,16 @@
-// -------------------------------------------------------------------------------
-// Filename:    $safeitemname$.cpp
-// Created by:  $username$
-// Created on:  $time$
-// -------------------------------------------------------------------------------
-// Copyright (c) $year$ Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/**
+ * \file        $safeitemname$.cpp
+ * \brief       INSERT BRIEF DESCRIPTION HERE
+ * \details     INSERT DETAILED DESCRIPTION HERE
+ * \author      $username$
+ * \date        $time$
+ * 
+ * \section     LICENSE
+ * 
+ * Copyright (c) $year$ Matthew Green - All rights reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
 #include "$safeitemname$.h"
 

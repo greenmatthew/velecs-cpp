@@ -1,14 +1,17 @@
-// -------------------------------------------------------------------------------
-// Filename:    Event.h
-// Created by:  mgreen
-// Created on:  10/18/2023 13:01:36
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/**
+ * \file        Event.h
+ * \author      mgreen
+ * \date        10/18/2023 13:01:36
+ * 
+ * \section     LICENSE
+ * 
+ * Copyright (c) 2023 Matthew Green - All rights reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 
 #pragma once
+
 
 #include <vector>
 #include <functional>

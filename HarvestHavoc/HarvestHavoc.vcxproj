@@ -68,6 +68,7 @@
     <ClInclude Include="include\vk_engine.h" />
     <ClInclude Include="include\vk_initializers.h" />
     <ClInclude Include="include\vk_types.h" />
+    <ClInclude Include="templates\Template.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\IEnableDisable.cpp">
@@ -104,6 +105,7 @@
     <ClCompile Include="src\VkBootstrap\VkBootstrap.cpp" />
     <ClCompile Include="src\vk_engine.cpp" />
     <ClCompile Include="src\vk_initializers.cpp" />
+    <ClCompile Include="templates\Template.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
