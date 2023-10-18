@@ -11,7 +11,7 @@
 #pragma once
 
 #include "IEnableDisable.h"
-#include "Input/Event.h"
+#include "Event.h"
 
 #include <memory>
 #include <iostream>

@@ -53,13 +53,15 @@ void StopGoingRight()
 void PlayerInputActionMap::Init()
 {
     Escape = CreateBinding(SDLK_ESCAPE);
-    Escape->OnPressed.AddListener(OpenMenu);
+    Escape->OnPressed += OpenMenu;
+
     LeftStrafe = CreateBinding(SDLK_LEFT);
-    LeftStrafe->OnPressed.AddListener(StartGoingLeft);
-    LeftStrafe->OnReleased.AddListener(StopGoingLeft);
+    LeftStrafe->OnPressed += StartGoingLeft;
+    LeftStrafe->OnReleased += StopGoingLeft;
+    
     RightStrafe = CreateBinding(SDLK_RIGHT);
-    RightStrafe->OnPressed.AddListener(StartGoingRight);
-    RightStrafe->OnReleased.AddListener(StopGoingRight);
+    RightStrafe->OnPressed += StartGoingRight;
+    RightStrafe->OnReleased += StopGoingRight;
 }
 
 void PlayerInputActionMap::Switch()

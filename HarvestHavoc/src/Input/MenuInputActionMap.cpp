@@ -33,7 +33,7 @@ void CloseMenu()
 void MenuInputActionMap::Init()
 {
     Escape = CreateBinding(SDLK_ESCAPE);
-    Escape->OnPressed.AddListener(CloseMenu);
+    Escape->OnPressed += CloseMenu;
 }
 
 void MenuInputActionMap::Switch()
