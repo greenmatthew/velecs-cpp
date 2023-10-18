@@ -22,6 +22,7 @@ public:
     // Enums
 
     // Public Fields
+    std::shared_ptr<InputAction> Escape;
 
     // Constructors and Destructors
     MenuInputActionMap() = default;
@@ -29,6 +30,8 @@ public:
 
     // Public Methods
     void Init() override;
+
+    void Switch() override;
 
 protected:
     // Protected Fields

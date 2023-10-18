@@ -13,6 +13,8 @@
 #include "IEnableDisable.h"
 #include "Input/InputAction.h"
 #include "Input/InputActionMap.h"
+#include "Input/PlayerInputActionMap.h"
+#include "Input/MenuInputActionMap.h"
 
 #include <vector>
 #include <unordered_map>
@@ -61,9 +63,14 @@ public:
 
     //std::shared_ptr<InputAction> CreateBinding(const SDL_Keycode keycode);
 
-    void TryOnPressed(const SDL_Keycode keycode);
-    void TryOnHeld();
-    void TryOnReleased(const SDL_Keycode keycode);
+    bool TryOnPressed(const SDL_Keycode keycode);
+    bool TryOnHeld();
+    bool TryOnReleased(const SDL_Keycode keycode);
+    void TrySettingToIdle();
+
+    void SwitchTo(std::shared_ptr<InputActionMap> inputActionMapPtr);
+
+    void HandleIEnableDisableRequests();
 
 protected:
     // Protected Fields
@@ -83,6 +90,8 @@ private:
 
     void ForEachMap(std::function<void(std::shared_ptr<InputActionMap>)> callback);
     void ForEachKeyBinding(std::function<void(const SDL_Keycode, std::shared_ptr<InputAction>)> callback);
+
+    void HandleIEnableDisableRequests(std::shared_ptr<IEnableDisable> object);
 };
 
 } // namespace HarvestHavoc::Input

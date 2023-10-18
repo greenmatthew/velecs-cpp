@@ -6,6 +6,7 @@
 #include "Input/InputAction.h"
 
 #include <iostream>
+#include <unordered_set>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -31,7 +32,10 @@ void VulkanEngine::init()
         window_flags
     );
 
+    inProcessKeys.reserve(10);
+
     Input::GetInstance().Init();
+    Input::GetInstance().Player->Switch();
 
     //everything went fine
     _isInitialized = true;
@@ -45,6 +49,43 @@ void VulkanEngine::cleanup()
     }
 }
 
+void VulkanEngine::input_update()
+{
+    Input::GetInstance().HandleIEnableDisableRequests();
+
+    Input::GetInstance().TrySettingToIdle();
+
+    //Handle events on queue
+    while (SDL_PollEvent(&event) != 0)
+    {
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            isQuitting = true; //close the window when user alt-f4s or clicks the X button
+            break;
+        case SDL_KEYDOWN:
+        {
+            SDL_Keycode keycode = event.key.keysym.sym;
+            if (event.key.repeat == 0)
+            {
+                Input::GetInstance().TryOnPressed(keycode);
+            }
+            break;
+        }
+        case SDL_KEYUP:
+        {
+            SDL_Keycode keycode = event.key.keysym.sym;
+            Input::GetInstance().TryOnReleased(keycode);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    Input::GetInstance().TryOnHeld();
+}
+
 void VulkanEngine::draw()
 {
     //nothing yet
@@ -52,38 +93,9 @@ void VulkanEngine::draw()
 
 void VulkanEngine::run()
 {
-    SDL_Event event;
-    bool bQuit = false;
-
-    //main loop
-    while (!bQuit)
+    while (!isQuitting)
     {
-        //Handle events on queue
-        while (SDL_PollEvent(&event) != 0)
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                bQuit = true; //close the window when user alt-f4s or clicks the X button
-                break;
-            case SDL_KEYDOWN:
-            {
-                SDL_Keycode keycode = event.key.keysym.sym;
-                Input::GetInstance().TryOnPressed(keycode);
-                break;
-            }
-            case SDL_KEYUP:
-            {
-                SDL_Keycode keycode = event.key.keysym.sym;
-                Input::GetInstance().TryOnReleased(keycode);
-                break;
-            }
-            default:
-                break;
-            }
-        }
-
-        Input::GetInstance().TryOnHeld();
+        input_update();
 
         draw();
     }

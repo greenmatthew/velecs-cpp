@@ -18,14 +18,14 @@ namespace HarvestHavoc {
 IEnableDisable::~IEnableDisable() = default;
 
 // Public Methods
-void IEnableDisable::Enable()
+void IEnableDisable::RequestEnable()
 {
-    isEnabled = true;
+    state = RequestState::Enable;
 }
 
-void IEnableDisable::Disable()
+void IEnableDisable::RequestDisable()
 {
-    isEnabled = false;
+    state = RequestState::Disable;
 }
 
 bool IEnableDisable::GetIsEnabled() const
@@ -40,5 +40,34 @@ bool IEnableDisable::GetIsEnabled() const
 // Private Fields
 
 // Private Methods
+void IEnableDisable::ExecuteEnable()
+{
+    state = RequestState::None;
+    isEnabled = true;
+    OnEnable();
+}
+
+void IEnableDisable::ExecuteDisable()
+{
+    state = RequestState::None;
+    isEnabled = false;
+    OnDisable();
+}
+
+void IEnableDisable::HandleRequests(Input::IEnableDisablePassKey passKey)
+{
+    switch (state)
+    {
+        case RequestState::Enable:
+            ExecuteEnable();
+            break;
+        case RequestState::Disable:
+            ExecuteDisable();
+            break;
+        case RequestState::None:
+        default:
+            break;
+    }
+}
 
 } // namespace HarvestHavoc::

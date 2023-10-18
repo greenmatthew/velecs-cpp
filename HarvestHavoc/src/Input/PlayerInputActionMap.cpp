@@ -11,6 +11,7 @@
 #include "Input/PlayerInputActionMap.h"
 #include "Input/InputActionMap.h"
 #include "Input/InputAction.h"
+#include "Input/Input.h"
 
 #include <iostream>
 
@@ -23,28 +24,47 @@ namespace HarvestHavoc::Input {
 // Constructors and Destructors
 
 // Public Methods
-void GoLeft()
+void OpenMenu()
 {
-    std::cout << SDL_GetKeyName(SDLK_LEFT) << std::endl;
+    std::cout << "Opening menu." << std::endl;
+    Input::GetInstance().Menu->Switch();
 }
 
-void GoRight()
+void StartGoingLeft()
 {
-    std::cout << SDL_GetKeyName(SDLK_RIGHT) << std::endl;
+    std::cout << "Started going left." << std::endl;
 }
 
-void Test()
+void StopGoingLeft()
 {
-    std::cout << "TEST" << std::endl;
+    std::cout << "Stopped going left." << std::endl;
+}
+
+void StartGoingRight()
+{
+    std::cout << "Started going right." << std::endl;
+}
+
+void StopGoingRight()
+{
+    std::cout << "Stopped going right." << std::endl;
 }
 
 void PlayerInputActionMap::Init()
 {
+    Escape = CreateBinding(SDLK_ESCAPE);
+    Escape->OnPressed.AddListener(OpenMenu);
     LeftStrafe = CreateBinding(SDLK_LEFT);
-    LeftStrafe->OnPressed.AddListener(GoLeft);
-    LeftStrafe->OnReleased.AddListener(Test);
+    LeftStrafe->OnPressed.AddListener(StartGoingLeft);
+    LeftStrafe->OnReleased.AddListener(StopGoingLeft);
     RightStrafe = CreateBinding(SDLK_RIGHT);
-    RightStrafe->OnPressed.AddListener(GoRight);
+    RightStrafe->OnPressed.AddListener(StartGoingRight);
+    RightStrafe->OnReleased.AddListener(StopGoingRight);
+}
+
+void PlayerInputActionMap::Switch()
+{
+    input.SwitchTo(input.Player);
 }
 
 // Protected Fields

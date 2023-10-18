@@ -13,13 +13,19 @@
 #include "Input/Input.h"
 
 #include <sstream>
-// #include <stdexcept>
+#include <algorithm>
 
 namespace HarvestHavoc::Input {
 
 // Public Fields
 
 // Constructors and Destructors
+InputActionMap::InputActionMap()
+{
+    heldKeyBinds.reserve(10);
+    releasedKeyBinds.reserve(10);
+}
+
 InputActionMap::~InputActionMap() = default;
 
 // Public Methods
@@ -44,40 +50,118 @@ std::shared_ptr<InputAction> InputActionMap::CreateBinding(const SDL_Keycode key
 }
 
 
-void InputActionMap::TryOnPressed(const SDL_Keycode keycode)
+bool InputActionMap::TryOnPressed(const SDL_Keycode keycode)
 {
     if (GetIsEnabled())
     {
         auto inputActionPtr = TryFindKeyBind(keycode);
         if (inputActionPtr)
         {
-            inputActionPtr->TryInvokeOnPressed();
+            if (inputActionPtr->TryInvokeOnPressed())
+            {
+                AddToHeldKeyBinds(inputActionPtr);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool InputActionMap::TryOnHeld()
+{
+    bool result = false;
+    if (GetIsEnabled())
+    {
+        if (!heldKeyBinds.empty())
+        {
+            ForEachHeldKeyBind
+            (
+                [&](std::shared_ptr<InputAction> inputActionPtr)
+                { 
+                    if (inputActionPtr->TryInvokeOnHeld())
+                    {
+                        result = true;
+                    }
+                }
+            );
+        }
+    }
+    return result;
+}
+
+bool InputActionMap::TryOnReleased(const SDL_Keycode keycode)
+{
+    if (GetIsEnabled())
+    {
+        auto inputActionPtr = TryFindKeyBind(keycode);
+        if (inputActionPtr)
+        {
+            if (inputActionPtr->TryInvokeOnReleased())
+            {
+                RemoveFromHeldKeyBinds(inputActionPtr);
+                AddToReleasedKeyBinds(inputActionPtr);
+                return true;
+            }
+        }        
+    }
+    return false;
+}
+
+void InputActionMap::TrySettingToIdle()
+{
+    if (GetIsEnabled())
+    {
+        if (!releasedKeyBinds.empty())
+        {
+            ForEachReleasedKeyBind
+            (
+                [&](std::shared_ptr<InputAction> inputActionPtr)
+                {
+                    RemoveFromReleasedKeyBinds(inputActionPtr);
+                    inputActionPtr->SetStateToIdle();
+                }
+            );
+
+            // Clear the vector afterwards
+            releasedKeyBinds.clear();
         }
     }
 }
 
-void InputActionMap::TryOnHeld()
+void InputActionMap::AddToHeldKeyBinds(std::shared_ptr<InputAction> inputActionPtr)
 {
-    if (GetIsEnabled())
-    {
-        // auto inputActionPtr = TryFindKeyBind(keycode);
-        // if (inputActionPtr)
-        // {
-        //     inputActionPtr->TryInvokeOnHeld();
-        // }
-    }
+    heldKeyBinds.push_back(inputActionPtr);
 }
 
-void InputActionMap::TryOnReleased(const SDL_Keycode keycode)
+void InputActionMap::RemoveFromHeldKeyBinds(std::shared_ptr<InputAction> inputActionPtr)
 {
-    if (GetIsEnabled())
-    {
-        auto inputActionPtr = TryFindKeyBind(keycode);
-        if (inputActionPtr)
-        {
-            inputActionPtr->TryInvokeOnReleased();
-        }        
-    }
+    heldKeyBinds.erase(
+        std::remove(heldKeyBinds.begin(), heldKeyBinds.end(), inputActionPtr),
+        heldKeyBinds.end()
+    );
+}
+
+void InputActionMap::AddToReleasedKeyBinds(std::shared_ptr<InputAction> inputActionPtr)
+{
+    releasedKeyBinds.push_back(inputActionPtr);
+}
+
+void InputActionMap::RemoveFromReleasedKeyBinds(std::shared_ptr<InputAction> inputActionPtr)
+{
+    releasedKeyBinds.erase(
+        std::remove(releasedKeyBinds.begin(), releasedKeyBinds.end(), inputActionPtr),
+        releasedKeyBinds.end()
+    );
+}
+
+void InputActionMap::OnEnable()
+{
+    ForEachKeyBind([](const SDL_Keycode keycode, std::shared_ptr<InputAction> inputActionPtr) { inputActionPtr->SetStateToIdle(); });
+}
+
+void InputActionMap::OnDisable()
+{
+    ForEachKeyBind([](const SDL_Keycode keycode, std::shared_ptr<InputAction> inputActionPtr) { inputActionPtr->SetStateToDisabled(); });
 }
 
 // Protected Fields
@@ -87,7 +171,7 @@ void InputActionMap::TryOnReleased(const SDL_Keycode keycode)
 // Private Fields
 
 // Private Methods
-void InputActionMap::ForEachItem(std::function<void(const SDL_Keycode, std::shared_ptr<InputAction>)> callback)
+void InputActionMap::ForEachKeyBind(std::function<void(const SDL_Keycode, std::shared_ptr<InputAction>)> callback)
 {
     for (auto& [keycode, inputActionPtr] : keyBinds)
     {
@@ -95,7 +179,23 @@ void InputActionMap::ForEachItem(std::function<void(const SDL_Keycode, std::shar
     }
 }
 
-std::shared_ptr<InputAction> InputActionMap::TryFindKeyBind(SDL_Keycode keycode) const
+void InputActionMap::ForEachHeldKeyBind(std::function<void(std::shared_ptr<InputAction>)> callback)
+{
+    for (auto& inputActionPtr : heldKeyBinds)
+    {
+        callback(inputActionPtr);
+    }
+}
+
+void InputActionMap::ForEachReleasedKeyBind(std::function<void(std::shared_ptr<InputAction>)> callback)
+{
+    for (auto& inputActionPtr : releasedKeyBinds)
+    {
+        callback(inputActionPtr);
+    }
+}
+
+std::shared_ptr<InputAction> InputActionMap::TryFindKeyBind(const SDL_Keycode keycode) const
 {
     auto it = keyBinds.find(keycode);
     if (it != keyBinds.end())

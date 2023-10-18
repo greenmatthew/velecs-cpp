@@ -14,10 +14,13 @@
 #include "Input/Event.h"
 
 #include <memory>
+#include <iostream>
 
 #include <SDL2/SDL.h>
 
 namespace HarvestHavoc::Input {
+
+class InputActionMap;
 
 enum class ButtonState
 {
@@ -25,6 +28,7 @@ enum class ButtonState
     Pressed,
     Held,
     Released,
+    Disabled,
 };
 
 /// <summary>
@@ -43,15 +47,18 @@ public:
     Event<> OnReleased;
 
     // Destructors
-    InputAction(SDL_Keycode keycode);
+    InputAction(const SDL_Keycode keycode);
     ~InputAction() = default;
 
     // Public Methods
     static std::shared_ptr<InputAction> Create(const SDL_Keycode keycode);
 
-    void TryInvokeOnPressed();
-    void TryInvokeOnHeld();
-    void TryInvokeOnReleased();
+    bool TryInvokeOnPressed();
+    bool TryInvokeOnHeld();
+    bool TryInvokeOnReleased();
+
+    void SetStateToIdle();
+    void SetStateToDisabled();
 
 protected:
     // Protected Fields

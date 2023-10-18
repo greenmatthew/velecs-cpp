@@ -1,7 +1,7 @@
 // -------------------------------------------------------------------------------
-// Filename:    PlayerInputActionMap.h
+// Filename:    IInputAccessor.h
 // Created by:  mgreen
-// Created on:  10/16/2023 18:49:35
+// Created on:  10/17/2023 17:07:08
 // -------------------------------------------------------------------------------
 // Copyright (c) 2023 Matthew Green - All rights reserved
 // Unauthorized copying of this file, via any medium is strictly prohibited
@@ -10,33 +10,28 @@
 
 #pragma once
 
-#include "Input/InputActionMap.h"
-
 namespace HarvestHavoc::Input {
+
+class Input;
 
 /// <summary>
 /// Summary of class
 /// </summary>
-class PlayerInputActionMap : public InputActionMap {
+class IInputAccessor {
 public:
     // Enums
 
     // Public Fields
-    std::shared_ptr<InputAction> Escape;
-    std::shared_ptr<InputAction> LeftStrafe;
-    std::shared_ptr<InputAction> RightStrafe;
 
     // Constructors and Destructors
-    PlayerInputActionMap() = default;
-    ~PlayerInputActionMap() = default;
+    IInputAccessor();
+    virtual ~IInputAccessor() = default;
 
     // Public Methods
-    void Init() override;
 
-    void Switch() override;
-    
 protected:
     // Protected Fields
+    Input& input;
 
     // Protected Methods
 

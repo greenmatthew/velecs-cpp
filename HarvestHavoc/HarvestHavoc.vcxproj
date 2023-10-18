@@ -19,7 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Debug.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="include\IEnableDisable.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Input\IEnableDisablePassKey.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -32,6 +40,10 @@
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\Input\Event.h" />
+    <ClInclude Include="include\Input\IInputAccessor.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="include\Input\Input.h">
       <SubType>
       </SubType>
@@ -56,6 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\IEnableDisable.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Input\IInputAccessor.cpp">
       <SubType>
       </SubType>
     </ClCompile>

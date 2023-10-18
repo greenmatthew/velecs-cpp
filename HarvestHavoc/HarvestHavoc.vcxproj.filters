@@ -81,6 +81,15 @@
     <ClInclude Include="include\Input\MenuInputActionMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Input\IInputAccessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Input\IEnableDisablePassKey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\imgui\imgui.cpp">
@@ -135,6 +144,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Input\MenuInputActionMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\IInputAccessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
