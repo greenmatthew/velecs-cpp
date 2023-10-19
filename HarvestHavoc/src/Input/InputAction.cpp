@@ -1,12 +1,12 @@
-// -------------------------------------------------------------------------------
-// Filename:    InputAction.cpp
-// Created by:  mgreen
-// Created on:  10/16/2023 19:45:16
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    InputAction.cpp
+/// \author  Matthew Green
+/// \date    10/16/2023 19:45:16
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #include "Debug.h"
 
@@ -40,6 +40,7 @@ std::ostream& operator<<(std::ostream& os, const ButtonState& state) {
 // Destructors
 
 // Public Methods
+
 std::shared_ptr<InputAction> InputAction::Create(const SDL_Keycode keycode)
 {
     auto inputActionPtr = std::make_shared<InputAction>(keycode);
@@ -133,6 +134,7 @@ void InputAction::SetStateToDisabled()
 // Private Fields
 
 // Constructors
+
 InputAction::InputAction(SDL_Keycode keycode) : keycode(keycode) {}
 
 // Private Methods

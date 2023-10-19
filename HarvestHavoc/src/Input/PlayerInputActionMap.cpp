@@ -1,12 +1,12 @@
-// -------------------------------------------------------------------------------
-// Filename:    PlayerInputActionMap.cpp
-// Created by:  mgreen
-// Created on:  10/16/2023 18:51:33
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    PlayerInputActionMap.cpp
+/// \author  Matthew Green
+/// \date    10/16/2023 18:51:33
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #include "Input/PlayerInputActionMap.h"
 #include "Input/InputActionMap.h"
@@ -24,6 +24,7 @@ namespace HarvestHavoc::Input {
 // Constructors and Destructors
 
 // Public Methods
+
 void OpenMenu()
 {
     std::cout << "Opening menu." << std::endl;

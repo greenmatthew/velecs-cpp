@@ -1,23 +1,25 @@
-// -------------------------------------------------------------------------------
-// Filename:    IEnableDisable.cpp
-// Created by:  mgreen
-// Created on:  10/16/2023 22:51:46
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    IEnableDisable.cpp
+/// \author  mgreen
+/// \date    10/16/2023 22:51:46
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
-#include "IEnableDisable.h"
+#include "Core/IEnableDisable.h"
 
 namespace HarvestHavoc {
 
 // Public Fields
 
 // Constructors and Destructors
+
 IEnableDisable::~IEnableDisable() = default;
 
 // Public Methods
+
 void IEnableDisable::RequestEnable()
 {
     state = RequestState::Enable;
@@ -40,6 +42,7 @@ bool IEnableDisable::GetIsEnabled() const
 // Private Fields
 
 // Private Methods
+
 void IEnableDisable::ExecuteEnable()
 {
     state = RequestState::None;
@@ -70,4 +73,4 @@ void IEnableDisable::HandleRequests(Input::IEnableDisablePassKey passKey)
     }
 }
 
-} // namespace HarvestHavoc::
+} // namespace HarvestHavoc

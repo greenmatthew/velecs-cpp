@@ -1,12 +1,12 @@
-// -------------------------------------------------------------------------------
-// Filename:    InputActionMap.cpp
-// Created by:  mgreen
-// Created on:  10/16/2023 22:30:21
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    InputActionMap.cpp
+/// \author  Matthew Green
+/// \date    10/16/2023 22:30:21
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #include "Input/InputActionMap.h"
 #include "Input/InputAction.h"
@@ -20,6 +20,7 @@ namespace HarvestHavoc::Input {
 // Public Fields
 
 // Constructors and Destructors
+
 InputActionMap::InputActionMap()
 {
     heldKeyBinds.reserve(10);
@@ -29,6 +30,7 @@ InputActionMap::InputActionMap()
 InputActionMap::~InputActionMap() = default;
 
 // Public Methods
+
 std::shared_ptr<InputAction> InputActionMap::CreateBinding(const SDL_Keycode keycode)
 {
     const auto& it = keyBinds.find(keycode);

@@ -1,3 +1,13 @@
+/// \file    Vec2.cpp
+/// \author  Matthew Green
+/// \date    10/15/2023 12:36:20
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
+
 #include "Math/Vec2.h"
 
 #include <sstream>
@@ -6,11 +16,15 @@
 
 namespace HarvestHavoc::Math {
 
+// Public Fields
+
+// Constructors and Destructors
+
+// Public Methods
+
 Vec2::Vec2(const float x, const float y) : x(x), y(y) {}
 
 Vec2::Vec2(const Vec2 &other) : x(other.x), y(other.y) {}
-
-Vec2::~Vec2() {}
 
 Vec2& Vec2::operator=(const Vec2& other)
 {
@@ -159,4 +173,12 @@ std::string Vec2::ToString() const
     return oss.str();
 }
 
-} // namespace HarvestHavoc::Math
+// Protected Fields
+
+// Protected Methods
+
+// Private Fields
+
+// Private Methods
+
+} // namespace $defaultnamespace$::

@@ -1,18 +1,16 @@
-// -------------------------------------------------------------------------------
-// Filename:    IEnableDisable.h
-// Created by:  mgreen
-// Created on:  10/16/2023 21:32:30
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    IEnableDisable.h
+/// \author  Matthew Green
+/// \date    10/16/2023 21:32:30
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #pragma once
 
 #include "Input/IEnableDisablePassKey.h"
-
-#include <functional>
 
 namespace HarvestHavoc {
 

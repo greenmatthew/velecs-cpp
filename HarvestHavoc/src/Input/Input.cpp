@@ -1,12 +1,12 @@
-// -------------------------------------------------------------------------------
-// Filename:    Input.cpp
-// Created by:  mgreen
-// Created on:  10/16/2023 18:36:19
-// -------------------------------------------------------------------------------
-// Copyright (c) 2023 Matthew Green - All rights reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// -------------------------------------------------------------------------------
+/// \file    Input.cpp
+/// \author  Matthew Green
+/// \date    10/16/2023 18:36:19
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #include "Input/Input.h"
 #include "Input/InputActionMap.h"
@@ -20,6 +20,7 @@ namespace HarvestHavoc::Input {
 // Public Fields
 
 // Public Methods
+
 void Input::Init()
 {
     Player = CreateMap<PlayerInputActionMap>();
@@ -123,6 +124,7 @@ void Input::HandleIEnableDisableRequests()
 // Private Fields
 
 // Private Methods
+
 void Input::ForEachMap(std::function<void(std::shared_ptr<InputActionMap>)> callback)
 {
     for (auto& map : maps)

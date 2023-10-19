@@ -1,5 +1,14 @@
-﻿
-#include "vk_engine.h"
+﻿/// \file    vk_engine.cpp
+/// \author  Matthew Green
+/// \date    10/15/2023 14:57:55
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
+
+#include "Engine/vk_engine.h"
 
 #include "Input/Input.h"
 #include "Input/InputActionMap.h"
@@ -11,10 +20,18 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
-#include <vk_types.h>
-#include <vk_initializers.h>
+#include <Engine/vk_types.h>
+#include <Engine/vk_initializers.h>
 
 using namespace HarvestHavoc::Input;
+
+namespace HarvestHavoc::Engine {
+
+// Public Fields
+
+// Constructors and Destructors
+
+// Public Methods
 
 void VulkanEngine::init()
 {
@@ -34,8 +51,8 @@ void VulkanEngine::init()
 
     inProcessKeys.reserve(10);
 
-    Input::GetInstance().Init();
-    Input::GetInstance().Player->Switch();
+    Input::Input::GetInstance().Init();
+    Input::Input::GetInstance().Player->Switch();
 
     //everything went fine
     _isInitialized = true;
@@ -49,11 +66,28 @@ void VulkanEngine::cleanup()
     }
 }
 
+void VulkanEngine::run()
+{
+    while (!isQuitting)
+    {
+        input_update();
+
+        draw();
+    }
+}
+
+// Protected Fields
+
+// Protected Methods
+
+// Private Fields
+
+// Private Methods
 void VulkanEngine::input_update()
 {
-    Input::GetInstance().HandleIEnableDisableRequests();
+    Input::Input::GetInstance().HandleIEnableDisableRequests();
 
-    Input::GetInstance().TrySettingToIdle();
+    Input::Input::GetInstance().TrySettingToIdle();
 
     //Handle events on queue
     while (SDL_PollEvent(&event) != 0)
@@ -68,14 +102,14 @@ void VulkanEngine::input_update()
             SDL_Keycode keycode = event.key.keysym.sym;
             if (event.key.repeat == 0)
             {
-                Input::GetInstance().TryOnPressed(keycode);
+                Input::Input::GetInstance().TryOnPressed(keycode);
             }
             break;
         }
         case SDL_KEYUP:
         {
             SDL_Keycode keycode = event.key.keysym.sym;
-            Input::GetInstance().TryOnReleased(keycode);
+            Input::Input::GetInstance().TryOnReleased(keycode);
             break;
         }
         default:
@@ -83,7 +117,7 @@ void VulkanEngine::input_update()
         }
     }
 
-    Input::GetInstance().TryOnHeld();
+    Input::Input::GetInstance().TryOnHeld();
 }
 
 void VulkanEngine::draw()
@@ -91,13 +125,11 @@ void VulkanEngine::draw()
     //nothing yet
 }
 
-void VulkanEngine::run()
-{
-    while (!isQuitting)
-    {
-        input_update();
+} // namespace HarvestHavoc::Engine
 
-        draw();
-    }
-}
+
+
+
+
+
 
