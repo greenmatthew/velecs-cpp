@@ -1,26 +1,21 @@
-/**
- * \file        $safeitemname$.h
- * \brief       INSERT BRIEF DESCRIPTION HERE
- * \details     INSERT DETAILED DESCRIPTION HERE
- * \author      $username$
- * \date        $time$
- * 
- * \section     LICENSE
- * 
- * Copyright (c) $year$ Matthew Green - All rights reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- */
+/// \file    $safeitemname$.h
+/// \author  Matthew Green
+/// \date    $time$
+/// 
+/// \section LICENSE
+/// 
+/// Copyright (c) $year$ Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
 
 #pragma once
 
 namespace $defaultnamespace$:: {
 
-/**
- * \brief INSERT BRIEF HERE
- *
- * INSERT DETAILED DESCRIPTION HERE
- */
+/// \class $safeitemname$
+/// \brief Brief description.
+///
+/// Rest of description.
 class $safeitemname$ {
 public:
     // Enums
@@ -29,15 +24,11 @@ public:
 
     // Constructors and Destructors
     
-    /**
-     * \brief INSERT BRIEF HERE
-     */
-    $safeitemname$();
+    /// \brief Default constructor.
+    $safeitemname$() = default;
     
-    /**
-     * \brief INSERT BRIEF HERE
-     */
-    ~$safeitemname$();
+    /// \brief Default deconstructor.
+    ~$safeitemname$() = default;
 
     // Public Methods
 
