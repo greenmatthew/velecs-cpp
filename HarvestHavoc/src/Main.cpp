@@ -14,11 +14,11 @@ int main(int argc, char* argv[])
 {
     HarvestHavoc::Engine::VulkanEngine engine;
 
-    engine.init();
+    engine.Init();
 
-    engine.run();
+    engine.Run();
 
-    engine.cleanup();
+    engine.Cleanup();
 
     return 0;
 }
