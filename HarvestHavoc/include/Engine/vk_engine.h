@@ -95,6 +95,8 @@ private:
     /// \brief create synchronization structures
     void InitSyncStructures();
 
+    void InitImGUI();
+
     void InitInput();
 
     // input loop
