@@ -32,13 +32,22 @@ public:
     
     // Public Methods
 
-    //initializes everything in the engine
+    /// \brief Initializes the engine, setting up necessary Vulkan objects and other resources.
+    ///
+    /// This method sets up Vulkan, SDL2, and other critical structures required for rendering and processing.
+    /// It should be called before attempting to use any other methods of this class.
     void Init();
 
-    //shuts down the engine
+    /// \brief Shuts down the engine, releasing any resources acquired during initialization or runtime.
+    ///
+    /// This method is responsible for cleaning up and releasing any resources to ensure a clean exit.
+    /// It should be called before exiting the program to ensure memory and other resources are properly released.
     void Cleanup();
 
-    //run main loop
+    /// \brief Runs the main event and rendering loop, handling input and drawing frames.
+    ///
+    /// This method enters a loop which processes SDL2 events, updates the engine state, and renders frames to the screen.
+    /// It continues looping until a quit event is received, at which point it returns control to the caller.
     void Run();
 
 protected:
@@ -49,61 +58,107 @@ protected:
 private:
     // Private Fields
 
-    bool _isInitialized{false};
-    int _frameNumber{0};
-    bool isQuitting = false;
-    SDL_Event event;
+    bool _isInitialized{false}; /// \brief Indicates whether the engine has been initialized.
+    int _frameNumber{0}; /// \brief Keeps track of the current frame number.
+    bool isQuitting = false; /// \brief Flag to indicate when the application is requesting a shutdown.
+    SDL_Event event; /// \brief Event structure for handling SDL events.
+    
+    VkExtent2D _windowExtent{1700, 900}; /// \brief Desired dimensions of the rendering window.
 
-    VkExtent2D _windowExtent{1700, 900};
+    struct SDL_Window* _window{nullptr}; /// \brief Pointer to the SDL window structure.
 
-    struct SDL_Window* _window{nullptr};
+    VkInstance _instance; /// \brief Handle to the Vulkan library.
+    VkDebugUtilsMessengerEXT _debug_messenger; /// \brief Handle for Vulkan debug messaging.
+    VkPhysicalDevice _chosenGPU; /// \brief The chosen GPU for rendering operations.
+    VkDevice _device; /// \brief Handle to the Vulkan device.
+    VkSurfaceKHR _surface; /// \brief Handle to the Vulkan window surface.
 
-    VkInstance _instance; /// \brief Vulkan library handle
-    VkDebugUtilsMessengerEXT _debug_messenger; /// \brief Vulkan debug output handle
-    VkPhysicalDevice _chosenGPU; /// \brief GPU chosen as the default device
-    VkDevice _device; /// \brief Vulkan device for commands
-    VkSurfaceKHR _surface; /// \brief Vulkan window surface
+    VkSwapchainKHR _swapchain; /// \brief Handle to the Vulkan swapchain.
+    VkFormat _swapchainImageFormat; /// \brief The format used for swapchain images.
+    std::vector<VkImage> _swapchainImages; /// \brief List of images within the swapchain.
+    std::vector<VkImageView> _swapchainImageViews; /// \brief List of image views for accessing swapchain images.
 
-    VkSwapchainKHR _swapchain; /// \brief from other articles
-    VkFormat _swapchainImageFormat; /// \brief image format expected by the windowing system
-    std::vector<VkImage> _swapchainImages; /// \brief array of images from the swapchain
-    std::vector<VkImageView> _swapchainImageViews; /// \brief array of image-views from the swapchain
+    VkQueue _graphicsQueue; /// \brief Queue used for submitting graphics commands.
+    uint32_t _graphicsQueueFamily; /// \brief Index of the queue family for graphics operations.
+    VkCommandPool _commandPool; /// \brief Pool for allocating command buffers.
+    VkCommandBuffer _mainCommandBuffer; /// \brief Main command buffer for recording rendering commands.
 
-    VkQueue _graphicsQueue; /// \brief queue we will submit to
-    uint32_t _graphicsQueueFamily; /// \brief family of that queue
-    VkCommandPool _commandPool; /// \brief the command pool for our commands
-    VkCommandBuffer _mainCommandBuffer; /// \brief the buffer we will record into
+    VkRenderPass _renderPass; /// \brief Handle to the Vulkan render pass.
+    std::vector<VkFramebuffer> _framebuffers; /// \brief List of framebuffers for rendering.
 
-    VkRenderPass _renderPass;
-    std::vector<VkFramebuffer> _framebuffers;
-
-    VkSemaphore _presentSemaphore, _renderSemaphore;
-	VkFence _renderFence;
+    VkSemaphore _presentSemaphore, _renderSemaphore; /// \brief Semaphore for synchronizing image presentation.
+	VkFence _renderFence; /// \brief Fence for synchronizing rendering operations.
 
     // Private Methods
 
+    /// \brief Initializes Vulkan-specific structures, such as the instance, debug messenger, and physical device selection.
+    ///
+    /// This method encapsulates the setup of critical Vulkan structures required for rendering.
+    /// It is called by the Init method during engine initialization.
     void InitVulkan();
 
+    /// \brief Initializes the swapchain for rendering.
+    ///
+    /// This method sets up the swapchain which is critical for rendering frames to the screen.
+    /// It is called by the Init method during engine initialization.
     void InitSwapchain();
 
+    /// \brief Initializes command buffers and pools for rendering.
+    ///
+    /// This method sets up the command pool and main command buffer used for rendering.
+    /// It is called by the Init method during engine initialization.
     void InitCommands();
 
+    /// \brief Initializes the default render pass used for rendering.
+    ///
+    /// This method sets up the render pass which defines how rendering operations are handled.
+    /// It is called by the Init method during engine initialization.
     void InitDefaultRenderPass();
 
+    /// \brief Initializes framebuffers used for rendering.
+    ///
+    /// This method sets up the framebuffers which hold references to the images used in rendering.
+    /// It is called by the Init method during engine initialization.
     void InitFrameBuffers();
 
-    /// \brief create synchronization structures
+    /// \brief Initializes synchronization structures used for rendering.
+    ///
+    /// This method sets up semaphores and fences used to synchronize rendering operations.
+    /// It is called by the Init method during engine initialization.
     void InitSyncStructures();
 
+    /// \brief Initializes the ImGUI user interface.
+    ///
+    /// This method sets up ImGUI which is used for rendering the user interface.
+    /// It is called by the Init method during engine initialization.
     void InitImGUI();
 
+    /// \brief Initializes input handling.
+    ///
+    /// This method sets up SDL2 event handling for processing user input.
+    /// It is called by the Init method during engine initialization.
     void InitInput();
 
-    // input loop
+    /// \brief Processes input events.
+    ///
+    /// This method is called during the main event loop to process SDL2 input events.
     void InputUpdate();
 
-    //draw loop
+    /// \brief Draws a frame to the screen.
+    ///
+    /// This method performs the rendering operations required to draw a frame to the screen.
+    /// It is called repeatedly during the main event loop.
     void Draw();
+
+    /// \brief Loads a shader module from a SPIR-V file.
+    ///
+    /// \param filePath The path to the SPIR-V file.
+    /// \param outShaderModule A pointer to a VkShaderModule structure where the loaded shader module will be stored.
+    /// \return Returns true if the shader module was loaded successfully, false otherwise.
+    ///
+    /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
+    /// and stores the shader module in the provided VkShaderModule structure.
+    bool load_shader_module(const char* filePath, VkShaderModule* outShaderModule);
 };
 
 } // namespace HarvestHavoc::Engine
