@@ -87,7 +87,10 @@ private:
     std::vector<VkFramebuffer> _framebuffers; /// \brief List of framebuffers for rendering.
 
     VkSemaphore _presentSemaphore, _renderSemaphore; /// \brief Semaphore for synchronizing image presentation.
-	VkFence _renderFence; /// \brief Fence for synchronizing rendering operations.
+    VkFence _renderFence; /// \brief Fence for synchronizing rendering operations.
+
+    VkPipelineLayout _trianglePipelineLayout; /// \brief Handle to the pipeline layout.
+    VkPipeline _trianglePipeline; /// \brief Handle to the pipeline.
 
     // Private Methods
 
@@ -127,6 +130,13 @@ private:
     /// It is called by the Init method during engine initialization.
     void InitSyncStructures();
 
+
+    /// \brief Initializes the rendering pipelines by loading shader modules.
+    ///
+    /// This method loads the shader modules necessary for rendering, including a vertex shader and a fragment shader for rendering triangles.
+    /// It leverages the load_shader_module method to load SPIR-V compiled shaders from file, and reports any errors encountered during the loading process.
+    void InitPipelines();
+
     /// \brief Initializes the ImGUI user interface.
     ///
     /// This method sets up ImGUI which is used for rendering the user interface.
@@ -158,7 +168,7 @@ private:
     ///
     /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
     /// and stores the shader module in the provided VkShaderModule structure.
-    bool load_shader_module(const char* filePath, VkShaderModule* outShaderModule);
+    bool LoadShaderModule(const char* filePath, VkShaderModule* outShaderModule);
 };
 
 } // namespace HarvestHavoc::Engine

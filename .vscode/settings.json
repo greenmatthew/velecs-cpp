@@ -64,6 +64,12 @@
         "xutility": "cpp",
         "algorithm": "cpp",
         "set": "cpp",
-        "unordered_set": "cpp"
+        "unordered_set": "cpp",
+        "filesystem": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "codecvt": "cpp"
     }
 }
