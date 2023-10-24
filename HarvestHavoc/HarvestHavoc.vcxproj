@@ -19,6 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Core\Directory.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Core\File.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Core\GameExceptions.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Core\Path.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="include\Debug.h">
       <SubType>
       </SubType>
@@ -28,6 +44,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="include\Core\Event.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="include\Engine\vk_pipeline.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -70,7 +90,27 @@
     <ClInclude Include="include\Engine\vk_types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\Directory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Core\File.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Core\GameExceptions.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="src\Core\IEnableDisable.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Core\Path.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="src\Engine\vk_pipeline.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -161,21 +201,25 @@
     <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -192,9 +236,12 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
 </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -215,9 +262,12 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
 </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -234,9 +284,12 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
 </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -257,12 +310,16 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
 </Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Import Project="$(ProjectDir)build_tools\CleanShaders.targets" />
+  <Import Project="$(ProjectDir)build_tools\CleanAssets.targets" />
+  <Import Project="$(ProjectDir)build_tools\CleanDLLs.targets" />
 </Project>
