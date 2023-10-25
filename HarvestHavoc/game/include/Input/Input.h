@@ -11,11 +11,11 @@
 #pragma once
 
 #include <Input/IInput.h>
+#include <Input/InputActionMap.h>
+
+#include <memory>
 
 namespace HarvestHavoc::Input {
-
-class PlayerInputActionMap;
-class MenuInputActionMap;
 
 /// \class Input
 /// \brief Brief description.
@@ -27,8 +27,8 @@ public:
 
     // Public Fields
 
-    static std::shared_ptr<PlayerInputActionMap> Player;  /// \brief Input action map for player controls
-    static std::shared_ptr<MenuInputActionMap> Menu;      /// \brief Input action map for menu navigation
+    static std::shared_ptr<class PlayerInputActionMap> Player;  /// \brief Input action map for player controls
+    static std::shared_ptr<class MenuInputActionMap> Menu;      /// \brief Input action map for menu navigation
 
     // Public Methods
 
@@ -41,6 +41,11 @@ public:
     }
 
     void Init() override;
+
+    /// \brief Switches to the specified input action map.
+    /// 
+    /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
+    static void SwitchTo(std::shared_ptr<HarvestHavocEngine::Input::InputActionMap> inputActionMapPtr);
 
 protected:
     // Protected Fields

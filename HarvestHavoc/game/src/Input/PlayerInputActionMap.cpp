@@ -10,9 +10,9 @@
 
 #include <Input/InputActionMap.h>
 
+#include "Input/Input.h"
 #include "Input/PlayerInputActionMap.h"
 #include "Input/MenuInputActionMap.h"
-#include "Input/Input.h"
 
 #include <iostream>
 
@@ -68,7 +68,7 @@ void PlayerInputActionMap::Init()
 
 void PlayerInputActionMap::Switch()
 {
-    Input::GetInstance().SwitchTo(Input::Player);
+    Input::SwitchTo(Input::Player);
 }
 
 // Protected Fields

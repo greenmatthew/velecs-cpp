@@ -28,6 +28,11 @@ void Input::Init()
 	Input::Player->Switch();
 }
 
+void Input::SwitchTo(std::shared_ptr<HarvestHavocEngine::Input::InputActionMap> inputActionMapPtr)
+{
+    Input::GetInstance().InternalSwitchTo(inputActionMapPtr);
+}
+
 // Protected Fields
 
 // Protected Methods

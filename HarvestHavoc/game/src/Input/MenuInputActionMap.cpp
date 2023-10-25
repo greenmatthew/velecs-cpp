@@ -9,11 +9,10 @@
 /// Proprietary and confidential
 
 #include <Input/InputActionMap.h>
-#include <Input/InputAction.h>
 
+#include "Input/Input.h"
 #include "Input/MenuInputActionMap.h"
 #include "Input/PlayerInputActionMap.h"
-#include "Input/Input.h"
 
 #include <iostream>
 
@@ -41,7 +40,7 @@ void MenuInputActionMap::Init()
 
 void MenuInputActionMap::Switch()
 {
-    Input::GetInstance().SwitchTo(Input::Menu);
+    Input::SwitchTo(Input::Menu);
 }
 
 // Protected Fields

@@ -48,20 +48,6 @@ public:
     /// \brief Initializes the Input instance.
     virtual void Init() = 0;
 
-    /// \brief Creates a new input action map of type T.
-    /// 
-    /// \tparam T The type of the input action map to create.
-    /// \return A shared pointer to the newly created input action map.
-    template<typename T>
-    static std::shared_ptr<T> CreateMap()
-    {
-        static_assert(std::is_base_of<InputActionMap, T>::value, "[Input] T must be a subclass of InputActionMap.");
-        auto inputActionMapPtr = std::make_shared<T>();
-        inputActionMapPtr->Init();
-        maps.push_back(inputActionMapPtr);
-        return inputActionMapPtr;
-    }
-
     /// \brief Attempts to trigger the 'Pressed' state on all active input maps.
     /// 
     /// \param[in] keycode The SDL keycode representing the key that was pressed.
@@ -82,11 +68,6 @@ public:
     /// \brief Attempts to set all active input maps to the 'Idle' state.
     void TrySettingToIdle();
 
-    /// \brief Switches to the specified input action map.
-    /// 
-    /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
-    void SwitchTo(std::shared_ptr<InputActionMap> inputActionMapPtr);
-
     /// \brief Handles enable/disable requests for all input action maps and key bindings.
     void HandleIEnableDisableRequests();
 
@@ -94,6 +75,25 @@ protected:
     // Protected Fields
 
     // Protected Methods
+
+    /// \brief Creates a new input action map of type T.
+    /// 
+    /// \tparam T The type of the input action map to create.
+    /// \return A shared pointer to the newly created input action map.
+    template<typename T>
+    static std::shared_ptr<T> CreateMap()
+    {
+        static_assert(std::is_base_of<InputActionMap, T>::value, "[Input] T must be a subclass of InputActionMap.");
+        auto inputActionMapPtr = std::make_shared<T>();
+        inputActionMapPtr->Init();
+        maps.push_back(inputActionMapPtr);
+        return inputActionMapPtr;
+    }
+
+    /// \brief Switches to the specified input action map.
+    /// 
+    /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
+    void InternalSwitchTo(std::shared_ptr<InputActionMap> inputActionMapPtr);
 
 private:
     // Private Fields

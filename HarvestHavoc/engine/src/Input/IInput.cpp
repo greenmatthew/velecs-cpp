@@ -86,12 +86,6 @@ void IInput::TrySettingToIdle()
     }
 }
 
-void IInput::SwitchTo(std::shared_ptr<InputActionMap> inputActionMapPtr)
-{
-    ForEachMap([](std::shared_ptr<InputActionMap> inputActionMapPtr) { inputActionMapPtr->RequestDisable(); });
-    inputActionMapPtr->RequestEnable();
-}
-
 void IInput::HandleIEnableDisableRequests()
 {
     ForEachMap
@@ -114,6 +108,12 @@ void IInput::HandleIEnableDisableRequests()
 // Protected Fields
 
 // Protected Methods
+
+void IInput::InternalSwitchTo(std::shared_ptr<InputActionMap> inputActionMapPtr)
+{
+    ForEachMap([](std::shared_ptr<InputActionMap> inputActionMapPtr) { inputActionMapPtr->RequestDisable(); });
+    inputActionMapPtr->RequestEnable();
+}
 
 // Private Fields
 
