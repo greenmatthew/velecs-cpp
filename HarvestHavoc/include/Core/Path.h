@@ -55,12 +55,6 @@ public:
     /// \return True if a file or directory exists at the specified path, false otherwise.
     static bool Exists(const std::string& path);
 
- 
-
-
-
-
-
     /// \brief Retrieves the parent directory path from the given path.
     /// \param[in] path The input path from which to extract the parent directory path.
     /// \return A string representing the parent directory path. If the input is "path/to/file.txt", the output will be "path/to/".
@@ -102,8 +96,7 @@ public:
     template<typename... Paths>
     static std::string Combine(const std::string& path1, const std::string& path2, Paths... paths);
 
-
-    static std::string ResolvePath(const std::string& path);
+    static std::string ResolvePath(std::string path);
 
 protected:
     // Protected Fields

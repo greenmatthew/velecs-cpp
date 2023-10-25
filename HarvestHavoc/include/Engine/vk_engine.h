@@ -169,6 +169,9 @@ private:
     /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
     /// and stores the shader module in the provided VkShaderModule structure.
     bool LoadShaderModule(const char* filePath, VkShaderModule* outShaderModule);
+
+    bool LoadVertShaderModule(const char* vertFilePath, VkShaderModule* outVertShaderModule);
+    bool LoadFragShaderModule(const char* fragFilePath, VkShaderModule* outFragShaderModule);
 };
 
 } // namespace HarvestHavoc::Engine

@@ -105,6 +105,9 @@
     <ClInclude Include="include\Core\GameExceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\vk_shaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libs\src\imgui\imgui.cpp">
@@ -177,6 +180,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\GameExceptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\vk_shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

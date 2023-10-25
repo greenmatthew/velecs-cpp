@@ -14,6 +14,8 @@
 #include "Core/GameExceptions.h"
 
 #include <filesystem>
+#include <unordered_map>
+#include <functional>
 
 namespace HarvestHavoc {
 
@@ -28,48 +30,30 @@ bool File::Exists(const std::string& filePath)
     return std::filesystem::exists(filePath) && !std::filesystem::is_directory(filePath);
 }
 
+bool File::HasExtension(const std::string& filePath)
+{
+    return GetExtension(filePath) != "";
+}
+
 std::string File::GetExtension(const std::string& filePath)
 {
-    if (File::Exists(filePath))
-    {
-        return std::filesystem::path(filePath).extension().string();
-    }
-    else
-    {
-        if (Directory::Exists(filePath))
-        {
-            throw FileExpectedButDirectoryFoundException(filePath);
-        }
-        else
-        {
-            throw FileNotFoundException(filePath);
-        }
-    }
+    return std::filesystem::path(filePath).extension().string();
+}
+
+std::string File::GetSecondaryExtension(const std::string& filePath)
+{
+    return File::GetExtension(File::GetFileName(filePath, false));
 }
 
 std::string File::GetFileName(const std::string& filePath, const bool includeExtension)
 {
-    if (File::Exists(filePath))
+    if (includeExtension)
     {
-        if (includeExtension)
-        {
-            return std::filesystem::path(filePath).filename().string();
-        }
-        else
-        {
-            return std::filesystem::path(filePath).stem().string();
-        }
+        return std::filesystem::path(filePath).filename().string();
     }
     else
     {
-        if (Directory::Exists(filePath))
-        {
-            throw FileExpectedButDirectoryFoundException(filePath);
-        }
-        else
-        {
-            throw FileNotFoundException(filePath);
-        }
+        return std::filesystem::path(filePath).stem().string();
     }
 }
 
@@ -86,6 +70,41 @@ std::ofstream File::OpenForWrite(const std::string& filePath, std::optional<std:
 std::fstream File::OpenForReadWrite(const std::string& filePath, std::optional<std::ios_base::openmode> mode /* = std::nullopt */)
 {
     return std::fstream{filePath, mode.value_or(std::ios::in | std::ios::out)};
+}
+
+File::Type File::DetermineFileType(const std::string& filePath)
+{
+    static std::unordered_map<std::string, std::function<Type(const std::string&)>> dispathTable
+    {
+        {
+            ".spv",
+            [](const std::string& filePath)
+            {
+                static std::unordered_map<std::string, Type> shaderDispathTable
+                {
+                    {".vert", Type::VERT_SHADER},
+                    {".frag", Type::FRAG_SHADER},
+                };
+                const std::string secExt = File::GetSecondaryExtension(filePath);
+
+                auto it = shaderDispathTable.find(secExt);
+                if (it != shaderDispathTable.end())
+                {
+                    return it->second;
+                }
+                return Type::SHADER;
+            }
+        }
+    };
+
+    const std::string ext = File::GetExtension(filePath);
+
+    auto it = dispathTable.find(ext);
+    if (it != dispathTable.end())
+    {
+        return it->second(filePath);
+    }
+    return Type::UNKNOWN;
 }
 
 // Protected Fields

@@ -12,6 +12,7 @@
 #include "Engine/vk_types.h"
 #include "Engine/vk_initializers.h"
 #include "Engine/vk_pipeline.h"
+#include "Engine/vk_shaders.h"
 
 #include "Core/Path.h"
 
@@ -325,7 +326,7 @@ void VulkanEngine::InitSyncStructures()
 void VulkanEngine::InitPipelines()
 {
     VkShaderModule triangleFragShader;
-    if (!LoadShaderModule("./assets/shaders/frag/ColoredTriangle.frag.spv", &triangleFragShader))
+    if (!ShaderModule::LoadFragmentShader(_device, "ColoredTriangle.frag.spv", &triangleFragShader))
     {
         std::cout << "Error when building the triangle fragment shader module" << std::endl;
     }
@@ -335,7 +336,7 @@ void VulkanEngine::InitPipelines()
     }
 
     VkShaderModule triangleVertexShader;
-    if (!LoadShaderModule("./assets/shaders/vert/ColoredTriangle.vert.spv", &triangleVertexShader))
+    if (!ShaderModule::LoadVertexShader(_device, "ColoredTriangle.vert.spv", &triangleVertexShader))
     {
         std::cout << "Error when building the triangle vertex shader module" << std::endl;
     }

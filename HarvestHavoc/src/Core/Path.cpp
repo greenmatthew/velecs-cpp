@@ -14,6 +14,8 @@
 #include "Core/GameExceptions.h"
 
 #include <filesystem>
+#include <algorithm>
+#include <string>
 
 #ifdef _WIN32
     // Windows-specific code
@@ -118,11 +120,6 @@ bool Path::IsRelative(const std::string& path)
 
 std::string Path::Combine(const std::string& path1, const std::string& path2)
 {
-    if (IsAbsolute(path1) && IsAbsolute(path2))
-    {
-        throw CombineAbsolutePathsException(path1, path2);
-    }
-
     return (std::filesystem::path{path1} / std::filesystem::path{path2}).string();
 }
 
@@ -132,27 +129,56 @@ std::string Path::Combine(const std::string& path1, const std::string& path2, Pa
     return Combine(Combine(path1, path2), paths...);
 }
 
-std::string Path::ResolvePath(const std::string& path)
+std::string Path::ResolvePath(std::string path)
 {
-    if (Path::Exists(path))
-    {
-        return path;
-    }
+    std::replace(path.begin(), path.end(), '/', '\\');
 
-    if (Path::IsRelative(path))
+    if (Path::IsAbsolute(path))
     {
-        std::string newPath{Path::Combine(Path::GAME_DIR, path)};
-        if (Path::Exists(newPath))
+        if (Path::Exists(path))
         {
-            return newPath;
+            return path;
         }
-
-        throw PathNotFoundException(path);
     }
     else
     {
-        throw PathNotFoundException(path);
+        std::vector<std::string> paths
+        {
+            Path::Combine(Path::GAME_DIR, path),
+            Path::Combine(Path::ASSETS_DIR, path),
+        };
+
+        for (const auto& it : paths)
+        {
+            if (Path::Exists(it))
+            {
+                return it;
+            }
+        }
+
+        // if (File::Exists(path) && File::HasExtension(path))
+        // {
+        //     auto getStartPath = [](File::Type fileType) -> const std::string
+        //     {
+        //         switch (fileType)
+        //         {
+        //             case File::Type::SHADER:
+        //                 return Path::SHADERS_DIR;
+        //             default:
+        //                 return Path::GAME_DIR;
+        //         }
+        //     };
+
+        //     const std::string startPath{ getStartPath(File::DetermineFileType(path)) };
+        //     std::string newPath = Path::Combine(startPath, path);
+        //     if (File::Exists(newPath))
+        //     {
+        //         return newPath;
+        //     }
+        // }
     }
+
+    throw PathNotFoundException(path);
 }
 
 // Protected Fields

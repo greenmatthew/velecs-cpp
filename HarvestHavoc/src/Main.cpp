@@ -8,7 +8,9 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include <Engine/vk_engine.h>
+#include "Engine/vk_engine.h"
+
+using namespace HarvestHavoc;
 
 int main(int argc, char* argv[])
 {
