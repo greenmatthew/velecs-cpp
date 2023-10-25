@@ -16,7 +16,7 @@ using namespace HarvestHavoc::Input;
 
 int main(int argc, char* argv[])
 {
-    HarvestHavocEngine::Engine::VulkanEngine engine;
+    auto& engine = HarvestHavocEngine::Engine::VulkanEngine::GetInstance();
 
     engine.Init();
 

@@ -24,7 +24,7 @@
 
     /// \def DEBUG_INPUTACTION
     /// Enable additional debugging for input actions.
-    #define DEBUG_INPUTACTION
+    // #define DEBUG_INPUTACTION
     
     #ifdef DEBUG_INPUTACTION
         /// \def DEBUG_INPUTACTION_HELD

@@ -96,28 +96,10 @@ void VulkanEngine::Cleanup()
 {
     if (_isInitialized)
     {
-        VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
+        //make sure the GPU has stopped doing its things
+        vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
 
-        // cleanup in reverse order to initialization.
-
-        vkDestroySemaphore(_device, _renderSemaphore, nullptr);
-        vkDestroySemaphore(_device, _presentSemaphore, nullptr);
-        vkDestroyFence(_device, _renderFence, nullptr);
-
-        vkDestroyCommandPool(_device, _commandPool, nullptr);
-
-        vkDestroySwapchainKHR(_device, _swapchain, nullptr);
-
-        //destroy the main renderpass
-        vkDestroyRenderPass(_device, _renderPass, nullptr);
-
-        //destroy swapchain resources
-        for (int i = 0; i < _framebuffers.size(); i++)
-        {
-            vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
-
-            vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
-        }
+        _mainDeletionQueue.Flush();
 
         vkDestroyDevice(_device, nullptr);
         vkDestroySurfaceKHR(_instance, _surface, nullptr);
@@ -134,6 +116,14 @@ void VulkanEngine::Run()
         InputUpdate();
 
         Draw();
+    }
+}
+
+void VulkanEngine::SwapToNextRenderPipeline()
+{
+    if (++renderPipelineIndex > 3)
+    {
+        renderPipelineIndex = 0;
     }
 }
 
@@ -170,9 +160,15 @@ void VulkanEngine::InitVulkan()
     //use vkbootstrap to select a GPU.
     //We want a GPU that can write to the SDL surface and supports Vulkan 1.1
     vkb::PhysicalDeviceSelector selector{ vkb_inst };
+
+    // Create a VkPhysicalDeviceFeatures structure and set the fillModeNonSolid feature to VK_TRUE
+    VkPhysicalDeviceFeatures desiredFeatures = {};
+    desiredFeatures.fillModeNonSolid = VK_TRUE;
+
     vkb::PhysicalDevice physicalDevice = selector
         .set_minimum_version(1, 1)
         .set_surface(_surface)
+        .set_required_features(desiredFeatures)
         .select()
         .value();
 
@@ -218,6 +214,14 @@ void VulkanEngine::InitSwapchain()
     _swapchainImageViews = vkbSwapchain.get_image_views().value();
 
     _swapchainImageFormat = vkbSwapchain.image_format;
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroySwapchainKHR(_device, _swapchain, nullptr);
+        }
+    );
 }
 
 void VulkanEngine::InitCommands()
@@ -232,6 +236,14 @@ void VulkanEngine::InitCommands()
     VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_commandPool, 1);
 
     VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_mainCommandBuffer));
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroyCommandPool(_device, _commandPool, nullptr);
+        }
+    );
 }
 
 void VulkanEngine::InitDefaultRenderPass()
@@ -280,6 +292,14 @@ void VulkanEngine::InitDefaultRenderPass()
     render_pass_info.pSubpasses = &subpass;
 
     VK_CHECK(vkCreateRenderPass(_device, &render_pass_info, nullptr, &_renderPass));
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroyRenderPass(_device, _renderPass, nullptr);
+        }
+    );
 }
 
 void VulkanEngine::InitFrameBuffers()
@@ -304,32 +324,52 @@ void VulkanEngine::InitFrameBuffers()
     {
         fb_info.pAttachments = &_swapchainImageViews[i];
         VK_CHECK(vkCreateFramebuffer(_device, &fb_info, nullptr, &_framebuffers[i]));
+
+        _mainDeletionQueue.PushDeletor
+        (
+            [=]()
+            {
+                vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
+                vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
+            }
+        );
     }
 }
 
 void VulkanEngine::InitSyncStructures()
 {
-    VkFenceCreateInfo fenceCreateInfo = {};
-    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    fenceCreateInfo.pNext = nullptr;
-
     //we want to create the fence with the Create Signaled flag, so we can wait on it before using it on a GPU command (for the first frame)
-    fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    VkFenceCreateInfo fenceCreateInfo = vkinit::fence_create_info(VK_FENCE_CREATE_SIGNALED_BIT);
 
     VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_renderFence));
 
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroyFence(_device, _renderFence, nullptr);
+        }
+    );
+
     //for the semaphores we don't need any flags
-    VkSemaphoreCreateInfo semaphoreCreateInfo = {};
-    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-    semaphoreCreateInfo.pNext = nullptr;
-    semaphoreCreateInfo.flags = 0;
+    VkSemaphoreCreateInfo semaphoreCreateInfo = vkinit::semaphore_create_info();
 
     VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_presentSemaphore));
     VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_renderSemaphore));
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroySemaphore(_device, _presentSemaphore, nullptr);
+            vkDestroySemaphore(_device, _renderSemaphore, nullptr);
+        }
+    );
 }
 
 void VulkanEngine::InitPipelines()
 {
+    //compile colored triangle modules
     VkShaderModule triangleFragShader;
     if (!ShaderModule::LoadFragmentShader(_device, "ColoredTriangle.frag.spv", &triangleFragShader))
     {
@@ -348,6 +388,44 @@ void VulkanEngine::InitPipelines()
     else
     {
         std::cout << "Triangle vertex shader successfully loaded" << std::endl;
+    }
+
+    //compile red triangle modules
+    VkShaderModule redTriangleFragShader;
+    if (!ShaderModule::LoadFragmentShader(_device, "triangle.frag.spv", &redTriangleFragShader))
+    {
+        std::cout << "Error when building the triangle fragment shader module" << std::endl;
+    }
+    else {
+        std::cout << "Red Triangle fragment shader successfully loaded" << std::endl;
+    }
+
+    VkShaderModule redTriangleVertShader;
+    if (!ShaderModule::LoadVertexShader(_device, "triangle.vert.spv", &redTriangleVertShader))
+    {
+        std::cout << "Error when building the triangle vertex shader module" << std::endl;
+    }
+    else {
+        std::cout << "Red Triangle vertex shader successfully loaded" << std::endl;
+    }
+
+    //compile rainbow triangle modules
+    VkShaderModule rainbowTriangleFragShader;
+    if (!ShaderModule::LoadFragmentShader(_device, "RainbowTriangle.frag.spv", &rainbowTriangleFragShader))
+    {
+        std::cout << "Error when building the Rainbow triangle fragment shader module" << std::endl;
+    }
+    else {
+        std::cout << "Rainbow Triangle fragment shader successfully loaded" << std::endl;
+    }
+
+    VkShaderModule rainbowTriangleVertShader;
+    if (!ShaderModule::LoadVertexShader(_device, "RainbowTriangle.vert.spv", &rainbowTriangleVertShader))
+    {
+        std::cout << "Error when building the Rainbow triangle vertex shader module" << std::endl;
+    }
+    else {
+        std::cout << "Rainbow Triangle vertex shader successfully loaded" << std::endl;
     }
 
     //build the pipeline layout that controls the inputs/outputs of the shader
@@ -397,6 +475,57 @@ void VulkanEngine::InitPipelines()
 
     //finally build the pipeline
     _trianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    //clear the shader stages for the builder
+    pipelineBuilder._shaderStages.clear();
+
+    //add the other shaders
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, redTriangleVertShader));
+
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, redTriangleFragShader));
+
+    //build the red triangle pipeline
+    _redTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_LINE);
+
+    // Build the wireframe pipeline
+    _triangleWireFramePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
+
+    //clear the shader stages for the builder
+    pipelineBuilder._shaderStages.clear();
+
+    //add the other shaders
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, rainbowTriangleVertShader));
+
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, rainbowTriangleFragShader));
+
+    _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    //destroy all shader modules, outside of the queue
+	vkDestroyShaderModule(_device, redTriangleVertShader, nullptr);
+	vkDestroyShaderModule(_device, redTriangleFragShader, nullptr);
+	vkDestroyShaderModule(_device, triangleFragShader, nullptr);
+	vkDestroyShaderModule(_device, triangleVertexShader, nullptr);
+    vkDestroyShaderModule(_device, rainbowTriangleFragShader, nullptr);
+    vkDestroyShaderModule(_device, rainbowTriangleVertShader, nullptr);
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            //destroy the pipelines we have created
+            vkDestroyPipeline(_device, _redTrianglePipeline, nullptr);
+            vkDestroyPipeline(_device, _trianglePipeline, nullptr);
+            vkDestroyPipeline(_device, _triangleWireFramePipeline, nullptr);
+            vkDestroyPipeline(_device, _rainbowTrianglePipeline, nullptr);
+
+            //destroy the pipeline layout that they use
+            vkDestroyPipelineLayout(_device, _trianglePipelineLayout, nullptr);
+        }
+    );
 }
 
 void VulkanEngine::InitImGUI()
@@ -422,7 +551,7 @@ void VulkanEngine::InitImGUI()
     // pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     // pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
     // pool_info.maxSets = 1000;
-    // pool_info.poolSizeCount = std::size(pool_sizes);
+    // pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
     // pool_info.pPoolSizes = pool_sizes;
 
     // VkDescriptorPool imguiPool;
@@ -451,22 +580,27 @@ void VulkanEngine::InitImGUI()
     // ImGui_ImplVulkan_Init(&init_info, _renderPass);
 
     // //execute a gpu command to upload imgui font textures
-    // immediate_submit([&](VkCommandBuffer cmd) {
-    //     ImGui_ImplVulkan_CreateFontsTexture(cmd);
-    //     });
+    // immediate_submit
+    // (
+    //     [&](VkCommandBuffer cmd)
+    //     {
+    //         ImGui_ImplVulkan_CreateFontsTexture(cmd);
+    //     }
+    // );
 
     // //clear font textures from cpu data
     // ImGui_ImplVulkan_DestroyFontUploadObjects();
 
     // //add the destroy the imgui created structures
-    // _mainDeletionQueue.push_function([=]() {
-
-    //     vkDestroyDescriptorPool(_device, imguiPool, nullptr);
-    //     ImGui_ImplVulkan_Shutdown();
-    //     });
+    // _mainDeletionQueue.PushDeletor
+    // (
+    //     [=]()
+    //     {
+    //         vkDestroyDescriptorPool(_device, imguiPool, nullptr);
+    //         ImGui_ImplVulkan_Shutdown();
+    //     }
+    // );
 }
-
-
 
 void VulkanEngine::InputUpdate()
 {
@@ -555,8 +689,25 @@ void VulkanEngine::Draw()
     vkCmdBeginRenderPass(cmd, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     //once we start adding rendering commands, they will go here
+    switch (renderPipelineIndex)
+    {
+        case 0:
+            vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+            break;
+        case 1:
+            vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _redTrianglePipeline);
+            break;
+        case 2:
+            vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _triangleWireFramePipeline);
+            break;
+        case 3:
+            vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _rainbowTrianglePipeline);
+            break;
+        default:
+            std::cout << "Unknown render pipeline" << std::endl;
+            break;
+    }
 
-    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
     vkCmdDraw(cmd, 3, 1, 0, 0);
 
     //finalize the render pass

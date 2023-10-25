@@ -17,6 +17,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <iostream>
+
 namespace HarvestHavocEngine {
 
 /// \class Event
@@ -60,6 +62,16 @@ public:
         return *this;
     }
 
+    /// \brief Registers a new callback using the += operator.
+    /// 
+    /// \param callback The callback function to register.
+    /// \return Reference to this Event instance.
+    Event& operator+=(const EventCallback&& callback)
+    {
+        AddListener(std::move(callback));
+        return *this;
+    }
+
     /// \brief Registers a new callback.
     /// 
     /// \param callback The callback function to register.
@@ -68,6 +80,17 @@ public:
     {
         CallbackId id = nextCallbackId++;
         callbacks[id] = callback;
+        return id;
+    }
+
+    /// \brief Registers a new callback.
+    /// 
+    /// \param callback The callback function to register.
+    /// \return The unique identifier assigned to the callback.
+    CallbackId AddListener(const EventCallback&& callback)
+    {
+        CallbackId id = nextCallbackId++;
+        callbacks[id] = std::move(callback);
         return id;
     }
 

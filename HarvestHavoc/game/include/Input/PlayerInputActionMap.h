@@ -32,6 +32,7 @@ public:
     std::shared_ptr<HarvestHavocEngine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to pause the game or access the menu.
     std::shared_ptr<HarvestHavocEngine::Input::InputAction> LeftStrafe; /// \brief The input action associated with strafing left.
     std::shared_ptr<HarvestHavocEngine::Input::InputAction> RightStrafe; /// \brief The input action associated with strafing right.
+    std::shared_ptr<HarvestHavocEngine::Input::InputAction> ChangeRenderPipeline;
 
     // Constructors and Destructors
 

@@ -29,9 +29,17 @@ public:
 
     // Public Fields
 
-    // Constructors and Destructors
+    // Delete the copy constructor and assignment operator to prevent copies
+    VulkanEngine(const VulkanEngine&) = delete;
+    VulkanEngine& operator=(const VulkanEngine&) = delete;
     
     // Public Methods
+
+    /// \brief Provide a static method to access the singleton instance
+    static VulkanEngine& GetInstance() {
+        static VulkanEngine instance;  // Guaranteed to be destroyed, instantiated on first use.
+        return instance;
+    }
 
     /// \brief Initializes the engine, setting up necessary Vulkan objects and other resources.
     ///
@@ -57,6 +65,8 @@ public:
     /// It continues looping until a quit event is received, at which point it returns control to the caller.
     void Run();
 
+    void SwapToNextRenderPipeline();
+
 protected:
     // Protected Fields
 
@@ -68,7 +78,7 @@ private:
     bool _isInitialized{false}; /// \brief Indicates whether the engine has been initialized.
     int _frameNumber{0}; /// \brief Keeps track of the current frame number.
     bool isQuitting = false; /// \brief Flag to indicate when the application is requesting a shutdown.
-    SDL_Event event; /// \brief Event structure for handling SDL events.
+    SDL_Event event{NULL}; /// \brief Event structure for handling SDL events.
     
     VkExtent2D _windowExtent{1700, 900}; /// \brief Desired dimensions of the rendering window.
 
@@ -76,30 +86,41 @@ private:
 
     HarvestHavocEngine::Input::IInput* inputHandle{nullptr};
 
-    VkInstance _instance; /// \brief Handle to the Vulkan library.
-    VkDebugUtilsMessengerEXT _debug_messenger; /// \brief Handle for Vulkan debug messaging.
-    VkPhysicalDevice _chosenGPU; /// \brief The chosen GPU for rendering operations.
-    VkDevice _device; /// \brief Handle to the Vulkan device.
-    VkSurfaceKHR _surface; /// \brief Handle to the Vulkan window surface.
+    VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
+    VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
+    VkPhysicalDevice _chosenGPU{nullptr}; /// \brief The chosen GPU for rendering operations.
+    VkDevice _device{nullptr}; /// \brief Handle to the Vulkan device.
+    VkSurfaceKHR _surface{nullptr}; /// \brief Handle to the Vulkan window surface.
 
-    VkSwapchainKHR _swapchain; /// \brief Handle to the Vulkan swapchain.
-    VkFormat _swapchainImageFormat; /// \brief The format used for swapchain images.
+    VkSwapchainKHR _swapchain{nullptr}; /// \brief Handle to the Vulkan swapchain.
+    VkFormat _swapchainImageFormat{VK_FORMAT_UNDEFINED}; /// \brief The format used for swapchain images.
     std::vector<VkImage> _swapchainImages; /// \brief List of images within the swapchain.
     std::vector<VkImageView> _swapchainImageViews; /// \brief List of image views for accessing swapchain images.
 
-    VkQueue _graphicsQueue; /// \brief Queue used for submitting graphics commands.
-    uint32_t _graphicsQueueFamily; /// \brief Index of the queue family for graphics operations.
-    VkCommandPool _commandPool; /// \brief Pool for allocating command buffers.
-    VkCommandBuffer _mainCommandBuffer; /// \brief Main command buffer for recording rendering commands.
+    VkQueue _graphicsQueue{nullptr}; /// \brief Queue used for submitting graphics commands.
+    uint32_t _graphicsQueueFamily{0}; /// \brief Index of the queue family for graphics operations.
+    VkCommandPool _commandPool{nullptr}; /// \brief Pool for allocating command buffers.
+    VkCommandBuffer _mainCommandBuffer{nullptr}; /// \brief Main command buffer for recording rendering commands.
 
-    VkRenderPass _renderPass; /// \brief Handle to the Vulkan render pass.
+    VkRenderPass _renderPass{nullptr}; /// \brief Handle to the Vulkan render pass.
     std::vector<VkFramebuffer> _framebuffers; /// \brief List of framebuffers for rendering.
 
-    VkSemaphore _presentSemaphore, _renderSemaphore; /// \brief Semaphore for synchronizing image presentation.
-    VkFence _renderFence; /// \brief Fence for synchronizing rendering operations.
+    VkSemaphore _presentSemaphore{nullptr}, _renderSemaphore{nullptr}; /// \brief Semaphore for synchronizing image presentation.
+    VkFence _renderFence{nullptr}; /// \brief Fence for synchronizing rendering operations.
 
-    VkPipelineLayout _trianglePipelineLayout; /// \brief Handle to the pipeline layout.
-    VkPipeline _trianglePipeline; /// \brief Handle to the pipeline.
+    VkPipelineLayout _trianglePipelineLayout{nullptr}; /// \brief Handle to the pipeline layout.
+    VkPipeline _trianglePipeline{nullptr}; /// \brief Handle to the pipeline.
+    VkPipeline _redTrianglePipeline{nullptr}; /// \brief Handle to the pipeline.
+    VkPipeline _triangleWireFramePipeline{nullptr}; /// \brief Handle to the pipeline.
+    VkPipeline _rainbowTrianglePipeline{nullptr}; /// \brief Handle to the pipeline.
+
+    size_t renderPipelineIndex{0};
+
+    DeletionQueue _mainDeletionQueue;
+
+    // Constructors and Destructors
+    VulkanEngine() = default;
+    ~VulkanEngine() = default;
 
     // Private Methods
 
@@ -138,7 +159,6 @@ private:
     /// This method sets up semaphores and fences used to synchronize rendering operations.
     /// It is called by the Init method during engine initialization.
     void InitSyncStructures();
-
 
     /// \brief Initializes the rendering pipelines by loading shader modules.
     ///

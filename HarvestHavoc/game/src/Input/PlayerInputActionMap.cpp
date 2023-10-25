@@ -9,6 +9,7 @@
 /// Proprietary and confidential
 
 #include <Input/InputActionMap.h>
+#include <Engine/vk_engine.h>
 
 #include "Input/Input.h"
 #include "Input/PlayerInputActionMap.h"
@@ -58,12 +59,16 @@ void PlayerInputActionMap::Init()
     Escape->OnPressed += OpenMenu;
 
     LeftStrafe = CreateBinding(SDLK_LEFT);
-    LeftStrafe->OnPressed += StartGoingLeft;
+    std::function<void()> func = StartGoingLeft;
+    LeftStrafe->OnPressed += func;
     LeftStrafe->OnReleased += StopGoingLeft;
     
     RightStrafe = CreateBinding(SDLK_RIGHT);
     RightStrafe->OnPressed += StartGoingRight;
     RightStrafe->OnReleased += StopGoingRight;
+
+    ChangeRenderPipeline = CreateBinding(SDLK_SPACE);
+    ChangeRenderPipeline->OnPressed += []() { HarvestHavocEngine::Engine::VulkanEngine::GetInstance().SwapToNextRenderPipeline(); };
 }
 
 void PlayerInputActionMap::Switch()

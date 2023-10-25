@@ -5,4 +5,26 @@
 
 #include <vulkan/vulkan.h>
 
-//we will add our main reusable types here
+#include <functional>
+#include <deque>
+
+struct DeletionQueue {
+public:
+    std::deque<std::function<void()>> deletors;
+
+    void PushDeletor(std::function<void()>&& deletor)
+    {
+        deletors.push_back(std::move(deletor));
+    }
+
+    void Flush()
+    {
+        // reverse iterate the deletion queue to execute all the functions
+        for (auto it = deletors.rbegin(); it != deletors.rend(); it++)
+        {
+            (*it)(); //call the function
+        }
+
+        deletors.clear();
+    }
+};
