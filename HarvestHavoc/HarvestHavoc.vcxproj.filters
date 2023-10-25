@@ -15,19 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\vk_engine.h">
+    <ClInclude Include="engine\include\Engine\vk_engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_initializers.h">
+    <ClInclude Include="engine\include\Engine\vk_initializers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_types.h">
+    <ClInclude Include="engine\include\Engine\vk_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libs\include\VkBootstrap\VkBootstrap.h">
+    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="libs\include\VkBootstrap\VkBootstrapDispatch.h">
+    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrapDispatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="libs\include\imgui\imconfig.h">
@@ -54,58 +54,58 @@
     <ClInclude Include="libs\include\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Math\Consts.h">
+    <ClInclude Include="engine\include\Math\Consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Math\Vec2.h">
+    <ClInclude Include="engine\include\Math\Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\Input.h">
+    <ClInclude Include="engine\include\Input\IInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\InputActionMap.h">
+    <ClInclude Include="engine\include\Input\InputActionMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\InputAction.h">
+    <ClInclude Include="engine\include\Input\InputAction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\IEnableDisable.h">
+    <ClInclude Include="engine\include\Core\IEnableDisable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\PlayerInputActionMap.h">
+    <ClInclude Include="game\include\Input\PlayerInputActionMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\MenuInputActionMap.h">
+    <ClInclude Include="game\include\Input\MenuInputActionMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\IInputAccessor.h">
+    <ClInclude Include="engine\include\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Debug.h">
+    <ClInclude Include="engine\include\Input\IEnableDisablePassKey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Input\IEnableDisablePassKey.h">
+    <ClInclude Include="engine\include\Core\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\Event.h">
+    <ClInclude Include="engine\include\Engine\vk_pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_pipeline.h">
+    <ClInclude Include="engine\include\Core\Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\Path.h">
+    <ClInclude Include="engine\include\Core\File.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\File.h">
+    <ClInclude Include="engine\include\Core\Directory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\Directory.h">
+    <ClInclude Include="engine\include\Core\GameExceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core\GameExceptions.h">
+    <ClInclude Include="engine\include\Engine\vk_shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_shaders.h">
+    <ClInclude Include="game\include\Input\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,58 +131,58 @@
     <ClCompile Include="libs\src\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Math\Vec2.cpp">
+    <ClCompile Include="engine\src\Math\Vec2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libs\src\VkBootstrap\VkBootstrap.cpp">
+    <ClCompile Include="engine\libs\src\VkBootstrap\VkBootstrap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Main.cpp">
+    <ClCompile Include="game\src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_engine.cpp">
+    <ClCompile Include="engine\src\Engine\vk_engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_initializers.cpp">
+    <ClCompile Include="engine\src\Engine\vk_initializers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\Input.cpp">
+    <ClCompile Include="engine\src\Input\IInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\InputAction.cpp">
+    <ClCompile Include="engine\src\Input\InputAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\InputActionMap.cpp">
+    <ClCompile Include="engine\src\Input\InputActionMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\IEnableDisable.cpp">
+    <ClCompile Include="engine\src\Core\IEnableDisable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\PlayerInputActionMap.cpp">
+    <ClCompile Include="game\src\Input\PlayerInputActionMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\MenuInputActionMap.cpp">
+    <ClCompile Include="game\src\Input\MenuInputActionMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Input\IInputAccessor.cpp">
+    <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_pipeline.cpp">
+    <ClCompile Include="engine\src\Core\Path.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Path.cpp">
+    <ClCompile Include="engine\src\Core\File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\File.cpp">
+    <ClCompile Include="engine\src\Core\Directory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Directory.cpp">
+    <ClCompile Include="engine\src\Core\GameExceptions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\GameExceptions.cpp">
+    <ClCompile Include="engine\src\Engine\vk_shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_shaders.cpp">
+    <ClCompile Include="game\src\Input\Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

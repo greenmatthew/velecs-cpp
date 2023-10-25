@@ -19,43 +19,47 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Core\Directory.h">
+    <ClInclude Include="engine\include\Core\Directory.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Core\File.h">
+    <ClInclude Include="engine\include\Core\File.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Core\GameExceptions.h">
+    <ClInclude Include="engine\include\Core\GameExceptions.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Core\Path.h">
+    <ClInclude Include="engine\include\Core\Path.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Debug.h">
+    <ClInclude Include="engine\include\Debug.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Core\IEnableDisable.h">
+    <ClInclude Include="engine\include\Core\IEnableDisable.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Core\Event.h">
+    <ClInclude Include="engine\include\Core\Event.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_pipeline.h">
+    <ClInclude Include="engine\include\Engine\vk_pipeline.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Engine\vk_shaders.h">
+    <ClInclude Include="engine\include\Engine\vk_shaders.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Input\IEnableDisablePassKey.h">
+    <ClInclude Include="engine\include\Input\IEnableDisablePassKey.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\Input\Input.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -67,74 +71,70 @@
     <ClInclude Include="libs\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="libs\include\imgui\imstb_textedit.h" />
     <ClInclude Include="libs\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="include\Input\IInputAccessor.h">
+    <ClInclude Include="engine\include\Input\IInput.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Input\Input.h">
+    <ClInclude Include="engine\include\Input\InputAction.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Input\InputAction.h">
+    <ClInclude Include="engine\include\Input\InputActionMap.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="include\Input\InputActionMap.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="include\Input\MenuInputActionMap.h" />
-    <ClInclude Include="include\Input\PlayerInputActionMap.h" />
-    <ClInclude Include="include\Math\Consts.h" />
-    <ClInclude Include="include\Math\Vec2.h" />
-    <ClInclude Include="libs\include\VkBootstrap\VkBootstrap.h" />
-    <ClInclude Include="libs\include\VkBootstrap\VkBootstrapDispatch.h" />
-    <ClInclude Include="include\Engine\vk_engine.h" />
-    <ClInclude Include="include\Engine\vk_initializers.h" />
-    <ClInclude Include="include\Engine\vk_types.h" />
+    <ClInclude Include="game\include\Input\MenuInputActionMap.h" />
+    <ClInclude Include="game\include\Input\PlayerInputActionMap.h" />
+    <ClInclude Include="engine\include\Math\Consts.h" />
+    <ClInclude Include="engine\include\Math\Vec2.h" />
+    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrap.h" />
+    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrapDispatch.h" />
+    <ClInclude Include="engine\include\Engine\vk_engine.h" />
+    <ClInclude Include="engine\include\Engine\vk_initializers.h" />
+    <ClInclude Include="engine\include\Engine\vk_types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Core\Directory.cpp">
+    <ClCompile Include="engine\src\Core\Directory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Core\File.cpp">
+    <ClCompile Include="engine\src\Core\File.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Core\GameExceptions.cpp">
+    <ClCompile Include="engine\src\Core\GameExceptions.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Core\IEnableDisable.cpp">
+    <ClCompile Include="engine\src\Core\IEnableDisable.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Core\Path.cpp">
+    <ClCompile Include="engine\src\Core\Path.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_pipeline.cpp">
+    <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Engine\vk_shaders.cpp">
+    <ClCompile Include="engine\src\Engine\vk_shaders.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Input\IInputAccessor.cpp">
+    <ClCompile Include="engine\src\Input\IInput.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Input\Input.cpp">
+    <ClCompile Include="engine\src\Input\InputAction.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Input\InputAction.cpp">
+    <ClCompile Include="engine\src\Input\InputActionMap.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="src\Input\InputActionMap.cpp">
+    <ClCompile Include="game\src\Input\Input.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -145,13 +145,13 @@
     <ClCompile Include="libs\src\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Input\MenuInputActionMap.cpp" />
-    <ClCompile Include="src\Input\PlayerInputActionMap.cpp" />
-    <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\Math\Vec2.cpp" />
-    <ClCompile Include="libs\src\VkBootstrap\VkBootstrap.cpp" />
-    <ClCompile Include="src\Engine\vk_engine.cpp" />
-    <ClCompile Include="src\Engine\vk_initializers.cpp" />
+    <ClCompile Include="game\src\Input\MenuInputActionMap.cpp" />
+    <ClCompile Include="game\src\Input\PlayerInputActionMap.cpp" />
+    <ClCompile Include="game\src\Main.cpp" />
+    <ClCompile Include="engine\src\Math\Vec2.cpp" />
+    <ClCompile Include="engine\libs\src\VkBootstrap\VkBootstrap.cpp" />
+    <ClCompile Include="engine\src\Engine\vk_engine.cpp" />
+    <ClCompile Include="engine\src\Engine\vk_initializers.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -206,25 +206,25 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
@@ -235,7 +235,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -259,7 +259,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -283,7 +283,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -307,7 +307,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;include;libs/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
