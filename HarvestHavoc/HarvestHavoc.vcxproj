@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\include\Core\Directory.h">
+    <ClInclude Include="engine\include\FileManagement\Directory.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\File.h">
+    <ClInclude Include="engine\include\FileManagement\File.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -31,7 +31,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Path.h">
+    <ClInclude Include="engine\include\FileManagement\Path.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -110,11 +110,11 @@
     <ClInclude Include="engine\include\Engine\vk_types.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engine\src\Core\Directory.cpp">
+    <ClCompile Include="engine\src\FileManagement\Directory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\File.cpp">
+    <ClCompile Include="engine\src\FileManagement\File.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -126,7 +126,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\Path.cpp">
+    <ClCompile Include="engine\src\FileManagement\Path.cpp">
       <SubType>
       </SubType>
     </ClCompile>

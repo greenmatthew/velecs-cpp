@@ -90,13 +90,13 @@
     <ClInclude Include="engine\include\Engine\vk_pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Path.h">
+    <ClInclude Include="engine\include\FileManagement\Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\File.h">
+    <ClInclude Include="engine\include\FileManagement\File.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Directory.h">
+    <ClInclude Include="engine\include\FileManagement\Directory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\include\Core\GameExceptions.h">
@@ -179,13 +179,13 @@
     <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\Path.cpp">
+    <ClCompile Include="engine\src\FileManagement\Path.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\File.cpp">
+    <ClCompile Include="engine\src\FileManagement\File.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\Directory.cpp">
+    <ClCompile Include="engine\src\FileManagement\Directory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\Core\GameExceptions.cpp">

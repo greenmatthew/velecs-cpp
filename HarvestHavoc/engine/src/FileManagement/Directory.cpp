@@ -8,9 +8,9 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "Core/Path.h"
-#include "Core/File.h"
-#include "Core/Directory.h"
+#include "FileManagement/Path.h"
+#include "FileManagement/File.h"
+#include "FileManagement/Directory.h"
 
 #include <filesystem>
 

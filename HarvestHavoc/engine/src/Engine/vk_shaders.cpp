@@ -10,8 +10,9 @@
 
 #include "Engine/vk_shaders.h"
 
-#include "Core/Path.h"
-#include "Core/File.h"
+#include "FileManagement/Path.h"
+#include "FileManagement/File.h"
+
 #include "Core/GameExceptions.h"
 
 #include <vector>
