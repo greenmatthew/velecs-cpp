@@ -12,7 +12,7 @@
 
 #include <Engine/vk_types.h>
 
-namespace HarvestHavocEngine::Engine {
+namespace engine::Engine {
 
 /// \class ShaderModule
 /// \brief Brief description.
@@ -70,4 +70,4 @@ private:
 
 };
 
-} // namespace HarvestHavocEngine::Engine
+} // namespace engine::Engine

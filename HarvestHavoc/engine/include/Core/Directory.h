@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 /// \class Directory
 /// \brief Brief description.
@@ -42,4 +42,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine

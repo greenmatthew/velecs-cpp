@@ -13,7 +13,7 @@
 #include <exception>
 #include <string>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 /// \class GameException
 /// \brief This class represents a base exception for game-specific errors.
@@ -200,4 +200,4 @@ public:
     explicit DirectoryNotFoundException(const std::string& dirPath);
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine

@@ -14,7 +14,7 @@
 
 #include <filesystem>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 // Public Fields
 
@@ -33,4 +33,4 @@ bool Directory::Exists(const std::string& dirPath)
 
 // Private Methods
 
-} // namespace HarvestHavocEngine::
+} // namespace engine::

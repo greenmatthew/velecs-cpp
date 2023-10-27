@@ -10,7 +10,7 @@
 
 #include "Core/IEnableDisable.h"
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 // Public Fields
 
@@ -73,4 +73,4 @@ void IEnableDisable::HandleRequests(Input::IEnableDisablePassKey passKey)
     }
 }
 
-} // namespace HarvestHavocEngine
+} // namespace engine

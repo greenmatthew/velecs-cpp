@@ -39,7 +39,7 @@ static std::string get_executable_path()
 #error "Unsupported platform"
 #endif
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 // Public Fields
 
@@ -189,4 +189,4 @@ std::string Path::ResolvePath(std::string path)
 
 // Private Methods
 
-} // namespace HarvestHavocEngine
+} // namespace engine

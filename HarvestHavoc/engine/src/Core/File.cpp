@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 // Public Fields
 
@@ -115,4 +115,4 @@ File::Type File::DetermineFileType(const std::string& filePath)
 
 // Private Methods
 
-} // namespace HarvestHavocEngine
+} // namespace engine

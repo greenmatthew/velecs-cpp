@@ -5,6 +5,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vma/vk_mem_alloc.h>
+
 #include <functional>
 #include <deque>
 
@@ -27,4 +29,10 @@ public:
 
         deletors.clear();
     }
+};
+
+struct AllocatedBuffer
+{
+    VkBuffer _buffer{nullptr};
+    VmaAllocation _allocation{nullptr};
 };

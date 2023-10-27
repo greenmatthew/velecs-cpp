@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 /// \class Event
 /// \brief Manages a list of callbacks.
@@ -154,4 +154,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine

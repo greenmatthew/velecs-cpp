@@ -14,11 +14,11 @@
 #include "Engine/vk_pipeline.h"
 #include "Engine/vk_shaders.h"
 
+#include "Graphics/Color32.h"
+
 #include "Core/Path.h"
 
 #include "Input/Input.h"
-#include "Input/InputActionMap.h"
-#include "Input/InputAction.h"
 
 #include <iostream>
 #include <fstream>
@@ -27,6 +27,9 @@
 #include <SDL2/SDL_vulkan.h>
 
 #include <VkBootstrap/VkBootstrap.h>
+
+#define VMA_IMPLEMENTATION
+#include <vma/vk_mem_alloc.h>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl.h>
@@ -43,9 +46,9 @@
         }                                                              \
     } while (0)
 
-using namespace HarvestHavocEngine::Input;
+using namespace engine::Input;
 
-namespace HarvestHavocEngine::Engine {
+namespace engine::Engine {
 
 // Public Fields
 
@@ -55,7 +58,7 @@ namespace HarvestHavocEngine::Engine {
 
 void VulkanEngine::Init()
 {
-    std::cout << HarvestHavocEngine::Path::GAME_DIR << std::endl;
+    std::cout << engine::Path::GAME_DIR << std::endl;
 
     // We initialize SDL and create a window with it. 
     SDL_Init(SDL_INIT_VIDEO);
@@ -81,6 +84,8 @@ void VulkanEngine::Init()
 
     InitImGUI();
 
+    LoadMeshes();
+
     //everything went fine
     _isInitialized = true;
 }
@@ -101,6 +106,7 @@ void VulkanEngine::Cleanup()
 
         _mainDeletionQueue.Flush();
 
+        vmaDestroyAllocator(_allocator);
         vkDestroyDevice(_device, nullptr);
         vkDestroySurfaceKHR(_instance, _surface, nullptr);
         vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
@@ -121,7 +127,7 @@ void VulkanEngine::Run()
 
 void VulkanEngine::SwapToNextRenderPipeline()
 {
-    if (++renderPipelineIndex > 3)
+    if (++renderPipelineIndex > 4)
     {
         renderPipelineIndex = 0;
     }
@@ -191,6 +197,13 @@ void VulkanEngine::InitVulkan()
     // use vkbootstrap to get a Graphics queue
     _graphicsQueue = vkbDevice.get_queue(vkb::QueueType::graphics).value();
     _graphicsQueueFamily = vkbDevice.get_queue_index(vkb::QueueType::graphics).value();
+
+    //initialize the memory allocator
+    VmaAllocatorCreateInfo allocatorInfo = {};
+    allocatorInfo.physicalDevice = _chosenGPU;
+    allocatorInfo.device = _device;
+    allocatorInfo.instance = _instance;
+    vmaCreateAllocator(&allocatorInfo, &_allocator);
 }
 
 void VulkanEngine::InitSwapchain()
@@ -504,13 +517,62 @@ void VulkanEngine::InitPipelines()
 
     _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
+    //build the mesh pipeline
+
+    VertexInputDescription vertexDescription = Vertex::GetVertexDescription();
+
+    //connect the pipeline builder vertex input info to the one we get from Vertex
+    pipelineBuilder._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
+    pipelineBuilder._vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)vertexDescription.attributes.size();
+
+    pipelineBuilder._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
+    pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)vertexDescription.bindings.size();
+
+    //clear the shader stages for the builder
+    pipelineBuilder._shaderStages.clear();
+
+    //compile mesh vertex shader
+
+
+    VkShaderModule meshVertShader;
+    if (!ShaderModule::LoadVertexShader(_device, "TriangleMesh.vert.spv", &meshVertShader))
+    {
+        std::cout << "Error when building the triangle vertex shader module" << std::endl;
+    }
+    else {
+        std::cout << "Mesh Triangle vertex shader successfully loaded" << std::endl;
+    }
+
+    VkShaderModule meshFragShader;
+    if (!ShaderModule::LoadFragmentShader(_device, "TriangleMesh.frag.spv", &meshFragShader))
+    {
+        std::cout << "Error when building the triangle frag shader module" << std::endl;
+    }
+    else {
+        std::cout << "Mesh Triangle frag shader successfully loaded" << std::endl;
+    }
+
+    //add the other shaders
+    pipelineBuilder._shaderStages.push_back(
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, meshVertShader));
+
+    //make sure that triangleFragShader is holding the compiled colored_triangle.frag
+    pipelineBuilder._shaderStages.push_back(
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, meshFragShader));
+
+    //build the mesh triangle pipeline
+    _meshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+
     //destroy all shader modules, outside of the queue
-	vkDestroyShaderModule(_device, redTriangleVertShader, nullptr);
-	vkDestroyShaderModule(_device, redTriangleFragShader, nullptr);
-	vkDestroyShaderModule(_device, triangleFragShader, nullptr);
-	vkDestroyShaderModule(_device, triangleVertexShader, nullptr);
+    vkDestroyShaderModule(_device, redTriangleVertShader, nullptr);
+    vkDestroyShaderModule(_device, redTriangleFragShader, nullptr);
+    vkDestroyShaderModule(_device, triangleFragShader, nullptr);
+    vkDestroyShaderModule(_device, triangleVertexShader, nullptr);
     vkDestroyShaderModule(_device, rainbowTriangleFragShader, nullptr);
     vkDestroyShaderModule(_device, rainbowTriangleVertShader, nullptr);
+    vkDestroyShaderModule(_device, meshVertShader, nullptr);
+    vkDestroyShaderModule(_device, meshFragShader, nullptr);
 
     _mainDeletionQueue.PushDeletor
     (
@@ -521,6 +583,7 @@ void VulkanEngine::InitPipelines()
             vkDestroyPipeline(_device, _trianglePipeline, nullptr);
             vkDestroyPipeline(_device, _triangleWireFramePipeline, nullptr);
             vkDestroyPipeline(_device, _rainbowTrianglePipeline, nullptr);
+            vkDestroyPipeline(_device, _meshPipeline, nullptr);
 
             //destroy the pipeline layout that they use
             vkDestroyPipelineLayout(_device, _trianglePipelineLayout, nullptr);
@@ -693,22 +756,36 @@ void VulkanEngine::Draw()
     {
         case 0:
             vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _trianglePipeline);
+            vkCmdDraw(cmd, 3, 1, 0, 0);
             break;
         case 1:
             vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _redTrianglePipeline);
+            vkCmdDraw(cmd, 3, 1, 0, 0);
             break;
         case 2:
             vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _triangleWireFramePipeline);
+            vkCmdDraw(cmd, 3, 1, 0, 0);
             break;
         case 3:
             vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _rainbowTrianglePipeline);
+            vkCmdDraw(cmd, 3, 1, 0, 0);
             break;
+        case 4:
+        {
+            vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, _meshPipeline);
+
+            //bind the mesh vertex buffer with offset 0
+            VkDeviceSize offset = 0;
+            vkCmdBindVertexBuffers(cmd, 0, 1, &_triangleMesh._vertexBuffer._buffer, &offset);
+
+            //we can now draw the mesh
+            vkCmdDraw(cmd, _triangleMesh._vertices.size(), 1, 0, 0);
+            break;
+        }
         default:
             std::cout << "Unknown render pipeline" << std::endl;
             break;
     }
-
-    vkCmdDraw(cmd, 3, 1, 0, 0);
 
     //finalize the render pass
     vkCmdEndRenderPass(cmd);
@@ -763,4 +840,64 @@ void VulkanEngine::Draw()
     _frameNumber++;
 }
 
-} // namespace HarvestHavocEngine::Engine
+void VulkanEngine::LoadMeshes()
+{
+    //make the array 3 vertices long
+    _triangleMesh._vertices.resize(3);
+
+    //vertex positions
+    _triangleMesh._vertices[0].position = {  1.0f,  1.0f,  0.0f };
+    _triangleMesh._vertices[1].position = { -1.0f,  1.0f,  0.0f };
+    _triangleMesh._vertices[2].position = {  0.0f, -1.0f,  0.0f };
+
+    //vertex colors, all green
+    _triangleMesh._vertices[0].color = Graphics::Color32::GREEN;
+    _triangleMesh._vertices[1].color = Graphics::Color32::GREEN;
+    _triangleMesh._vertices[2].color = Graphics::Color32::GREEN;
+
+    //we don't care about the vertex normals
+
+    UploadMesh(_triangleMesh);
+}
+
+void VulkanEngine::UploadMesh(Mesh& mesh)
+{
+    //allocate vertex buffer
+    VkBufferCreateInfo bufferInfo = {};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    //this is the total size, in bytes, of the buffer we are allocating
+    bufferInfo.size = mesh._vertices.size() * sizeof(Vertex);
+    //this buffer is going to be used as a Vertex Buffer
+    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+
+    //let the VMA library know that this data should be writeable by CPU, but also readable by GPU
+    VmaAllocationCreateInfo vmaallocInfo = {};
+    vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+    //allocate the buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &bufferInfo, &vmaallocInfo,
+        &mesh._vertexBuffer._buffer,
+        &mesh._vertexBuffer._allocation,
+        nullptr));
+
+    //add the destruction of triangle mesh buffer to the deletion queue
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+
+            vmaDestroyBuffer(_allocator, mesh._vertexBuffer._buffer, mesh._vertexBuffer._allocation);
+        }
+    );
+
+    //copy vertex data
+    void* data;
+    vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &data);
+
+    memcpy(data, mesh._vertices.data(), mesh._vertices.size() * sizeof(Vertex));
+
+    vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
+}
+
+} // namespace engine::Engine

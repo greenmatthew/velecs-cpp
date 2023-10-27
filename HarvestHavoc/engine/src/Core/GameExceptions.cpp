@@ -10,7 +10,7 @@
 
 #include "Core/GameExceptions.h"
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 // Public Fields
 
@@ -64,4 +64,4 @@ DirectoryNotFoundException::DirectoryNotFoundException(const std::string& dirPat
 
 // Private Methods
 
-} // namespace HarvestHavocEngine
+} // namespace engine

@@ -11,13 +11,15 @@
 #pragma once
 
 #include "Engine/vk_types.h"
-#include "Input/IInput.h"
+#include "Engine/vk_mesh.h"
 
-#include <vector>
+#include "Input/IInput.h"
 
 #include <SDL2/SDL.h>
 
-namespace HarvestHavocEngine::Engine {
+#include <vector>
+
+namespace engine::Engine {
 
 /// \class VulkanEngine
 /// \brief Brief description.
@@ -51,7 +53,7 @@ public:
     ///
     /// This method sets up SDL2 event handling for processing user input.
     /// It is called by the Init method during engine initialization.
-    void InitInput(HarvestHavocEngine::Input::IInput * const inputHandle);
+    void InitInput(engine::Input::IInput * const inputHandle);
 
     /// \brief Shuts down the engine, releasing any resources acquired during initialization or runtime.
     ///
@@ -84,7 +86,7 @@ private:
 
     struct SDL_Window* _window{nullptr}; /// \brief Pointer to the SDL window structure.
 
-    HarvestHavocEngine::Input::IInput* inputHandle{nullptr};
+    engine::Input::IInput* inputHandle{nullptr};
 
     VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
     VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
@@ -117,6 +119,11 @@ private:
     size_t renderPipelineIndex{0};
 
     DeletionQueue _mainDeletionQueue;
+
+    VmaAllocator _allocator{nullptr};
+
+    VkPipeline _meshPipeline{nullptr};
+    Mesh _triangleMesh;
 
     // Constructors and Destructors
     VulkanEngine() = default;
@@ -182,6 +189,10 @@ private:
     /// This method performs the rendering operations required to draw a frame to the screen.
     /// It is called repeatedly during the main event loop.
     void Draw();
+
+    void LoadMeshes();
+
+    void UploadMesh(Mesh& mesh);
 };
 
-} // namespace HarvestHavocEngine::Engine
+} // namespace engine::Engine

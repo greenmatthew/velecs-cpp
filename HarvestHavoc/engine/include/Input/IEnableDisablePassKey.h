@@ -10,7 +10,7 @@
 
 #pragma once
 
-namespace HarvestHavocEngine::Input {
+namespace engine::Input {
 
 class IInput;  ///< Forward declaration of the Input class
 
@@ -58,4 +58,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine::Input
+} // namespace engine::Input

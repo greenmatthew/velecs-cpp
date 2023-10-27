@@ -18,7 +18,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace HarvestHavocEngine::Input {
+namespace engine::Input {
 
 class InputActionMap;
 
@@ -113,4 +113,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine::Input
+} // namespace engine::Input

@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <exception>
 
-namespace HarvestHavocEngine::Math {
+namespace engine::Math {
 
 // Public Fields
 

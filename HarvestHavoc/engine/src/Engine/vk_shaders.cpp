@@ -17,7 +17,7 @@
 #include <vector>
 #include <fstream>
 
-namespace HarvestHavocEngine::Engine {
+namespace engine::Engine {
 
 // Public Fields
 
@@ -120,4 +120,4 @@ bool ShaderModule::LoadShader(const VkDevice& device, const char* filePath, VkSh
     return true;
 }
 
-} // namespace HarvestHavocEngine::Engine
+} // namespace engine::Engine

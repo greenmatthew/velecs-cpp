@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-namespace HarvestHavocEngine::Engine {
+namespace engine::Engine {
 
 // Public Fields
 
@@ -85,4 +85,4 @@ VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
 
 // Private Methods
 
-} // namespace HarvestHavocEngine::Engine
+} // namespace engine::Engine

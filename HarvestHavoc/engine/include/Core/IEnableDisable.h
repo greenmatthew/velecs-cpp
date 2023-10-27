@@ -12,7 +12,7 @@
 
 #include "Input/IEnableDisablePassKey.h"
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 class IEnableDisablePassKey;
 
@@ -107,4 +107,4 @@ private:
     void ExecuteDisable();
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine

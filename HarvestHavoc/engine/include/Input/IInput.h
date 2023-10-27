@@ -21,7 +21,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace HarvestHavocEngine::Input {
+namespace engine::Input {
 
 /// \class IInput
 /// \brief Manages input actions and input action maps.
@@ -119,4 +119,4 @@ private:
     static void HandleIEnableDisableRequests(std::shared_ptr<IEnableDisable> object);
 };
 
-} // namespace HarvestHavocEngine::Input
+} // namespace engine::Input

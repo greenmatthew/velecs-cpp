@@ -13,7 +13,7 @@
 #include <fstream>
 #include <optional>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 /// \class File
 /// \brief Brief description.
@@ -88,4 +88,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine

@@ -21,7 +21,7 @@
 #include <memory>
 #include <sstream>
 
-namespace HarvestHavocEngine::Input {
+namespace engine::Input {
 
 std::ostream& operator<<(std::ostream& os, const ButtonState& state) {
     switch (state) {
@@ -139,4 +139,4 @@ InputAction::InputAction(SDL_Keycode keycode) : keycode(keycode) {}
 
 // Private Methods
 
-} // namespace HarvestHavocEngine::Input
+} // namespace engine::Input

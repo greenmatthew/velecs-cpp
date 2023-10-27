@@ -70,6 +70,9 @@
         "forward_list": "cpp",
         "fstream": "cpp",
         "iomanip": "cpp",
-        "codecvt": "cpp"
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "shared_mutex": "cpp"
     }
 }

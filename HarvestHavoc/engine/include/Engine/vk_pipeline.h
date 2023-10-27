@@ -14,7 +14,7 @@
 
 #include <vector>
 
-namespace HarvestHavocEngine::Engine {
+namespace engine::Engine {
 
 /// \class PipelineBuilder
 /// \brief Utility class for constructing Vulkan pipelines.
@@ -59,4 +59,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine::Engine
+} // namespace engine::Engine

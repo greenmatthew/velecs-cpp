@@ -12,7 +12,7 @@
 
 #include <string>
 
-namespace HarvestHavocEngine {
+namespace engine {
 
 /// \class Path
 /// \brief A utility class for path operations.
@@ -109,4 +109,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavocEngine
+} // namespace engine
