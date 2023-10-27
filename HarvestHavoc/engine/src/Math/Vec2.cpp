@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <exception>
 
-namespace engine::Math {
+namespace engine {
 
 // Public Fields
 

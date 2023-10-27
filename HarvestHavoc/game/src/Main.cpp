@@ -12,13 +12,13 @@
 
 #include "Input/Input.h"
 
-#include "Graphics/Color32.h";
+#include "Graphics/Color32.h"
 
 int main(int argc, char* argv[])
 {
-    std::cout << sizeof(engine::Graphics::Color32) << std::endl;
+    std::cout << sizeof(engine::Color32) << std::endl;
 
-    auto& engine = engine::Engine::VulkanEngine::GetInstance();
+    auto& engine = engine::VulkanEngine::GetInstance();
 
     engine.Init();
 

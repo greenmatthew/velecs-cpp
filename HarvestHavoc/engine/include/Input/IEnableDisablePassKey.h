@@ -10,7 +10,7 @@
 
 #pragma once
 
-namespace engine::Input {
+namespace engine {
 
 class IInput;  ///< Forward declaration of the Input class
 
@@ -58,4 +58,4 @@ private:
     // Private Methods
 };
 
-} // namespace engine::Input
+} // namespace engine

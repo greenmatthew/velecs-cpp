@@ -28,7 +28,7 @@ void Input::Init()
 	Input::Player->Switch();
 }
 
-void Input::SwitchTo(std::shared_ptr<engine::Input::InputActionMap> inputActionMapPtr)
+void Input::SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr)
 {
     Input::GetInstance().InternalSwitchTo(inputActionMapPtr);
 }

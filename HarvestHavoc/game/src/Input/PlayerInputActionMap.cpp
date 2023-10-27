@@ -68,7 +68,7 @@ void PlayerInputActionMap::Init()
     RightStrafe->OnReleased += StopGoingRight;
 
     ChangeRenderPipeline = CreateBinding(SDLK_SPACE);
-    ChangeRenderPipeline->OnPressed += []() { engine::Engine::VulkanEngine::GetInstance().SwapToNextRenderPipeline(); };
+    ChangeRenderPipeline->OnPressed += []() { engine::VulkanEngine::GetInstance().SwapToNextRenderPipeline(); };
 }
 
 void PlayerInputActionMap::Switch()

@@ -15,7 +15,7 @@
 #include "Input/MenuInputActionMap.h"
 #include "Input/IEnableDisablePassKey.h"
 
-namespace engine::Input {
+namespace engine {
 
 // Public Fields
 
@@ -146,4 +146,4 @@ void IInput::HandleIEnableDisableRequests(std::shared_ptr<IEnableDisable> object
     object->HandleRequests(IEnableDisablePassKey{});
 }
 
-} // namespace engine::Input
+} // namespace engine

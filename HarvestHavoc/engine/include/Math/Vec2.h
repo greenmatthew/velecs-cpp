@@ -15,7 +15,7 @@
 #include <string>
 #include <ostream>
 
-namespace engine::Math {
+namespace engine {
 
 /// \struct Vec2
 /// \brief A 2D vector structure for representing points or vectors in 2D space.
@@ -289,4 +289,4 @@ inline Vec2 operator/(float scalar, const Vec2& vec)
     return vec / scalar;
 }
 
-} // namespace engine::Math
+} // namespace engine

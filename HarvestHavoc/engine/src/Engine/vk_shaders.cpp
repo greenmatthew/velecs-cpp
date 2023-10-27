@@ -18,7 +18,7 @@
 #include <vector>
 #include <fstream>
 
-namespace engine::Engine {
+namespace engine {
 
 // Public Fields
 
@@ -121,4 +121,4 @@ bool ShaderModule::LoadShader(const VkDevice& device, const char* filePath, VkSh
     return true;
 }
 
-} // namespace engine::Engine
+} // namespace engine

@@ -46,9 +46,7 @@
         }                                                              \
     } while (0)
 
-using namespace engine::Input;
-
-namespace engine::Engine {
+namespace engine {
 
 // Public Fields
 
@@ -779,7 +777,7 @@ void VulkanEngine::Draw()
             vkCmdBindVertexBuffers(cmd, 0, 1, &_triangleMesh._vertexBuffer._buffer, &offset);
 
             //we can now draw the mesh
-            vkCmdDraw(cmd, _triangleMesh._vertices.size(), 1, 0, 0);
+            vkCmdDraw(cmd, (uint32_t)_triangleMesh._vertices.size(), 1, 0, 0);
             break;
         }
         default:
@@ -851,9 +849,9 @@ void VulkanEngine::LoadMeshes()
     _triangleMesh._vertices[2].position = {  0.0f, -1.0f,  0.0f };
 
     //vertex colors, all green
-    _triangleMesh._vertices[0].color = Graphics::Color32::GREEN;
-    _triangleMesh._vertices[1].color = Graphics::Color32::GREEN;
-    _triangleMesh._vertices[2].color = Graphics::Color32::GREEN;
+    _triangleMesh._vertices[0].color = Color32::GREEN;
+    _triangleMesh._vertices[1].color = Color32::GREEN;
+    _triangleMesh._vertices[2].color = Color32::GREEN;
 
     //we don't care about the vertex normals
 
@@ -900,4 +898,4 @@ void VulkanEngine::UploadMesh(Mesh& mesh)
     vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
 }
 
-} // namespace engine::Engine
+} // namespace engine

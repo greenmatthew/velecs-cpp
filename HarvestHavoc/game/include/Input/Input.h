@@ -21,7 +21,7 @@ namespace hh::Input {
 /// \brief Brief description.
 ///
 /// Rest of description.
-class Input : public engine::Input::IInput {
+class Input : public engine::IInput {
 public:
     // Enums
 
@@ -45,7 +45,7 @@ public:
     /// \brief Switches to the specified input action map.
     /// 
     /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
-    static void SwitchTo(std::shared_ptr<engine::Input::InputActionMap> inputActionMapPtr);
+    static void SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr);
 
 protected:
     // Protected Fields

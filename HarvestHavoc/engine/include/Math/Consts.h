@@ -12,7 +12,7 @@
 
 #include <limits>
 
-namespace engine::Math {
+namespace engine {
 
     constexpr float PI = 3.14159265358979323846f; /// \brief The mathematical constant Pi (π).
     constexpr float DEG_TO_RAD = PI / 180.0f; /// \brief Conversion factor to convert degrees to radians.
@@ -20,4 +20,4 @@ namespace engine::Math {
     constexpr float FLOAT_POS_INFINITY = std::numeric_limits<float>::infinity(); /// \brief Representation of positive infinity in floating-point.
     constexpr float FLOAT_NEG_INFINITY = -FLOAT_POS_INFINITY; /// \brief Representation of negative infinity in floating-point.
 
-} // namespace engine::Math
+} // namespace engine

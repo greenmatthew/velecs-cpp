@@ -52,7 +52,7 @@ public:
     /// <summary>
     /// Processes any pending requests to enable or disable the object.
     /// </summary>
-    void HandleRequests(Input::IEnableDisablePassKey passKey);
+    void HandleRequests(IEnableDisablePassKey passKey);
 
 protected:
     // Protected Fields

@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-namespace engine::Engine {
+namespace engine {
 
 // Public Fields
 
@@ -85,4 +85,4 @@ VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
 
 // Private Methods
 
-} // namespace engine::Engine
+} // namespace engine

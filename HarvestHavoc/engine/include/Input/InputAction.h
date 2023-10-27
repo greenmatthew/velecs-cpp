@@ -18,7 +18,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace engine::Input {
+namespace engine {
 
 class InputActionMap;
 
@@ -113,4 +113,4 @@ private:
     // Private Methods
 };
 
-} // namespace engine::Input
+} // namespace engine

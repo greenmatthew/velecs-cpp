@@ -57,7 +57,7 @@ void IEnableDisable::ExecuteDisable()
     OnDisable();
 }
 
-void IEnableDisable::HandleRequests(Input::IEnableDisablePassKey passKey)
+void IEnableDisable::HandleRequests(IEnableDisablePassKey passKey)
 {
     switch (state)
     {

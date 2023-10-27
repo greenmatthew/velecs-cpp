@@ -12,7 +12,7 @@
 
 #include <Engine/vk_types.h>
 
-namespace engine::Engine {
+namespace engine {
 
 /// \class ShaderModule
 /// \brief Brief description.
@@ -70,4 +70,4 @@ private:
 
 };
 
-} // namespace engine::Engine
+} // namespace engine

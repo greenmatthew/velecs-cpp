@@ -19,7 +19,7 @@
 
 #include <vector>
 
-namespace engine::Engine {
+namespace engine {
 
 /// \class VulkanEngine
 /// \brief Brief description.
@@ -53,7 +53,7 @@ public:
     ///
     /// This method sets up SDL2 event handling for processing user input.
     /// It is called by the Init method during engine initialization.
-    void InitInput(engine::Input::IInput * const inputHandle);
+    void InitInput(IInput * const inputHandle);
 
     /// \brief Shuts down the engine, releasing any resources acquired during initialization or runtime.
     ///
@@ -86,7 +86,7 @@ private:
 
     struct SDL_Window* _window{nullptr}; /// \brief Pointer to the SDL window structure.
 
-    engine::Input::IInput* inputHandle{nullptr};
+    IInput* inputHandle{nullptr};
 
     VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
     VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
@@ -195,4 +195,4 @@ private:
     void UploadMesh(Mesh& mesh);
 };
 
-} // namespace engine::Engine
+} // namespace engine

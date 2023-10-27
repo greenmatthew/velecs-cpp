@@ -18,7 +18,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace engine::Input {
+namespace engine {
 
 class InputAction;
 
@@ -149,4 +149,4 @@ private:
     std::shared_ptr<InputAction> TryFindKeyBind(const SDL_Keycode keycode) const;
 };
 
-} // namespace engine::Input
+} // namespace engine

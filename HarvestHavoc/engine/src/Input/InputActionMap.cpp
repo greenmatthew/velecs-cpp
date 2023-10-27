@@ -15,7 +15,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace engine::Input {
+namespace engine {
 
 // Public Fields
 
@@ -210,4 +210,4 @@ std::shared_ptr<InputAction> InputActionMap::TryFindKeyBind(const SDL_Keycode ke
     }
 }
 
-} // namespace engine::Input
+} // namespace engine

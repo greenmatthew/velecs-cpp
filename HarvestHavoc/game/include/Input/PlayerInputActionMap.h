@@ -23,16 +23,16 @@ namespace hh::Input {
 /// interaction, and other gameplay mechanics. The class provides convenient access to commonly used player 
 /// input actions through public member variables, and overrides methods from the InputActionMap class to 
 /// implement player-specific input handling logic.
-class PlayerInputActionMap : public engine::Input::InputActionMap {
+class PlayerInputActionMap : public engine::InputActionMap {
 public:
     // Enums
 
     // Public Fields
 
-    std::shared_ptr<engine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to pause the game or access the menu.
-    std::shared_ptr<engine::Input::InputAction> LeftStrafe; /// \brief The input action associated with strafing left.
-    std::shared_ptr<engine::Input::InputAction> RightStrafe; /// \brief The input action associated with strafing right.
-    std::shared_ptr<engine::Input::InputAction> ChangeRenderPipeline;
+    std::shared_ptr<engine::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to pause the game or access the menu.
+    std::shared_ptr<engine::InputAction> LeftStrafe; /// \brief The input action associated with strafing left.
+    std::shared_ptr<engine::InputAction> RightStrafe; /// \brief The input action associated with strafing right.
+    std::shared_ptr<engine::InputAction> ChangeRenderPipeline;
 
     // Constructors and Destructors
 
