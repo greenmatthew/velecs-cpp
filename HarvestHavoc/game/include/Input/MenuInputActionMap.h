@@ -13,7 +13,7 @@
 #include <Input/InputActionMap.h>
 #include "Input/Input.h"
 
-namespace HarvestHavoc::Input {
+namespace hh::Input {
 
 /// \class MenuInputActionMap
 /// \brief Manages the mappings of SDL keycodes to input actions for menu interactions.
@@ -23,13 +23,13 @@ namespace HarvestHavoc::Input {
 /// navigating through menu items, selecting options, and exiting menus. The class provides convenient 
 /// access to commonly used menu input actions through public member variables, and overrides methods 
 /// from the InputActionMap class to implement menu-specific input handling logic.
-class MenuInputActionMap : public HarvestHavocEngine::Input::InputActionMap {
+class MenuInputActionMap : public engine::Input::InputActionMap {
 public:
     // Enums
 
     // Public Fields
     
-    std::shared_ptr<HarvestHavocEngine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to exit a menu.
+    std::shared_ptr<engine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to exit a menu.
 
     // Constructors and Destructors
 
@@ -58,4 +58,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavoc::Input
+} // namespace hh::Input

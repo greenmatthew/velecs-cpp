@@ -13,7 +13,7 @@
 #include <Input/InputActionMap.h>
 #include "Input/Input.h"
 
-namespace HarvestHavoc::Input {
+namespace hh::Input {
 
 /// \class PlayerInputActionMap
 /// \brief Manages the mappings of SDL keycodes to input actions for player interactions.
@@ -23,16 +23,16 @@ namespace HarvestHavoc::Input {
 /// interaction, and other gameplay mechanics. The class provides convenient access to commonly used player 
 /// input actions through public member variables, and overrides methods from the InputActionMap class to 
 /// implement player-specific input handling logic.
-class PlayerInputActionMap : public HarvestHavocEngine::Input::InputActionMap {
+class PlayerInputActionMap : public engine::Input::InputActionMap {
 public:
     // Enums
 
     // Public Fields
 
-    std::shared_ptr<HarvestHavocEngine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to pause the game or access the menu.
-    std::shared_ptr<HarvestHavocEngine::Input::InputAction> LeftStrafe; /// \brief The input action associated with strafing left.
-    std::shared_ptr<HarvestHavocEngine::Input::InputAction> RightStrafe; /// \brief The input action associated with strafing right.
-    std::shared_ptr<HarvestHavocEngine::Input::InputAction> ChangeRenderPipeline;
+    std::shared_ptr<engine::Input::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to pause the game or access the menu.
+    std::shared_ptr<engine::Input::InputAction> LeftStrafe; /// \brief The input action associated with strafing left.
+    std::shared_ptr<engine::Input::InputAction> RightStrafe; /// \brief The input action associated with strafing right.
+    std::shared_ptr<engine::Input::InputAction> ChangeRenderPipeline;
 
     // Constructors and Destructors
 
@@ -61,4 +61,4 @@ private:
     // Private Methods
 };
 
-} // namespace HarvestHavoc::Input
+} // namespace hh::Input

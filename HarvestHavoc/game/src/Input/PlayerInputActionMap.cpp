@@ -19,7 +19,7 @@
 
 #include "SDL2/SDL.h"
 
-namespace HarvestHavoc::Input {
+namespace hh::Input {
 
 // Public Fields
 
@@ -68,7 +68,7 @@ void PlayerInputActionMap::Init()
     RightStrafe->OnReleased += StopGoingRight;
 
     ChangeRenderPipeline = CreateBinding(SDLK_SPACE);
-    ChangeRenderPipeline->OnPressed += []() { HarvestHavocEngine::Engine::VulkanEngine::GetInstance().SwapToNextRenderPipeline(); };
+    ChangeRenderPipeline->OnPressed += []() { engine::Engine::VulkanEngine::GetInstance().SwapToNextRenderPipeline(); };
 }
 
 void PlayerInputActionMap::Switch()
@@ -84,4 +84,4 @@ void PlayerInputActionMap::Switch()
 
 // Private Methods
 
-} // namespace HarvestHavoc::Input
+} // namespace hh::Input

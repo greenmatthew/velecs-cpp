@@ -12,7 +12,7 @@
 #include "Input/PlayerInputActionMap.h"
 #include "Input/MenuInputActionMap.h"
 
-namespace HarvestHavoc::Input {
+namespace hh::Input {
 
 // Public Fields
 
@@ -28,7 +28,7 @@ void Input::Init()
 	Input::Player->Switch();
 }
 
-void Input::SwitchTo(std::shared_ptr<HarvestHavocEngine::Input::InputActionMap> inputActionMapPtr)
+void Input::SwitchTo(std::shared_ptr<engine::Input::InputActionMap> inputActionMapPtr)
 {
     Input::GetInstance().InternalSwitchTo(inputActionMapPtr);
 }
@@ -41,4 +41,4 @@ void Input::SwitchTo(std::shared_ptr<HarvestHavocEngine::Input::InputActionMap> 
 
 // Private Methods
 
-} // namespace HarvestHavoc::Input
+} // namespace hh::Input

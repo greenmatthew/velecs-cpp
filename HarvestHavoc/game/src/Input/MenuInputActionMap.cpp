@@ -18,7 +18,7 @@
 
 #include "SDL2/SDL.h"
 
-namespace HarvestHavoc::Input {
+namespace hh::Input {
 
 // Public Fields
 
@@ -51,4 +51,4 @@ void MenuInputActionMap::Switch()
 
 // Private Methods
 
-} // namespace HarvestHavoc::Input
+} // namespace hh::Input

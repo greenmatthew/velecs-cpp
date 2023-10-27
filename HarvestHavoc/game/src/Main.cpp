@@ -12,15 +12,17 @@
 
 #include "Input/Input.h"
 
-using namespace HarvestHavoc::Input;
+#include "Graphics/Color32.h";
 
 int main(int argc, char* argv[])
 {
-    auto& engine = HarvestHavocEngine::Engine::VulkanEngine::GetInstance();
+    std::cout << sizeof(engine::Graphics::Color32) << std::endl;
+
+    auto& engine = engine::Engine::VulkanEngine::GetInstance();
 
     engine.Init();
 
-    engine.InitInput(&(Input::GetInstance()));
+    engine.InitInput(&(hh::Input::Input::GetInstance()));
 
     engine.Run();
 
