@@ -14,6 +14,8 @@
 #include "Engine/vk_pipeline.h"
 #include "Engine/vk_shaders.h"
 
+#include "ECS/ECSManager.h"
+
 #include "Graphics/Color32.h"
 
 #include "FileManagement/Path.h"
@@ -72,6 +74,8 @@ void VulkanEngine::Init()
         window_flags
     );
 
+    ECSManager::GetInstance().Init(this);
+
     InitVulkan();
     InitSwapchain();
     InitCommands();
@@ -129,6 +133,11 @@ void VulkanEngine::SwapToNextRenderPipeline()
     {
         renderPipelineIndex = 0;
     }
+}
+
+void VulkanEngine::TrackEntity(std::shared_ptr<Entity> entity)
+{
+    entities.push_back(entity);
 }
 
 // Protected Fields

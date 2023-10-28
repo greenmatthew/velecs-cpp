@@ -18,8 +18,11 @@
 #include <SDL2/SDL.h>
 
 #include <vector>
+#include <memory>
 
 namespace engine {
+
+class Entity;
 
 /// \class VulkanEngine
 /// \brief Brief description.
@@ -68,6 +71,8 @@ public:
     void Run();
 
     void SwapToNextRenderPipeline();
+
+    void TrackEntity(std::shared_ptr<Entity> entity);
 
 protected:
     // Protected Fields
@@ -124,6 +129,8 @@ private:
 
     VkPipeline _meshPipeline{nullptr};
     Mesh _triangleMesh;
+
+    std::vector<std::shared_ptr<Entity>> entities;
 
     // Constructors and Destructors
     VulkanEngine() = default;

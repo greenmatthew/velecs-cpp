@@ -12,17 +12,31 @@
 
 #include "Input/Input.h"
 
-#include "Graphics/Color32.h"
+#include "ECS/Entity.h"
+
+using namespace engine;
 
 int main(int argc, char* argv[])
 {
-    std::cout << sizeof(engine::Color32) << std::endl;
-
     auto& engine = engine::VulkanEngine::GetInstance();
 
     engine.Init();
 
     engine.InitInput(&(hh::Input::Input::GetInstance()));
+
+    {
+        auto entity = Entity::Create();
+        auto entityPtr = entity.lock();
+        if (entityPtr)
+        {
+            std::cout << entityPtr->name << std::endl;
+        }
+        else
+        {
+            std::cout << "No entity exists!" << std::endl;
+        }
+        
+    }
 
     engine.Run();
 

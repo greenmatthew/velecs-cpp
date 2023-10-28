@@ -89,6 +89,20 @@ public:
         : GameRuntimeException<TWhereExceptionOccurred>("Instance was not initialized.") {}
 };
 
+/// \class ReinitializationException
+/// \brief Represents an exception for re-initialization attempts.
+///
+/// Derived from GameRuntimeException, this class encapsulates errors 
+/// that occur when an attempt is made to re-initialize an already initialized instance.
+/// \tparam TWhereExceptionOccurred The type where the exception occurred. This type's name will be prefixed to the error message.
+template <typename TWhereExceptionOccurred>
+class ReinitializationException : public GameRuntimeException<TWhereExceptionOccurred> {
+public:
+    /// \brief Constructs a ReinitializationException with a specific error message.
+    explicit ReinitializationException()
+        : GameRuntimeException<TWhereExceptionOccurred>("Attempted to re-initialize an already initialized instance.") {}
+};
+
 
 
 /// \class FileSystemException

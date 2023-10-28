@@ -142,10 +142,6 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\GameExceptions.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="engine\src\Core\IEnableDisable.cpp">
       <SubType>
       </SubType>

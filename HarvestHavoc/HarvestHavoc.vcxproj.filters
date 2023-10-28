@@ -197,9 +197,6 @@
     <ClCompile Include="engine\src\FileManagement\Directory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\GameExceptions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="engine\src\Engine\vk_shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
