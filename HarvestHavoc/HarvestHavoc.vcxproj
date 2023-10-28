@@ -19,6 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\include\ECS\Component.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\ECSManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\Entity.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="engine\include\FileManagement\Directory.h">
       <SubType>
       </SubType>
@@ -35,7 +47,7 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Transform.h">
+    <ClInclude Include="engine\include\ECS\Transform.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -110,6 +122,18 @@
     <ClInclude Include="engine\include\Engine\vk_types.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="engine\src\ECS\Component.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="engine\src\ECS\Entity.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="engine\src\ECS\ECSManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="engine\src\FileManagement\Directory.cpp">
       <SubType>
       </SubType>
@@ -130,7 +154,7 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\Transform.cpp">
+    <ClCompile Include="engine\src\ECS\Transform.cpp">
       <SubType>
       </SubType>
     </ClCompile>

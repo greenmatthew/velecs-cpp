@@ -117,7 +117,16 @@
     <ClInclude Include="engine\include\Math\Vec3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Transform.h">
+    <ClInclude Include="engine\include\ECS\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\ECSManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -206,7 +215,16 @@
     <ClCompile Include="engine\src\Math\Vec3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\Transform.cpp">
+    <ClCompile Include="engine\src\ECS\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\src\ECS\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\src\ECS\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\src\ECS\ECSManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

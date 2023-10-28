@@ -68,7 +68,7 @@ std::string Path::GetParentDirPath(const std::string& path)
     }
     else
     {
-        throw PathHasNoParentDirectoryException(path);
+        throw PathHasNoParentDirectoryException<Path>(path);
     }
 }
 
@@ -81,7 +81,7 @@ std::string Path::GetRootDirPath(const std::string& path)
     }
     else
     {
-        throw PathHasNoParentDirectoryException(path);
+        throw PathHasNoParentDirectoryException<Path>(path);
     }
 }
 
@@ -101,7 +101,7 @@ std::string Path::GetLastDir(const std::string& path)
     }
     else
     {
-        throw PathHasNoParentDirectoryException(path);
+        throw PathHasNoParentDirectoryException<Path>(path);
     }
 }
 
@@ -179,7 +179,7 @@ std::string Path::ResolvePath(std::string path)
         // }
     }
 
-    throw PathNotFoundException(path);
+    throw PathNotFoundException<Path>(path);
 }
 
 // Protected Fields
