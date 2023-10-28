@@ -11,6 +11,9 @@
 #pragma once
 
 #include "Math/Consts.h"
+#include "Math/Vec3.h"
+
+#include <glm/vec2.hpp>
 
 #include <string>
 #include <ostream>
@@ -22,8 +25,14 @@ namespace engine {
 struct Vec2
 {
 public:
+    // Enums
+
+    // Public Fields
+
     float x;  /// \brief The x-coordinate.
     float y;  /// \brief The y-coordinate.
+
+    // Constructors and Destructors
 
     /// \brief Constructs a Vec2 with the specified coordinates.
     /// \param[in] x The x-coordinate.
@@ -36,6 +45,22 @@ public:
 
     /// \brief Default deconstructor.
     ~Vec2() = default;
+    
+    // Public Methods
+
+    /// \brief Converts the Vec2 to a glm::vec2.
+    /// \returns A glm::vec2 with the same components as this Vec2.
+    operator glm::vec2() const;
+
+    /// \brief Converts the Vec2 to a Vec3.
+    /// \details The z-component of the returned Vec3 is set to 0.0f.
+    /// \returns A Vec3 with the x and y components from this Vec2, and z-component set to 0.0f.
+    operator Vec3() const;
+
+    /// \brief Converts the Vec2 to a glm::vec3.
+    /// \details The z-component of the returned glm::vec3 is set to 0.0f.
+    /// \returns A glm::vec3 with the x and y components from this Vec2, and z-component set to 0.0f.
+    operator glm::vec3() const;
 
     /// \brief Assigns the values of another Vec2 object to this Vec2 object.
     /// \param[in] other The other Vec2 object whose values will be assigned to this Vec2 object.
@@ -269,6 +294,19 @@ public:
         os << '(' << vec.x << ", " << vec.y << ')';
         return os;
     }
+
+protected:
+    // Protected Fields
+
+    // Protected Methods
+
+private:
+    // Private Fields
+
+    // Private Methods
+
+public:
+    
 };
 
 /// \brief Multiplies a scalar value by the specified Vec2.

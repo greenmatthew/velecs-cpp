@@ -9,6 +9,7 @@
 /// Proprietary and confidential
 
 #include "Math/Vec2.h"
+#include "Math/Vec3.h"
 
 #include <sstream>
 #include <algorithm>
@@ -20,11 +21,26 @@ namespace engine {
 
 // Constructors and Destructors
 
-// Public Methods
-
 Vec2::Vec2(const float x, const float y) : x(x), y(y) {}
 
 Vec2::Vec2(const Vec2 &other) : x(other.x), y(other.y) {}
+
+// Public Methods
+
+Vec2::operator glm::vec2() const
+{
+    return glm::vec2(x, y);
+}
+
+Vec2::operator Vec3() const
+{
+    return Vec3(*this);
+}
+
+Vec2::operator glm::vec3() const
+{
+    return glm::vec3(x, y, 0.0f);
+}
 
 Vec2& Vec2::operator=(const Vec2& other)
 {
