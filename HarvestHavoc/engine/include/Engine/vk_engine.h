@@ -10,10 +10,14 @@
 
 #pragma once
 
-#include "Engine/vk_types.h"
-#include "Engine/vk_mesh.h"
+#include "Engine/DeletionQueue.h"
+
+#include "Graphics/Mesh.h"
+#include "Graphics/MeshPushConstants.h"
 
 #include "Input/IInput.h"
+
+#include <vulkan/vulkan_core.h>
 
 #include <SDL2/SDL.h>
 
@@ -127,8 +131,11 @@ private:
 
     VmaAllocator _allocator{nullptr};
 
+    VkPipelineLayout _meshPipelineLayout{nullptr};
     VkPipeline _meshPipeline{nullptr};
     Mesh _triangleMesh;
+
+    Mesh _monkeyMesh;
 
     std::vector<std::shared_ptr<Entity>> entities;
 

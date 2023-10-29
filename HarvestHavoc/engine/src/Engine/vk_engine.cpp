@@ -9,7 +9,6 @@
 /// Proprietary and confidential
 
 #include "Engine/vk_engine.h"
-#include "Engine/vk_types.h"
 #include "Engine/vk_initializers.h"
 #include "Engine/vk_pipeline.h"
 #include "Engine/vk_shaders.h"
@@ -32,6 +31,8 @@
 
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl.h>
@@ -468,9 +469,26 @@ void VulkanEngine::InitPipelines()
 
     _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
+    //we start from just the default empty pipeline layout info
+	VkPipelineLayoutCreateInfo mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
+
+	//setup push constants
+	VkPushConstantRange push_constant;
+	//this push constant range starts at the beginning
+	push_constant.offset = 0;
+	//this push constant range takes up the size of a MeshPushConstants struct
+	push_constant.size = sizeof(MeshPushConstants);
+	//this push constant range is accessible only in the vertex shader
+	push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+	mesh_pipeline_layout_info.pPushConstantRanges = &push_constant;
+	mesh_pipeline_layout_info.pushConstantRangeCount = 1;
+
+	VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &_meshPipelineLayout));
+
     //build the mesh pipeline
 
-    VertexInputDescription vertexDescription = Vertex::GetVertexDescription();
+    VertexInputAttributeDescriptor vertexDescription = Vertex::GetVertexDescription();
 
     //connect the pipeline builder vertex input info to the one we get from Vertex
     pipelineBuilder._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
@@ -492,6 +510,8 @@ void VulkanEngine::InitPipelines()
     pipelineBuilder._shaderStages.push_back(
         vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *meshFragShader));
 
+    pipelineBuilder._pipelineLayout = _meshPipelineLayout;
+
     //build the mesh triangle pipeline
     _meshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
@@ -508,6 +528,7 @@ void VulkanEngine::InitPipelines()
 
             //destroy the pipeline layout that they use
             vkDestroyPipelineLayout(_device, _trianglePipelineLayout, nullptr);
+            vkDestroyPipelineLayout(_device, _meshPipelineLayout, nullptr);
         }
     );
 }
@@ -698,6 +719,26 @@ void VulkanEngine::Draw()
             //bind the mesh vertex buffer with offset 0
             VkDeviceSize offset = 0;
             vkCmdBindVertexBuffers(cmd, 0, 1, &_triangleMesh._vertexBuffer._buffer, &offset);
+
+            //make a model view matrix for rendering the object
+            //camera position
+            glm::vec3 camPos = { 0.f,0.f,-2.f };
+
+            glm::mat4 view = glm::translate(glm::mat4(1.f), camPos);
+            //camera projection
+            glm::mat4 projection = glm::perspective(glm::radians(70.f), _windowExtent.width / (float)_windowExtent.height, 0.1f, 200.0f);
+            projection[1][1] *= -1;
+            //model rotation
+            glm::mat4 model = glm::rotate(glm::mat4{ 1.0f }, glm::radians(_frameNumber * 0.02f), glm::vec3(0, 1, 0));
+
+            //calculate final mesh matrix
+            glm::mat4 meshMatrix = projection * view * model;
+
+            MeshPushConstants constants;
+            constants.renderMatrix = meshMatrix;
+
+            //upload the matrix to the GPU via push constants
+            vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
 
             //we can now draw the mesh
             vkCmdDraw(cmd, (uint32_t)_triangleMesh._vertices.size(), 1, 0, 0);

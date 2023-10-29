@@ -63,10 +63,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Engine\vk_mesh.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="engine\include\Engine\vk_pipeline.h">
       <SubType>
       </SubType>
@@ -79,11 +75,35 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="engine\include\Graphics\Mesh.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\Graphics\MeshPushConstants.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\Graphics\Vertex.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\Graphics\VertexInputAttributeDescriptor.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="engine\include\Input\IEnableDisablePassKey.h">
       <SubType>
       </SubType>
     </ClInclude>
     <ClInclude Include="engine\include\Math\Vec3.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\Engine\AllocatedBuffer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="engine\include\Engine\DeletionQueue.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -119,7 +139,6 @@
     <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrapDispatch.h" />
     <ClInclude Include="engine\include\Engine\vk_engine.h" />
     <ClInclude Include="engine\include\Engine\vk_initializers.h" />
-    <ClInclude Include="engine\include\Engine\vk_types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="engine\src\ECS\Component.cpp">
@@ -131,6 +150,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="engine\src\ECS\ECSManager.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="engine\src\Engine\DeletionQueue.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -154,10 +177,6 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Engine\vk_mesh.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
       <SubType>
       </SubType>
@@ -167,6 +186,14 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="engine\src\Graphics\Color32.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="engine\src\Graphics\Mesh.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="engine\src\Graphics\Vertex.cpp">
       <SubType>
       </SubType>
     </ClCompile>

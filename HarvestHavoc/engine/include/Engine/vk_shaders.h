@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Engine/vk_types.h>
+#include <vulkan/vulkan_core.h>
 
 #include <memory>
 #include <string>

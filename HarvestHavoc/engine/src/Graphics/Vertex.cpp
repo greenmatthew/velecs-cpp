@@ -1,6 +1,6 @@
-/// \file    vk_mesh.cpp
+/// \file    Vertex.cpp
 /// \author  Matthew Green
-/// \date    10/26/2023 14:18:58
+/// \date    10/29/2023 17:59:53
 /// 
 /// \section LICENSE
 /// 
@@ -8,13 +8,20 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "Engine/vk_mesh.h"
+#include "Graphics/Vertex.h"
+#include "Graphics/VertexInputAttributeDescriptor.h"
 
 namespace engine {
 
-VertexInputDescription Vertex::GetVertexDescription()
+// Public Fields
+
+// Constructors and Destructors
+
+// Public Methods
+
+VertexInputAttributeDescriptor Vertex::GetVertexDescription()
 {
-    VertexInputDescription description;
+    VertexInputAttributeDescriptor description;
 
     //we will have just 1 vertex buffer binding, with a per-vertex rate
     VkVertexInputBindingDescription mainBinding = {};
@@ -51,35 +58,12 @@ VertexInputDescription Vertex::GetVertexDescription()
     return description;
 }
 
-VertexInputDescription Vertex2D::GetVertexDescription()
-{
-    VertexInputDescription description;
+// Protected Fields
 
-    //we will have just 1 vertex buffer binding, with a per-vertex rate
-    VkVertexInputBindingDescription mainBinding = {};
-    mainBinding.binding = 0;
-    mainBinding.stride = sizeof(Vertex2D);
-    mainBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+// Protected Methods
 
-    description.bindings.push_back(mainBinding);
+// Private Fields
 
-    //Position will be stored at Location 0
-    VkVertexInputAttributeDescription positionAttribute = {};
-    positionAttribute.binding = 0;
-    positionAttribute.location = 0;
-    positionAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
-    positionAttribute.offset = offsetof(Vertex2D, position);
-
-    //Color will be stored at Location 1
-    VkVertexInputAttributeDescription colorAttribute = {};
-    colorAttribute.binding = 0;
-    colorAttribute.location = 1;
-    colorAttribute.format = VK_FORMAT_R8G8B8A8_UINT;
-    colorAttribute.offset = offsetof(Vertex2D, color);
-
-    description.attributes.push_back(positionAttribute);
-    description.attributes.push_back(colorAttribute);
-    return description;
-}
+// Private Methods
 
 } // namespace engine
