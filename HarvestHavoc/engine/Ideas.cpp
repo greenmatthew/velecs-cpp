@@ -13,43 +13,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Math/Vec3.h"
-#include "Core/Transform.h"
+#include "ECS/Transform.h"
+#include "ECS/Entity.h"
+#include "ECS/Component.h"
 
 using namespace engine;
-
-struct Entity {
-public:
-    Transform transform;
-    std::vector<Component> components;
-
-    template <typename T, typename... Args>
-    void AddComponent(Args... args)
-    {
-        components.emplace_back(this, args...);
-    }
-
-    template <typename T>
-    void RemoveComponent();
-
-    void RemoveAllComponents()
-    {
-        components.clear();
-    }
-};
-
-struct Component {
-public:
-    friend struct Entity;
-private:
-    Entity* entity;
-protected:
-    Component(Entity* entity) : entity(entity) {}
-public:
-    Transform& GetTransform()
-    {
-        return entity->transform;
-    }
-};
 
 struct Rect {
 public:

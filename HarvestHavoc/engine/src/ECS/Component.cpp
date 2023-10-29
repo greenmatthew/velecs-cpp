@@ -9,6 +9,7 @@
 /// Proprietary and confidential
 
 #include "ECS/Component.h"
+#include "ECS/Entity.h"
 
 namespace engine {
 
@@ -16,7 +17,15 @@ namespace engine {
 
 // Constructors and Destructors
 
+Component::Component(std::weak_ptr<Entity> entity)
+    : entity(entity) {}
+
 // Public Methods
+
+std::weak_ptr<Entity> Component::GetEntity()
+{
+    return entity;
+}
 
 // Protected Fields
 

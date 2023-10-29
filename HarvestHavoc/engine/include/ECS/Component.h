@@ -10,7 +10,11 @@
 
 #pragma once
 
+#include <memory>
+
 namespace engine {
+
+class Entity;
 
 /// \class Component
 /// \brief Brief description.
@@ -24,16 +28,19 @@ public:
 
     // Constructors and Destructors
     
-    /// \brief Default constructor.
-    Component() = default;
+    Component(std::weak_ptr<Entity> entity);
     
     /// \brief Default deconstructor.
     ~Component() = default;
 
     // Public Methods
 
+    std::weak_ptr<Entity> GetEntity();
+
 protected:
     // Protected Fields
+
+    std::weak_ptr<Entity> entity;
 
     // Protected Methods
 
