@@ -73,6 +73,7 @@
         "codecvt": "cpp",
         "condition_variable": "cpp",
         "deque": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "memory_resource": "cpp"
     }
 }

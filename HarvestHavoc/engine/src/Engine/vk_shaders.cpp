@@ -9,6 +9,7 @@
 /// Proprietary and confidential
 
 #include "Engine/vk_shaders.h"
+#include "Engine/vk_initializers.h"
 
 #include "FileManagement/Path.h"
 #include "FileManagement/File.h"
@@ -17,55 +18,56 @@
 
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 namespace engine {
 
 // Public Fields
 
-// Constructors and Destructors
+// Destructors
+
+ShaderModule::~ShaderModule()
+{
+    if (shaderModule != VK_NULL_HANDLE)
+    {
+        vkDestroyShaderModule(device, shaderModule, nullptr);
+    }
+}
 
 // Public Methods
 
-bool ShaderModule::LoadVertexShader(const VkDevice& device, const char* filePath, VkShaderModule* outShaderModule)
+std::unique_ptr<ShaderModule> ShaderModule::CreateVertexShaderModule(const VkDevice device, const std::string& filePath)
 {
-    const std::string newPath{ Path::Combine(Path::VERT_SHADERS_DIR, std::string{filePath}) };
-    if (File::Exists(newPath))
+    VkShaderModule vertShaderModule;
+    if (!LoadVertexShader(device, filePath, &vertShaderModule))
     {
-        return LoadShader(device, newPath.c_str(), outShaderModule);
+        std::cout << "Error when building or loading the vertex shader module: " << filePath << std::endl;
+        return nullptr;
     }
-    else
-    {
-        try
-        {
-            return LoadShader(device, Path::ResolvePath(std::string{filePath}).c_str(), outShaderModule);
-        }
-        catch (std::exception ex)
-        {
-            return false;
-        }
-    }
-    return false;
+    std::cout << "Successfully built and loaded vertex shader module: " << filePath << std::endl;
+    return CreateUniquePtr(device, vertShaderModule);
 }
 
-bool ShaderModule::LoadFragmentShader(const VkDevice& device, const char* filePath, VkShaderModule* outShaderModule)
+std::unique_ptr<ShaderModule> ShaderModule::CreateFragmentShaderModule(const VkDevice device, const std::string& filePath)
 {
-    const std::string newPath{ Path::Combine(Path::FRAG_SHADERS_DIR, std::string{filePath}) };
-    if (File::Exists(newPath))
+    VkShaderModule fragShaderModule;
+    if (!LoadFragmentShader(device, filePath, &fragShaderModule))
     {
-        return LoadShader(device, newPath.c_str(), outShaderModule);
+        std::cout << "Error when building or loading the fragment shader module: " << filePath << std::endl;
+        return nullptr;
     }
-    else
-    {
-        try
-        {
-            return LoadShader(device, Path::ResolvePath(std::string{filePath}).c_str(), outShaderModule);
-        }
-        catch (std::exception ex)
-        {
-            return false;
-        }
-    }
-    return false;
+    std::cout << "Successfully built and loaded fragment shader module: " << filePath << std::endl;
+    return CreateUniquePtr(device, fragShaderModule);
+}
+
+const VkShaderModule ShaderModule::get() const
+{
+    return shaderModule;
+}
+
+ShaderModule::operator const VkShaderModule() const
+{
+    return shaderModule;
 }
 
 // Protected Fields
@@ -74,9 +76,24 @@ bool ShaderModule::LoadFragmentShader(const VkDevice& device, const char* filePa
 
 // Private Fields
 
+// Constructors
+
+ShaderModule::ShaderModule(const VkDevice device, const VkShaderModule shaderModule)
+    : device(device), shaderModule(shaderModule) {}
+
 // Private Methods
 
-bool ShaderModule::LoadShader(const VkDevice& device, const char* filePath, VkShaderModule* outShaderModule)
+std::unique_ptr<ShaderModule> ShaderModule::CreateUniquePtr(const VkDevice device, const VkShaderModule shaderModule)
+{
+    struct UniquePtrWrapper : public ShaderModule
+    {
+        UniquePtrWrapper(const VkDevice device, const VkShaderModule shaderModule) : ShaderModule(device, shaderModule) {}
+    };
+
+    return std::make_unique<UniquePtrWrapper>(device, shaderModule);
+}
+
+bool ShaderModule::LoadShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
 {
     //open the file. With cursor at the end
     std::ifstream file(filePath, std::ios::ate | std::ios::binary);
@@ -119,6 +136,48 @@ bool ShaderModule::LoadShader(const VkDevice& device, const char* filePath, VkSh
 
     *outShaderModule = shaderModule;
     return true;
+}
+
+bool ShaderModule::LoadVertexShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
+{
+    const std::string newPath{ Path::Combine(Path::VERT_SHADERS_DIR, std::string{filePath}) };
+    if (File::Exists(newPath))
+    {
+        return LoadShader(device, newPath, outShaderModule);
+    }
+    else
+    {
+        try
+        {
+            return LoadShader(device, filePath, outShaderModule);
+        }
+        catch (std::exception ex)
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+bool ShaderModule::LoadFragmentShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
+{
+    const std::string newPath{ Path::Combine(Path::FRAG_SHADERS_DIR, filePath) };
+    if (File::Exists(newPath))
+    {
+        return LoadShader(device, newPath, outShaderModule);
+    }
+    else
+    {
+        try
+        {
+            return LoadShader(device, filePath, outShaderModule);
+        }
+        catch (std::exception ex)
+        {
+            return false;
+        }
+    }
+    return false;
 }
 
 } // namespace engine

@@ -389,65 +389,6 @@ void VulkanEngine::InitSyncStructures()
 
 void VulkanEngine::InitPipelines()
 {
-    //compile colored triangle modules
-    VkShaderModule triangleFragShader;
-    if (!ShaderModule::LoadFragmentShader(_device, "ColoredTriangle.frag.spv", &triangleFragShader))
-    {
-        std::cout << "Error when building the triangle fragment shader module" << std::endl;
-    }
-    else
-    {
-        std::cout << "Triangle fragment shader successfully loaded" << std::endl;
-    }
-
-    VkShaderModule triangleVertexShader;
-    if (!ShaderModule::LoadVertexShader(_device, "ColoredTriangle.vert.spv", &triangleVertexShader))
-    {
-        std::cout << "Error when building the triangle vertex shader module" << std::endl;
-    }
-    else
-    {
-        std::cout << "Triangle vertex shader successfully loaded" << std::endl;
-    }
-
-    //compile red triangle modules
-    VkShaderModule redTriangleFragShader;
-    if (!ShaderModule::LoadFragmentShader(_device, "triangle.frag.spv", &redTriangleFragShader))
-    {
-        std::cout << "Error when building the triangle fragment shader module" << std::endl;
-    }
-    else {
-        std::cout << "Red Triangle fragment shader successfully loaded" << std::endl;
-    }
-
-    VkShaderModule redTriangleVertShader;
-    if (!ShaderModule::LoadVertexShader(_device, "triangle.vert.spv", &redTriangleVertShader))
-    {
-        std::cout << "Error when building the triangle vertex shader module" << std::endl;
-    }
-    else {
-        std::cout << "Red Triangle vertex shader successfully loaded" << std::endl;
-    }
-
-    //compile rainbow triangle modules
-    VkShaderModule rainbowTriangleFragShader;
-    if (!ShaderModule::LoadFragmentShader(_device, "RainbowTriangle.frag.spv", &rainbowTriangleFragShader))
-    {
-        std::cout << "Error when building the Rainbow triangle fragment shader module" << std::endl;
-    }
-    else {
-        std::cout << "Rainbow Triangle fragment shader successfully loaded" << std::endl;
-    }
-
-    VkShaderModule rainbowTriangleVertShader;
-    if (!ShaderModule::LoadVertexShader(_device, "RainbowTriangle.vert.spv", &rainbowTriangleVertShader))
-    {
-        std::cout << "Error when building the Rainbow triangle vertex shader module" << std::endl;
-    }
-    else {
-        std::cout << "Rainbow Triangle vertex shader successfully loaded" << std::endl;
-    }
-
     //build the pipeline layout that controls the inputs/outputs of the shader
     //we are not using descriptor sets or other systems yet, so no need to use anything other than empty default
     VkPipelineLayoutCreateInfo pipeline_layout_info = vkinit::pipeline_layout_create_info();
@@ -458,9 +399,10 @@ void VulkanEngine::InitPipelines()
     //build the stage-create-info for both vertex and fragment stages. This lets the pipeline know the shader modules per stage
     PipelineBuilder pipelineBuilder;
 
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, triangleVertexShader));
-
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, triangleFragShader));
+    auto triangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "ColoredTriangle.vert.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *triangleVertShader));
+    auto triangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "ColoredTriangle.frag.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *triangleFragShader));
 
 
     //vertex input controls how to read vertices from vertex buffers. We aren't using it yet
@@ -500,9 +442,10 @@ void VulkanEngine::InitPipelines()
     pipelineBuilder._shaderStages.clear();
 
     //add the other shaders
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, redTriangleVertShader));
-
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, redTriangleFragShader));
+    auto redTriangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "triangle.vert.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *redTriangleVertShader));
+    auto redTriangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "triangle.frag.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *redTriangleFragShader));
 
     //build the red triangle pipeline
     _redTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
@@ -518,9 +461,10 @@ void VulkanEngine::InitPipelines()
     pipelineBuilder._shaderStages.clear();
 
     //add the other shaders
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, rainbowTriangleVertShader));
-
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, rainbowTriangleFragShader));
+    auto rainbowTriangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "RainbowTriangle.vert.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *rainbowTriangleVertShader));
+    auto rainbowTriangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "RainbowTriangle.frag.spv");
+    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *rainbowTriangleFragShader));
 
     _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
@@ -538,48 +482,18 @@ void VulkanEngine::InitPipelines()
     //clear the shader stages for the builder
     pipelineBuilder._shaderStages.clear();
 
-    //compile mesh vertex shader
-
-
-    VkShaderModule meshVertShader;
-    if (!ShaderModule::LoadVertexShader(_device, "TriangleMesh.vert.spv", &meshVertShader))
-    {
-        std::cout << "Error when building the triangle vertex shader module" << std::endl;
-    }
-    else {
-        std::cout << "Mesh Triangle vertex shader successfully loaded" << std::endl;
-    }
-
-    VkShaderModule meshFragShader;
-    if (!ShaderModule::LoadFragmentShader(_device, "TriangleMesh.frag.spv", &meshFragShader))
-    {
-        std::cout << "Error when building the triangle frag shader module" << std::endl;
-    }
-    else {
-        std::cout << "Mesh Triangle frag shader successfully loaded" << std::endl;
-    }
-
     //add the other shaders
+    const auto meshVertShader = ShaderModule::CreateVertexShaderModule(_device, "TriangleMesh.vert.spv");
     pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, meshVertShader));
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *meshVertShader));
 
     //make sure that triangleFragShader is holding the compiled colored_triangle.frag
+    const auto meshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "TriangleMesh.frag.spv");
     pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, meshFragShader));
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *meshFragShader));
 
     //build the mesh triangle pipeline
     _meshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
-
-
-    //destroy all shader modules, outside of the queue
-    vkDestroyShaderModule(_device, redTriangleVertShader, nullptr);
-    vkDestroyShaderModule(_device, redTriangleFragShader, nullptr);
-    vkDestroyShaderModule(_device, triangleFragShader, nullptr);
-    vkDestroyShaderModule(_device, triangleVertexShader, nullptr);
-    vkDestroyShaderModule(_device, rainbowTriangleFragShader, nullptr);
-    vkDestroyShaderModule(_device, rainbowTriangleVertShader, nullptr);
-    vkDestroyShaderModule(_device, meshVertShader, nullptr);
-    vkDestroyShaderModule(_device, meshFragShader, nullptr);
 
     _mainDeletionQueue.PushDeletor
     (
