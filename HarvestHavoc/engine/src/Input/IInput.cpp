@@ -19,7 +19,18 @@ namespace engine {
 
 // Public Fields
 
+// Deconstructor
+
+IInput::~IInput() = default;
+
 // Public Methods
+
+std::unique_ptr<IInput> IInput::Create()
+{
+    auto ptr = CreateUniquePtr();
+    ptr->Init();
+    return ptr;
+}
 
 bool IInput::TryOnPressed(const SDL_Keycode keycode)
 {
@@ -121,6 +132,16 @@ std::vector<std::shared_ptr<InputActionMap>> IInput::maps = std::vector<std::sha
 std::unordered_map<SDL_Keycode, std::vector<std::shared_ptr<InputAction>>> IInput::keyBinds = std::unordered_map<SDL_Keycode, std::vector<std::shared_ptr<InputAction>>>();
 
 // Private Methods
+
+std::unique_ptr<IInput> IInput::CreateUniquePtr()
+{
+    struct Wrapper : public IInput
+    {
+    protected:
+        void Init() override {};
+    };
+    return std::make_unique<Wrapper>();
+}
 
 void IInput::ForEachMap(std::function<void(std::shared_ptr<InputActionMap>)> callback)
 {

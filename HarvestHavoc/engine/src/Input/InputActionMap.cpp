@@ -21,7 +21,8 @@ namespace engine {
 
 // Constructors and Destructors
 
-InputActionMap::InputActionMap()
+InputActionMap::InputActionMap(IInput* const input)
+    : input(input)
 {
     heldKeyBinds.reserve(10);
     releasedKeyBinds.reserve(10);

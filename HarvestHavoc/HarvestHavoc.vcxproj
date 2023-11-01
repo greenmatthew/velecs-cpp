@@ -19,15 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\include\ECS\Component.h">
+    <ClInclude Include="engine\include\ECS\IECSManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\ECS\ECSManager.h">
+    <ClInclude Include="game\include\ECS\Components\Physics\AngularKinematics.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\ECS\Entity.h">
+    <ClInclude Include="game\include\ECS\Components\Physics\LinearKinematics.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Material.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Mesh.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Transform.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\ECSManager.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -44,10 +60,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="engine\include\FileManagement\Path.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="engine\include\ECS\Transform.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -91,10 +103,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Input\IEnableDisablePassKey.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="engine\include\Math\Vec3.h">
       <SubType>
       </SubType>
@@ -107,10 +115,31 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\Input\Input.h">
+    <ClInclude Include="game\include\ECS\IPhysicsECS.h">
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="game\include\ECS\IRenderingECS.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\IECSInterface.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\PhysicsECS.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\PipelineStages.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\RenderingECS.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="libs\include\flecs\flecs.h" />
     <ClInclude Include="libs\include\imgui\imconfig.h" />
     <ClInclude Include="libs\include\imgui\imgui.h" />
     <ClInclude Include="libs\include\imgui\imgui_impl_sdl.h" />
@@ -119,20 +148,6 @@
     <ClInclude Include="libs\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="libs\include\imgui\imstb_textedit.h" />
     <ClInclude Include="libs\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="engine\include\Input\IInput.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="engine\include\Input\InputAction.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="engine\include\Input\InputActionMap.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="game\include\Input\MenuInputActionMap.h" />
-    <ClInclude Include="game\include\Input\PlayerInputActionMap.h" />
     <ClInclude Include="engine\include\Math\Consts.h" />
     <ClInclude Include="engine\include\Math\Vec2.h" />
     <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrap.h" />
@@ -141,18 +156,6 @@
     <ClInclude Include="engine\include\Engine\vk_initializers.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engine\src\ECS\Component.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\Entity.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\ECSManager.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="engine\src\Engine\DeletionQueue.cpp">
       <SubType>
       </SubType>
@@ -170,10 +173,6 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="engine\src\FileManagement\Path.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\Transform.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -197,26 +196,20 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Input\IInput.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="engine\src\Input\InputAction.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="engine\src\Input\InputActionMap.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="engine\src\Math\Vec3.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="game\src\Input\Input.cpp">
+    <ClCompile Include="game\src\ECS\ECSManager.cpp" />
+    <ClCompile Include="game\src\ECS\PhysicsECS.cpp">
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="game\src\ECS\RenderingECS.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="libs\src\flecs\flecs.c" />
     <ClCompile Include="libs\src\imgui\imgui.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_demo.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_draw.cpp" />
@@ -224,8 +217,6 @@
     <ClCompile Include="libs\src\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="game\src\Input\MenuInputActionMap.cpp" />
-    <ClCompile Include="game\src\Input\PlayerInputActionMap.cpp" />
     <ClCompile Include="game\src\Main.cpp" />
     <ClCompile Include="engine\src\Math\Vec2.cpp" />
     <ClCompile Include="engine\libs\src\VkBootstrap\VkBootstrap.cpp" />

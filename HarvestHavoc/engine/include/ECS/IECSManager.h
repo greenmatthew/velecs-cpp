@@ -1,6 +1,6 @@
-/// \file    Component.h
+/// \file    IECSManager.h
 /// \author  Matthew Green
-/// \date    10/27/2023 20:59:45
+/// \date    10/30/2023 16:21:32
 /// 
 /// \section LICENSE
 /// 
@@ -10,39 +10,42 @@
 
 #pragma once
 
-#include <memory>
+#include <flecs/flecs.h>
 
 namespace engine {
 
-class Entity;
-
-/// \class Component
+/// \class IECSManager
 /// \brief Brief description.
 ///
 /// Rest of description.
-class Component {
+class IECSManager {
 public:
     // Enums
 
     // Public Fields
 
-    // Constructors and Destructors
-    
-    Component(std::weak_ptr<Entity> entity);
-    
+    flecs::world ecs;
+
+    // Destructors
+
     /// \brief Default deconstructor.
-    ~Component() = default;
+    virtual ~IECSManager() = default;
 
     // Public Methods
 
-    std::weak_ptr<Entity> GetEntity();
+    virtual void Init() = 0;
 
 protected:
     // Protected Fields
 
-    std::weak_ptr<Entity> entity;
+    // Constructors
+
+    /// \brief Default constructor.
+    IECSManager() = default;
 
     // Protected Methods
+
+    virtual void InitPipeline() = 0;
 
 private:
     // Private Fields

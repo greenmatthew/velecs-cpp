@@ -1,6 +1,6 @@
-/// \file    Transform.h
+/// \file    PhysicsSystems.h
 /// \author  Matthew Green
-/// \date    10/27/2023 17:33:18
+/// \date    10/31/2023 18:53:05
 /// 
 /// \section LICENSE
 /// 
@@ -10,31 +10,26 @@
 
 #pragma once
 
-#include "Math/Vec3.h"
+#include "ECS/IPhysicsECS.h"
 
-namespace engine {
+namespace hh {
 
-/// \class Transform
+/// \class PhysicsSystems
 /// \brief Brief description.
 ///
 /// Rest of description.
-class Transform {
+class PhysicsECS : public IPhysicsECS {
 public:
     // Enums
 
     // Public Fields
 
-    Vec3 position{Vec3::ZERO};
-    Vec3 rotation{Vec3::ZERO};
-    Vec3 scale{Vec3::ONE};
-
     // Constructors and Destructors
     
-    /// \brief Default constructor.
-    Transform() = default;
+    PhysicsECS(flecs::world& ecs);
     
     /// \brief Default deconstructor.
-    ~Transform() = default;
+    ~PhysicsECS() = default;
 
     // Public Methods
 
@@ -43,10 +38,14 @@ protected:
 
     // Protected Methods
 
+    void InitComponents() override;
+    void InitSystems() override;
+    void InitEntities() override;
+
 private:
     // Private Fields
 
     // Private Methods
 };
 
-} // namespace engine
+} // namespace hh

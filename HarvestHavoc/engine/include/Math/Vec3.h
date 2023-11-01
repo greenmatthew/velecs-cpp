@@ -12,6 +12,8 @@
 
 #include <glm/vec3.hpp>
 
+#include <iostream>
+
 namespace engine {
 
 /// \class Vec3
@@ -75,6 +77,60 @@ public:
     /// \returns A glm::vec3 with the same components as this Vec3.
     operator glm::vec3() const;
 
+    /// \brief Overloads the addition assignment operator to add another Vec3 to this Vec3 and assign the result to this Vec3.
+    /// \details This method adds the corresponding components of the other Vec3 to this Vec3 and assigns the result to this Vec3.
+    /// \param[in] other The other Vec3 to add to this Vec3.
+    /// \returns A reference to this Vec3 after the addition
+    Vec3& operator+=(const Vec3 other);
+
+    /// \brief Overloads the subtraction assignment operator to subtract another Vec3 from this Vec3 and assign the result to this Vec3.
+    /// \details This method subtracts the corresponding components of the other Vec3 from this Vec3 and assigns the result to this Vec3.
+    /// \param[in] other The other Vec3 to subtract from this Vec3.
+    /// \returns A reference to this Vec3 after the subtraction.
+    Vec3& operator-=(const Vec3 other);
+
+    /// \brief Overloads the multiplication assignment operator to multiply this Vec3 by a scalar and assign the result to this Vec3.
+    /// \details This method multiplies the components of this Vec3 by the specified scalar value and assigns the result to this Vec3.
+    /// \param[in] scalar The scalar value to multiply this Vec3 by.
+    /// \returns A reference to this Vec3 after the multiplication.
+    Vec3& operator*=(const float scalar);
+
+    /// \brief Overloads the division assignment operator to divide this Vec3 by a scalar and assign the result to this Vec3.
+    /// \details This method divides the components of this Vec3 by the specified scalar value and assigns the result to this Vec3.
+    /// \param[in] scalar The scalar value to divide this Vec3 by.
+    /// \returns A reference to this Vec3 after the division.
+    Vec3& operator/=(const float scalar);
+
+    /// \brief Computes the L0 norm of this Vec3, which is the count of non-zero components.
+    /// \returns The L0 norm.
+    unsigned int L0Norm() const;
+
+    /// \brief Computes the L1 norm of this Vec3, which is the sum of the absolute values of the components.
+    /// \returns The L1 norm.
+    float L1Norm() const;
+
+    /// \brief Computes the L2 norm (magnitude) of this Vec3.
+    /// \returns The L2 norm.
+    float L2Norm() const;
+
+    /// \brief Alias for L2Norm, computes the L2 norm (magnitude) of this Vec3.
+    /// \returns The L2 norm.
+    inline float Norm() const { return L2Norm(); }
+
+    /// \brief Alias for L2Norm, computes the L2 norm (magnitude) of this Vec3.
+    /// \returns The L2 norm.
+    inline float Magnitude() const { return L2Norm(); }
+
+    /// \brief Outputs a Vec3 object to an output stream in a formatted manner.
+    /// \param[in] os The output stream to write to.
+    /// \param[in] vec The Vec3 object to output.
+    /// \return The same output stream, for chaining.
+    friend std::ostream& operator<<(std::ostream& os, const Vec3 vec)
+    {
+        os << '(' << vec.x << ", " << vec.y << ", " << vec.z << ')';
+        return os;
+    }
+
 protected:
     // Protected Fields
 
@@ -85,5 +141,41 @@ private:
 
     // Private Methods
 };
+
+/// \brief Overloads the addition operator to add two Vec3 objects together.
+/// \details This method adds the corresponding components of the two Vec3 objects together.
+/// \param[in] lhs The left-hand side Vec3 operand.
+/// \param[in] rhs The right-hand side Vec3 operand.
+/// \returns A new Vec3 object representing the sum of the two Vec3 operands.
+Vec3 operator+(const Vec3 lhs, const Vec3 rhs);
+
+/// \brief Overloads the subtraction operator to subtract one Vec3 from another.
+/// \details This method subtracts the corresponding components of the two Vec3 objects.
+/// \param[in] lhs The left-hand side Vec3 operand.
+/// \param[in] rhs The right-hand side Vec3 operand.
+/// \returns A new Vec3 object representing the difference of the two Vec3 operands.
+Vec3 operator-(const Vec3 lhs, const Vec3 rhs);
+
+/// \brief Overloads the multiplication operator to multiply a Vec3 object by a scalar value.
+/// \details This method multiplies each component of the Vec3 object by the scalar value.
+/// \param[in] lhs The Vec3 object to be multiplied.
+/// \param[in] rhs The scalar value by which to multiply the Vec3 object.
+/// \returns A new Vec3 object representing the product of the Vec3 object and the scalar value.
+Vec3 operator*(const Vec3 lhs, const float rhs);
+
+/// \brief Overloads the multiplication operator to multiply a scalar value by a Vec3 object.
+/// \details This method multiplies each component of the Vec3 object by the scalar value. 
+/// This overload ensures that multiplication is commutative.
+/// \param[in] lhs The scalar value by which to multiply the Vec3 object.
+/// \param[in] rhs The Vec3 object to be multiplied.
+/// \returns A new Vec3 object representing the product of the scalar value and the Vec3 object.
+Vec3 operator*(const float lhs, const Vec3 rhs);
+
+/// \brief Overloads the division operator to divide a Vec3 by a scalar.
+/// \details This method divides the components of the Vec3 by the specified scalar value.
+/// \param[in] lhs The Vec3 operand.
+/// \param[in] rhs The scalar operand.
+/// \returns A new Vec3 object representing the quotient of the Vec3 and scalar operands.
+Vec3 operator/(const Vec3 lhs, const float rhs);
 
 } // namespace engine

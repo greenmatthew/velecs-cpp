@@ -13,16 +13,13 @@
 #include "Engine/vk_pipeline.h"
 #include "Engine/vk_shaders.h"
 
-#include "ECS/ECSManager.h"
-
 #include "Graphics/Color32.h"
 
 #include "FileManagement/Path.h"
 
-#include "Input/Input.h"
-
 #include <iostream>
 #include <fstream>
+#include <chrono>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -38,17 +35,6 @@
 #include <imgui/imgui_impl_sdl.h>
 #include <imgui/imgui_impl_vulkan.h>
 
-#define VK_CHECK(x)                                                    \
-    do                                                                 \
-    {                                                                  \
-        VkResult err = x;                                              \
-        if (err)                                                       \
-        {                                                              \
-            std::cout <<"Detected Vulkan error: " << err << std::endl; \
-            abort();                                                   \
-        }                                                              \
-    } while (0)
-
 namespace engine {
 
 // Public Fields
@@ -57,7 +43,7 @@ namespace engine {
 
 // Public Methods
 
-void VulkanEngine::Init()
+VulkanEngine& VulkanEngine::Init()
 {
     std::cout << engine::Path::GAME_DIR << std::endl;
 
@@ -75,8 +61,6 @@ void VulkanEngine::Init()
         window_flags
     );
 
-    ECSManager::GetInstance().Init(this);
-
     InitVulkan();
     InitSwapchain();
     InitCommands();
@@ -85,22 +69,51 @@ void VulkanEngine::Init()
     InitSyncStructures();
     InitPipelines();
 
+    ecsManager->Init();
+
     InitImGUI();
 
     LoadMeshes();
 
     //everything went fine
     _isInitialized = true;
+    return *this;
 }
 
-void VulkanEngine::InitInput(IInput * const inputHandle)
+// VulkanEngine& VulkanEngine::SetInput(std::unique_ptr<IInput> input)
+// {
+//     this->input = std::move(input);
+//     return *this;
+// }
+
+VulkanEngine& VulkanEngine::SetECS(std::unique_ptr<IECSManager> ecsManager)
 {
-    this->inputHandle = inputHandle;
-
-    this->inputHandle->Init();
+    this->ecsManager = std::move(ecsManager);
+    return *this;
 }
 
-void VulkanEngine::Cleanup()
+VulkanEngine& VulkanEngine::Run()
+{
+    auto lastFrameTime = std::chrono::high_resolution_clock::now();
+
+    while (!isQuitting)
+    {
+        auto currentFrameTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> elapsedTime = currentFrameTime - lastFrameTime;
+        float deltaTime = elapsedTime.count();
+
+        lastFrameTime = currentFrameTime;
+
+        InputUpdate();
+
+        ecsManager->ecs.progress(deltaTime);
+
+        Draw(deltaTime);
+    }
+    return *this;
+}
+
+VulkanEngine& VulkanEngine::Cleanup()
 {
     if (_isInitialized)
     {
@@ -116,16 +129,7 @@ void VulkanEngine::Cleanup()
         vkDestroyInstance(_instance, nullptr);
         SDL_DestroyWindow(_window);
     }
-}
-
-void VulkanEngine::Run()
-{
-    while (!isQuitting)
-    {
-        InputUpdate();
-
-        Draw();
-    }
+    return *this;
 }
 
 void VulkanEngine::SwapToNextRenderPipeline()
@@ -134,11 +138,6 @@ void VulkanEngine::SwapToNextRenderPipeline()
     {
         renderPipelineIndex = 0;
     }
-}
-
-void VulkanEngine::TrackEntity(std::shared_ptr<Entity> entity)
-{
-    entities.push_back(entity);
 }
 
 // Protected Fields
@@ -473,7 +472,7 @@ void VulkanEngine::InitPipelines()
 	VkPipelineLayoutCreateInfo mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
 
 	//setup push constants
-	VkPushConstantRange push_constant;
+    VkPushConstantRange push_constant = {};
 	//this push constant range starts at the beginning
 	push_constant.offset = 0;
 	//this push constant range takes up the size of a MeshPushConstants struct
@@ -609,9 +608,9 @@ void VulkanEngine::InitImGUI()
 
 void VulkanEngine::InputUpdate()
 {
-    inputHandle->HandleIEnableDisableRequests();
+    // input->HandleIEnableDisableRequests();
 
-    inputHandle->TrySettingToIdle();
+    // input->TrySettingToIdle();
 
     //Handle events on queue
     while (SDL_PollEvent(&event) != 0)
@@ -626,14 +625,14 @@ void VulkanEngine::InputUpdate()
             SDL_Keycode keycode = event.key.keysym.sym;
             if (event.key.repeat == 0)
             {
-                inputHandle->TryOnPressed(keycode);
+                // input->TryOnPressed(keycode);
             }
             break;
         }
         case SDL_KEYUP:
         {
             SDL_Keycode keycode = event.key.keysym.sym;
-            inputHandle->TryOnReleased(keycode);
+            // input->TryOnReleased(keycode);
             break;
         }
         default:
@@ -641,10 +640,10 @@ void VulkanEngine::InputUpdate()
         }
     }
 
-    inputHandle->TryOnHeld();
+    // input->TryOnHeld();
 }
 
-void VulkanEngine::Draw()
+void VulkanEngine::Draw(const float deltaTime)
 {
     //wait until the GPU has finished rendering the last frame. Timeout of 1 second
     VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
@@ -729,12 +728,14 @@ void VulkanEngine::Draw()
             glm::mat4 projection = glm::perspective(glm::radians(70.f), _windowExtent.width / (float)_windowExtent.height, 0.1f, 200.0f);
             projection[1][1] *= -1;
             //model rotation
-            glm::mat4 model = glm::rotate(glm::mat4{ 1.0f }, glm::radians(_frameNumber * 0.02f), glm::vec3(0, 1, 0));
+            static float cumulativeAngle = 0.0f;
+            cumulativeAngle += deltaTime * 100.0f;
+            glm::mat4 model = glm::rotate(glm::mat4{ 1.0f }, glm::radians(cumulativeAngle), glm::vec3(0, 1, 0));
 
             //calculate final mesh matrix
             glm::mat4 meshMatrix = projection * view * model;
 
-            MeshPushConstants constants;
+            MeshPushConstants constants = {};
             constants.renderMatrix = meshMatrix;
 
             //upload the matrix to the GPU via push constants
@@ -848,7 +849,6 @@ void VulkanEngine::UploadMesh(Mesh& mesh)
     (
         [=]()
         {
-
             vmaDestroyBuffer(_allocator, mesh._vertexBuffer._buffer, mesh._vertexBuffer._allocation);
         }
     );

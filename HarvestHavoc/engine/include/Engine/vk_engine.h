@@ -15,7 +15,7 @@
 #include "Graphics/Mesh.h"
 #include "Graphics/MeshPushConstants.h"
 
-#include "Input/IInput.h"
+#include "ECS/IECSManager.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -24,9 +24,20 @@
 #include <vector>
 #include <memory>
 
-namespace engine {
+#include "ECS/RenderingECS.h"
 
-class Entity;
+#define VK_CHECK(x)                                                    \
+    do                                                                 \
+    {                                                                  \
+        VkResult err = x;                                              \
+        if (err)                                                       \
+        {                                                              \
+            std::cout <<"Detected Vulkan error: " << err << std::endl; \
+            abort();                                                   \
+        }                                                              \
+    } while (0)
+
+namespace engine {
 
 /// \class VulkanEngine
 /// \brief Brief description.
@@ -34,6 +45,9 @@ class Entity;
 /// Rest of description.
 class VulkanEngine {
 public:
+    // Friend Classes
+    friend class hh::RenderingECS;
+
     // Enums
 
     // Public Fields
@@ -54,29 +68,39 @@ public:
     ///
     /// This method sets up Vulkan, SDL2, and other critical structures required for rendering and processing.
     /// It should be called before attempting to use any other methods of this class.
-    void Init();
+    /// \return Reference to the VulkanEngine instance, allowing for method chaining.
+    VulkanEngine& Init();
 
     /// \brief Initializes input handling.
+    /// \return Reference to the VulkanEngine instance, allowing for method chaining.
     ///
     /// This method sets up SDL2 event handling for processing user input.
     /// It is called by the Init method during engine initialization.
-    void InitInput(IInput * const inputHandle);
+    // VulkanEngine& SetInput(std::unique_ptr<IInput> inputHandle);
 
-    /// \brief Shuts down the engine, releasing any resources acquired during initialization or runtime.
+    /// \brief Sets the ECS Manager.
+    /// \param ecsManager A unique pointer to an IECSManager implementation.
+    /// \return Reference to the VulkanEngine instance, allowing for method chaining.
     ///
-    /// This method is responsible for cleaning up and releasing any resources to ensure a clean exit.
-    /// It should be called before exiting the program to ensure memory and other resources are properly released.
-    void Cleanup();
+    /// This method assigns the ECS Manager which will handle the creation and processing
+    /// of components, entities, and systems within the ECS architecture.
+    VulkanEngine& SetECS(std::unique_ptr<IECSManager> ecsManager);
 
     /// \brief Runs the main event and rendering loop, handling input and drawing frames.
+    /// \return Reference to the VulkanEngine instance, allowing for method chaining.
     ///
     /// This method enters a loop which processes SDL2 events, updates the engine state, and renders frames to the screen.
     /// It continues looping until a quit event is received, at which point it returns control to the caller.
-    void Run();
+    VulkanEngine& Run();
+
+    /// \brief Shuts down the engine, releasing any resources acquired during initialization or runtime.
+    /// \return Reference to the VulkanEngine instance, allowing for method chaining.
+    ///
+    /// This method is responsible for cleaning up and releasing any resources to ensure a clean exit.
+    /// It should be called before exiting the program to ensure memory and other resources are properly released.
+    VulkanEngine& Cleanup();
 
     void SwapToNextRenderPipeline();
-
-    void TrackEntity(std::shared_ptr<Entity> entity);
 
 protected:
     // Protected Fields
@@ -86,6 +110,9 @@ protected:
 private:
     // Private Fields
 
+    // std::unique_ptr<IInput> input;
+    std::unique_ptr<IECSManager> ecsManager;
+
     bool _isInitialized{false}; /// \brief Indicates whether the engine has been initialized.
     int _frameNumber{0}; /// \brief Keeps track of the current frame number.
     bool isQuitting = false; /// \brief Flag to indicate when the application is requesting a shutdown.
@@ -94,8 +121,6 @@ private:
     VkExtent2D _windowExtent{1700, 900}; /// \brief Desired dimensions of the rendering window.
 
     struct SDL_Window* _window{nullptr}; /// \brief Pointer to the SDL window structure.
-
-    IInput* inputHandle{nullptr};
 
     VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
     VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
@@ -125,7 +150,7 @@ private:
     VkPipeline _triangleWireFramePipeline{nullptr}; /// \brief Handle to the pipeline.
     VkPipeline _rainbowTrianglePipeline{nullptr}; /// \brief Handle to the pipeline.
 
-    size_t renderPipelineIndex{0};
+    size_t renderPipelineIndex{4};
 
     DeletionQueue _mainDeletionQueue;
 
@@ -136,8 +161,6 @@ private:
     Mesh _triangleMesh;
 
     Mesh _monkeyMesh;
-
-    std::vector<std::shared_ptr<Entity>> entities;
 
     // Constructors and Destructors
     VulkanEngine() = default;
@@ -202,7 +225,7 @@ private:
     ///
     /// This method performs the rendering operations required to draw a frame to the screen.
     /// It is called repeatedly during the main event loop.
-    void Draw();
+    void Draw(const float deltaTime);
 
     void LoadMeshes();
 

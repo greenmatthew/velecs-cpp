@@ -12,25 +12,25 @@
 #include "Input/PlayerInputActionMap.h"
 #include "Input/MenuInputActionMap.h"
 
-namespace hh::Input {
+namespace hh {
 
 // Public Fields
 
-std::shared_ptr<PlayerInputActionMap> Input::Player = Input::CreateMap<PlayerInputActionMap>();
-std::shared_ptr<MenuInputActionMap> Input::Menu = Input::CreateMap<MenuInputActionMap>();
 
 // Constructors and Destructors
 
 // Public Methods
 
-void Input::Init()
+void Input::Init(std::weak_ptr<IInput> input)
 {
-	Input::Player->Switch();
+    Player = CreateMap<PlayerInputActionMap>(input);
+    Menu = CreateMap<MenuInputActionMap>(input);
+    Player->Switch();
 }
 
 void Input::SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr)
 {
-    Input::GetInstance().InternalSwitchTo(inputActionMapPtr);
+    InternalSwitchTo(inputActionMapPtr);
 }
 
 // Protected Fields
@@ -41,4 +41,4 @@ void Input::SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr)
 
 // Private Methods
 
-} // namespace hh::Input
+} // namespace hh

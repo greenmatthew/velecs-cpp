@@ -41,7 +41,7 @@ public:
     // Constructors and Destructors
 
     /// \brief Default constructor.
-    InputActionMap();
+    InputActionMap(IInput* const input);
 
     /// \brief Virtual destructor to allow for subclassing and also makes class abstract.
     virtual ~InputActionMap() = 0;
@@ -108,6 +108,8 @@ public:
 
 protected:
     // Protected Fields
+    
+    IInput* const input;
 
     // Protected Methods
 

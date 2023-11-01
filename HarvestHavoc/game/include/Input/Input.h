@@ -15,7 +15,7 @@
 
 #include <memory>
 
-namespace hh::Input {
+namespace hh {
 
 /// \class Input
 /// \brief Brief description.
@@ -27,25 +27,17 @@ public:
 
     // Public Fields
 
-    static std::shared_ptr<class PlayerInputActionMap> Player;  /// \brief Input action map for player controls
-    static std::shared_ptr<class MenuInputActionMap> Menu;      /// \brief Input action map for menu navigation
+    std::shared_ptr<PlayerInputActionMap> Player = CreateMap<PlayerInputActionMap>();  /// \brief Input action map for player controls
+    std::shared_ptr<MenuInputActionMap> Menu = CreateMap<MenuInputActionMap>(); /// \brief Input action map for menu navigation
 
     // Public Methods
 
-    /// \brief Gets the singleton instance of the Input class.
-    /// 
-    /// \return Reference to the singleton instance of the Input class.
-    static Input& GetInstance() {
-        static Input instance;  // Created on first use, destroyed at program end
-        return instance;
-    }
-
-    void Init() override;
+    void Init(std::weak_ptr<IInput> input) override;
 
     /// \brief Switches to the specified input action map.
     /// 
     /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
-    static void SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr);
+    void SwitchTo(std::shared_ptr<engine::InputActionMap> inputActionMapPtr);
 
 protected:
     // Protected Fields
@@ -83,4 +75,4 @@ private:
     // Private Methods
 };
 
-} // namespace hh::Input
+} // namespace hh

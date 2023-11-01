@@ -57,28 +57,10 @@
     <ClInclude Include="engine\include\Math\Vec2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="engine\include\Input\IInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\Input\InputActionMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\Input\InputAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="engine\include\Core\IEnableDisable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\include\Input\PlayerInputActionMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game\include\Input\MenuInputActionMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="engine\include\Debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\Input\IEnableDisablePassKey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\include\Core\Event.h">
@@ -102,25 +84,10 @@
     <ClInclude Include="engine\include\Engine\vk_shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\include\Input\Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="engine\include\Graphics\Color32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\include\Math\Vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\ECS\Transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\ECS\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\ECS\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\include\ECS\ECSManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\include\Graphics\Mesh.h">
@@ -139,6 +106,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="engine\include\Engine\DeletionQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\include\flecs\flecs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\ECSManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\include\ECS\IECSManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Physics\LinearKinematics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Physics\AngularKinematics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\PipelineStages.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\IRenderingECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\RenderingECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\IPhysicsECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\PhysicsECS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\IECSInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -179,22 +188,7 @@
     <ClCompile Include="engine\src\Engine\vk_initializers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine\src\Input\IInput.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\Input\InputAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\Input\InputActionMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="engine\src\Core\IEnableDisable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game\src\Input\PlayerInputActionMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game\src\Input\MenuInputActionMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
@@ -212,25 +206,10 @@
     <ClCompile Include="engine\src\Engine\vk_shaders.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game\src\Input\Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="engine\src\Graphics\Color32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\Math\Vec3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\Transform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\src\ECS\ECSManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\Graphics\Mesh.cpp">
@@ -240,6 +219,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="engine\src\Engine\DeletionQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\src\flecs\flecs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\src\ECS\ECSManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\src\ECS\RenderingECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game\src\ECS\PhysicsECS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

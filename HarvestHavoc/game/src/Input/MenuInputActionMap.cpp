@@ -18,7 +18,7 @@
 
 #include "SDL2/SDL.h"
 
-namespace hh::Input {
+namespace hh {
 
 // Public Fields
 
@@ -28,19 +28,22 @@ namespace hh::Input {
 
 void CloseMenu()
 {
-    std::cout << "Closing menu." << std::endl;
-    Input::Player->Switch();
+    
 }
 
 void MenuInputActionMap::Init()
 {
     Escape = CreateBinding(SDLK_ESCAPE);
-    Escape->OnPressed += CloseMenu;
+    Escape->OnPressed += [&]()
+    { 
+        std::cout << "Closing menu." << std::endl;
+        input->Player->Switch();
+    };
 }
 
 void MenuInputActionMap::Switch()
 {
-    Input::SwitchTo(Input::Menu);
+    input->SwitchTo(input->Menu);
 }
 
 // Protected Fields
@@ -51,4 +54,4 @@ void MenuInputActionMap::Switch()
 
 // Private Methods
 
-} // namespace hh::Input
+} // namespace hh

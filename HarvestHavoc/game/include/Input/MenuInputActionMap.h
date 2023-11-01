@@ -13,7 +13,7 @@
 #include <Input/InputActionMap.h>
 #include "Input/Input.h"
 
-namespace hh::Input {
+namespace hh {
 
 /// \class MenuInputActionMap
 /// \brief Manages the mappings of SDL keycodes to input actions for menu interactions.
@@ -58,4 +58,4 @@ private:
     // Private Methods
 };
 
-} // namespace hh::Input
+} // namespace hh

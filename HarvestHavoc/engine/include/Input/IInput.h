@@ -35,18 +35,14 @@ public:
 
     // Public Fields
 
-    // Constructors and Deconstructor
-
-    /// \brief Default constructor.
-    IInput() = default;
+    // Deconstructor
 
     /// \brief Default destructor.
-    ~IInput() = default;
+    virtual ~IInput() = 0;
 
     // Public Methods
 
-    /// \brief Initializes the Input instance.
-    virtual void Init() = 0;
+    static std::unique_ptr<IInput> Create();
 
     /// \brief Attempts to trigger the 'Pressed' state on all active input maps.
     /// 
@@ -76,15 +72,18 @@ protected:
 
     // Protected Methods
 
+    /// \brief Initializes the Input instance.
+    virtual void Init(std::weak_ptr<IInput> input) = 0;
+
     /// \brief Creates a new input action map of type T.
-    /// 
-    /// \tparam T The type of the input action map to create.
+    /// \tparam TInput The type of input manager to create.
+    /// \tparam TMap The type of the input action map to create.
     /// \return A shared pointer to the newly created input action map.
-    template<typename T>
-    static std::shared_ptr<T> CreateMap()
+    template<typename TInput, typename TMap>
+    std::shared_ptr<TMap> CreateMap()
     {
-        static_assert(std::is_base_of<InputActionMap, T>::value, "[Input] T must be a subclass of InputActionMap.");
-        auto inputActionMapPtr = std::make_shared<T>();
+        static_assert(std::is_base_of<InputActionMap, TMap>::value, "[Input] T must be a subclass of InputActionMap.");
+        auto inputActionMapPtr = std::make_shared<TMap>();
         inputActionMapPtr->Init();
         maps.push_back(inputActionMapPtr);
         return inputActionMapPtr;
@@ -101,7 +100,14 @@ private:
     static std::vector<std::shared_ptr<InputActionMap>> maps; /// \brief List of input action maps
     static std::unordered_map<SDL_Keycode, std::vector<std::shared_ptr<InputAction>>> keyBinds; /// \brief Map of key bindings to input actions
 
+    // Constructors
+
+    /// \brief Default constructor.
+    IInput() = default;
+    
     // Private Methods
+
+    static std::unique_ptr<IInput> CreateUniquePtr();
 
     /// \brief Iterates through all input action maps, applying the specified callback function.
     /// 

@@ -84,4 +84,4 @@ void PlayerInputActionMap::Switch()
 
 // Private Methods
 
-} // namespace hh::Input
+} // namespace hh
