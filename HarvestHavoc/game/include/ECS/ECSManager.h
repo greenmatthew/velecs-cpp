@@ -43,6 +43,8 @@ public:
 
     void Init() override;
 
+    void Cleanup() override;
+
 protected:
     // Protected Fields
 

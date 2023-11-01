@@ -39,6 +39,11 @@ void ECSManager::Init()
     renderingECS->Init();
 }
 
+void ECSManager::Cleanup()
+{
+    renderingECS->Cleanup();
+}
+
 // Protected Fields
 
 // Protected Methods
@@ -55,7 +60,9 @@ void ECSManager::InitPipeline()
         .with<InputUpdate>().or_()
         .with<Update>().or_()
         .with<Collisions>().or_()
+        .with<PreDraw>().or_()
         .with<Draw>().or_()
+        .with<PostDraw>().or_()
         .with<HouseKeeping>()
         .build();
 
@@ -83,25 +90,11 @@ void ECSManager::InitPipeline()
     //        std::cout << "Running Collisions Stage" << std::endl;
     //    });
 
-    //// PreDraw Stage
-    //ecs.system()
-    //    .kind<PreDraw>()
-    //    .iter([](flecs::iter& it) {
-    //        std::cout << "Running PreDraw Stage" << std::endl;
-    //    });
-
     //// Draw Stage
     //ecs.system()
     //    .kind<Draw>()
     //    .iter([](flecs::iter& it) {
     //        std::cout << "Running Draw Stage" << std::endl;
-    //    });
-
-    //// PostDraw Stage
-    //ecs.system()
-    //    .kind<PostDraw>()
-    //    .iter([](flecs::iter& it) {
-    //        std::cout << "Running PostDraw Stage" << std::endl;
     //    });
 
     //// HouseKeeping Stage

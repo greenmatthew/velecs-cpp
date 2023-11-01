@@ -43,7 +43,7 @@ public:
 
     // Public Methods
 
-    void Init()
+    virtual void Init()
     {
         InitComponents();
         InitSystems();

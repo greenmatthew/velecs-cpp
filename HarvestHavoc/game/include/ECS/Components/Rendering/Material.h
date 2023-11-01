@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Graphics/Color32.h>
+
 namespace hh {
 
 /// \class Material
@@ -17,6 +19,7 @@ namespace hh {
 ///
 /// Rest of description.
 struct Material {
+	engine::Color32 color{engine::Color32::MAGENTA};
 };
 
 } // namespace hh

@@ -34,6 +34,7 @@ public:
     // Public Methods
 
     virtual void Init() = 0;
+    virtual void Cleanup() = 0;
 
 protected:
     // Protected Fields

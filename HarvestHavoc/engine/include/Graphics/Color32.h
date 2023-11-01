@@ -55,6 +55,8 @@ public:
     uint8_t a; /// \brief The alpha channel.
 
     // Constructors and Destructors
+
+    Color32();
     
     /// \brief Default deconstructor.
     ~Color32() = default;

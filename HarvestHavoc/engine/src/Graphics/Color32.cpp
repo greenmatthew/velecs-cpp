@@ -50,6 +50,10 @@ const Color32 Color32::VIOLET{238U, 130U, 238U};
 
 // Constructors and Destructors
 
+Color32::Color32()
+    : r(255U), g(0u), b(255u), a(255U) {}
+
+
 // Public Methods
 
 Color32 Color32::FromUInt8(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a /*= 255U*/)
