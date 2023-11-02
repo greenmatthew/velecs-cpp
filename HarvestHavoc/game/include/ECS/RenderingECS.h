@@ -166,6 +166,12 @@ private:
         const float aspectRatio = 16.0f/9.0f,
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f);
+    
+    flecs::entity CreateOrthoCamera(const engine::Vec3 position = engine::Vec3::ZERO,
+        const engine::Vec3 rotation = engine::Vec3::ZERO,
+        const engine::Vec2 resolution = engine::Vec2{1920.0f, 1080.0f},
+        const float nearPlaneOffset = 0.1f,
+        const float farPlaneOffset = 200.0f);
 
     glm::mat4 GetRenderMatrix(const Transform& transform, const flecs::entity camera);
 };

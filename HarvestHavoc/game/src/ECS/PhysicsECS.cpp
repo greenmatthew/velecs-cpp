@@ -48,6 +48,20 @@ void PhysicsECS::InitSystems()
 
                     linear.velocity += linear.acceleration * delta_time * delta_time;
                     transform.position += linear.velocity * delta_time;
+
+                    auto entity = it.entity(i);
+                    const char* entityName = entity.name();
+                    if (entityName)
+                    {
+                        std::cout << "name: " << entityName << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << "name: n/a" << std::endl;
+                    }
+                    std::cout << "id: " << entity.id() << std::endl;
+                    std::cout << "vel: " << linear.velocity << std::endl;
+                    std::cout << "pos: " << transform.position << '\n' << std::endl;
                 }
             }
     );
@@ -71,9 +85,6 @@ void PhysicsECS::InitSystems()
 
 void PhysicsECS::InitEntities()
 {
-    ecs.entity()
-        .set<Transform>({})
-        .set<LinearKinematics>({ Vec3::ONE, Vec3::ZERO });
 }
 
 // Private Fields

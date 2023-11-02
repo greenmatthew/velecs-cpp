@@ -53,35 +53,78 @@ public:
     ///
     /// This method calculates the width of the rectangle by subtracting the x-coordinate of the minimum point from the x-coordinate of the maximum point.
     /// \return The width of the rectangle.
-    float GetWidth() const;
+    inline float GetWidth() const
+    {
+        return max.x - min.x;
+    }
+
+    /// \brief Computes and returns half the width of the rectangle.
+    ///
+    /// This method calculates half the width of the rectangle by subtracting the x-coordinate 
+    /// of the minimum point from the x-coordinate of the maximum point, and then dividing the result by 2.
+    /// \return Half the width of the rectangle.
+    inline float GetHalfWidth() const
+    {
+        return GetWidth() * 0.5f;
+    }
 
     /// \brief Computes and returns the length of the rectangle.
     ///
     /// This method calculates the length of the rectangle by subtracting the y-coordinate of the minimum point from the y-coordinate of the maximum point.
     /// \return The length of the rectangle.
-    float GetLength() const;
+    inline float GetLength() const
+    {
+        return max.y - min.y;
+    }
+
+    /// \brief Computes and returns half the length of the rectangle.
+    ///
+    /// This method calculates half the length of the rectangle by subtracting the y-coordinate 
+    /// of the minimum point from the y-coordinate of the maximum point, and then dividing the result by 2.
+    /// \return Half the length of the rectangle.
+    inline float GetHalfLength() const
+    {
+        return GetLength() * 0.5f;
+    }
 
     /// \brief Computes and returns the area of the rectangle.
     /// \return The area of the rectangle.
-    float GetArea() const;
+    inline float GetArea() const
+    {
+        return GetWidth() * GetLength();
+    }
 
     /// \brief Computes and returns the perimeter of the rectangle.
     /// \return The perimeter of the rectangle.
-    float GetPerimeter() const;
+    inline float GetPerimeter() const
+    {
+        return 2 * (GetWidth() + GetLength());
+    }
 
     /// \brief Computes and returns the center point of the rectangle.
     /// \return The center point of the rectangle.
-    Vec2 GetCenter() const;
+    inline Vec2 GetCenter() const
+    {
+        return Vec2((min.x + max.x) / 2, (min.y + max.y) / 2);
+    }
 
     /// \brief Checks if a point is within the rectangle.
     /// \param[in] point The point to check.
     /// \return True if the point is within the rectangle, false otherwise.
-    bool Contains(const Vec2& point) const;
+    inline bool Contains(const Vec2& point) const
+    {
+        return point.x >= min.x && point.x <= max.x &&
+            point.y >= min.y && point.y <= max.y;
+    }
 
     /// \brief Checks if another rectangle intersects with this rectangle.
     /// \param[in] other The other rectangle to check.
     /// \return True if the rectangles intersect, false otherwise.
-    bool Intersects(const Rect& other) const;
+    inline bool Intersects(const Rect& other) const
+    {
+        return max.x >= other.min.x && min.x <= other.max.x &&
+            max.y >= other.min.y && min.y <= other.max.y;
+    }
 
 protected:
     // Protected Fields

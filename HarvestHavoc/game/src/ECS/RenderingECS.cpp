@@ -297,20 +297,16 @@ void RenderingECS::InitSystems()
 }
 
 void RenderingECS::InitEntities()
-{
-    OrthoCamera ortho{Rect{Vec2::zero(), engine::Vec2{1700.0f, 900.0f}}};
-    auto camera = ecs.entity("Camera")
-        .set<Transform>({})
-        .set<OrthoCamera>(ortho);
-    
+{ 
     ecs.set<GlobalData>({CreatePerspectiveCamera(Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
+    // ecs.set<GlobalData>({CreateOrthoCamera(Vec3{0.0f, 0.0f,-100.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f}, 0.0f, 200.0f)});
 
     ecs.entity()
-        .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 0.5f})
+        .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 1.0f})
         .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
         .set<Material>({engine::Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
-        .set<LinearKinematics>({Vec3{0.0f, 0.00f, 0.00f}, Vec3::ZERO})
-        .set<AngularKinematics>({Vec3{0.0f, 0.0f, -90.0f}, Vec3::ZERO});
+        .set<LinearKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3{0.1f, 0.0f, 0.0f}})
+        .set<AngularKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3::ZERO});
 }
 
 // Private Fields
@@ -321,7 +317,7 @@ void RenderingECS::InitVulkan()
 {
     vkb::InstanceBuilder builder;
 
-    auto inst_ret = builder.set_app_name("HarvestHavoc")
+    auto inst_ret = builder.set_app_name("Harvest Havoc")
     #ifdef _DEBUG
         .request_validation_layers(true)
     #endif
@@ -850,10 +846,23 @@ flecs::entity RenderingECS::CreatePerspectiveCamera(const Vec3 position /*= Vec3
         .set<PerspectiveCamera>(perspective);
 }
 
+flecs::entity RenderingECS::CreateOrthoCamera(const Vec3 position /*= Vec3::ZERO*/,
+    const Vec3 rotation /*= Vec3::ZERO*/,
+    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
+    const float nearPlaneOffset /*= 0.1f*/,
+    const float farPlaneOffset /*= 200.0f*/)
+{
+    Transform transform{position, rotation};
+    Rect extent{Vec2::zero(), resolution};
+    OrthoCamera ortho{extent, nearPlaneOffset, farPlaneOffset};
+    return ecs.entity("Camera")
+        .set<Transform>(transform)
+        .set<OrthoCamera>(ortho);
+}
+
 glm::mat4 RenderingECS::GetRenderMatrix(const Transform& transform, const flecs::entity camera)
 {
     auto cameraTransform = camera.get<Transform>();
-
 
     // Start with the identity matrix
     glm::mat4 model = glm::mat4(1.0f); 
@@ -874,21 +883,52 @@ glm::mat4 RenderingECS::GetRenderMatrix(const Transform& transform, const flecs:
     auto perspectiveCamera = camera.get<PerspectiveCamera>();
     if (perspectiveCamera)
     {
-        projection = glm::perspective(glm::radians(70.f), engine._windowExtent.width / (float)engine._windowExtent.height, 0.1f, 200.0f);
+        projection = glm::perspective(glm::radians(perspectiveCamera->verticalFov),
+            perspectiveCamera->aspectRatio,
+            perspectiveCamera->nearPlaneOffset,
+            perspectiveCamera->farPlaneOffset);
     }
     else
     {
         auto orthoCamera = camera.get<OrthoCamera>();
-        auto extent = orthoCamera->extent;
-        glm::ortho(extent.min.x, extent.max.x, extent.min.y, extent.max.y, orthoCamera->nearPlaneOffset, orthoCamera->farPlaneOffset);
+        Rect extent = orthoCamera->extent;
+        float halfWidth = extent.GetHalfWidth()*0.001f;
+        float halfLength = extent.GetHalfLength()*0.001f;
+        projection = glm::ortho(
+            -halfWidth, halfWidth,
+            -halfLength, halfLength,
+            orthoCamera->nearPlaneOffset,
+            orthoCamera->farPlaneOffset);
+        static bool once = true;
+        if (once)
+        {
+            for (int y = 0; y < 4; y++) {
+                for (int x = 0; x < 4; x++) {
+                    std::cout << projection[x][y] << " ";
+                }
+                std::cout << std::endl;
+            }
+            once = false;
+        }
     }
-    
 
     // Apply translation in world space
     glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;
+
+    static bool once2 = true;
+    if (once2)
+    {
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                std::cout << meshMatrix[x][y] << " ";
+            }
+            std::cout << std::endl;
+        }
+        once2 = false;
+    }
 
     return meshMatrix;
 }

@@ -26,43 +26,6 @@ Rect::Rect(const float left, const float bottom, const float right, const float 
 
 // Public Methods
 
-float Rect::GetWidth() const
-{
-    return max.x - min.x;
-}
-
-float Rect::GetLength() const
-{
-    return max.y - min.y;
-}
-
-float Rect::GetArea() const
-{
-    return GetWidth() * GetLength();
-}
-
-float Rect::GetPerimeter() const
-{
-    return 2 * (GetWidth() + GetLength());
-}
-
-Vec2 Rect::GetCenter() const
-{
-    return Vec2((min.x + max.x) / 2, (min.y + max.y) / 2);
-}
-
-bool Rect::Contains(const Vec2& point) const
-{
-    return point.x >= min.x && point.x <= max.x &&
-           point.y >= min.y && point.y <= max.y;
-}
-
-bool Rect::Intersects(const Rect& other) const
-{
-    return max.x >= other.min.x && min.x <= other.max.x &&
-           max.y >= other.min.y && min.y <= other.max.y;
-}
-
 // Protected Fields
 
 // Protected Methods

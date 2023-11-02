@@ -40,13 +40,15 @@ namespace engine {
 
 VulkanEngine& VulkanEngine::Init()
 {
-    std::cout << engine::Path::GAME_DIR << std::endl;
+    ecsManager->Init();
 
     // We initialize SDL and create a window with it. 
     SDL_Init(SDL_INIT_VIDEO);
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN);
-    
+
+    ecsManager->ecs.get<GlobalData>()->camera;
+
     _window = SDL_CreateWindow(
         "Harvest Havoc",
         SDL_WINDOWPOS_UNDEFINED,
@@ -55,8 +57,6 @@ VulkanEngine& VulkanEngine::Init()
         _windowExtent.height,
         window_flags
     );
-
-    ecsManager->Init();
 
     //everything went fine
     _isInitialized = true;
