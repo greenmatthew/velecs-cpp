@@ -10,19 +10,7 @@
 
 #pragma once
 
-#include "ECS/PipelineStages.h"
-
-#include "Math/Vec2.h"
-#include "Math/Vec3.h"
-
-#include "ECS/Components/Rendering/Transform.h"
-#include "ECS/Components/Rendering/Mesh.h"
-#include "ECS/Components/Rendering/Material.h"
-
-#include "ECS/Components/Physics/LinearKinematics.h"
-#include "ECS/Components/Physics/AngularKinematics.h"
-
-#include <flecs/flecs.h>
+#include "ECS/ECSCommon.h"
 
 namespace hh {
 

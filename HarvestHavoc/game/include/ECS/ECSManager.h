@@ -14,6 +14,8 @@
 
 #include <ECS/IECSManager.h>
 
+#include "ECS/ECSCommon.h"
+
 #include "ECS/RenderingECS.h"
 #include "ECS/PhysicsECS.h"
 
@@ -30,6 +32,8 @@ public:
     // Enums
 
     // Public Fields
+
+    ECSPipelineStages stages;
 
     // Constructors and Destructors
     

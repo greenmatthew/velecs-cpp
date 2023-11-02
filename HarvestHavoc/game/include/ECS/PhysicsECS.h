@@ -26,7 +26,7 @@ public:
 
     // Constructors and Destructors
     
-    PhysicsECS(flecs::world& ecs);
+    PhysicsECS(flecs::world& ecs, ECSPipelineStages& stages);
     
     /// \brief Default deconstructor.
     ~PhysicsECS() = default;
@@ -44,6 +44,8 @@ protected:
 
 private:
     // Private Fields
+
+    ECSPipelineStages& stages;
 
     // Private Methods
 };

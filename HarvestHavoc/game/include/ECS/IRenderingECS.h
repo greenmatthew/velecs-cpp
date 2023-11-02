@@ -52,8 +52,6 @@ private:
     // Private Fields
 
     // Private Methods
-    
-    virtual glm::mat4 GetRenderMatrix(const struct Mesh& mesh, const struct Material& material) = 0;
 };
 
 } // namespace hh

@@ -126,9 +126,6 @@
     <ClInclude Include="game\include\ECS\Components\Physics\AngularKinematics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\PipelineStages.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game\include\ECS\IRenderingECS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -148,6 +145,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="game\include\ECS\IECSInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\OrthoCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\ECSCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\include\Graphics\Rect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game\include\ECS\Components\Rendering\PerspectiveCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -231,6 +240,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game\src\ECS\PhysicsECS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\src\Graphics\Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

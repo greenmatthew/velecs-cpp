@@ -63,8 +63,8 @@ namespace hh {
 
 // Constructors and Destructors
 
-RenderingECS::RenderingECS(flecs::world& ecs, VulkanEngine& engine)
-    : IRenderingECS(ecs, engine) {}
+RenderingECS::RenderingECS(flecs::world& ecs, ECSPipelineStages& stages, VulkanEngine& engine)
+    : IRenderingECS(ecs, engine), stages(stages) {}
 
 // Public Methods
 
@@ -152,7 +152,7 @@ void RenderingECS::InitSystems()
     //);
 
     ecs.system()
-        .kind<PreDraw>()
+        .kind(stages.PreDraw)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
@@ -203,7 +203,7 @@ void RenderingECS::InitSystems()
     );
 
     ecs.system()
-        .kind<PostDraw>()
+        .kind(stages.PostDraw)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
@@ -263,42 +263,54 @@ void RenderingECS::InitSystems()
     );
 
     ecs.system<Transform, Mesh, Material>()
-      .kind<Draw>()
-      .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
-      {
-          float deltaTime = it.delta_time();
+        .kind(stages.Draw)
+        .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
+        {
+            float deltaTime = it.delta_time();
 
-          for (auto i : it)
-          {
-              Transform transform = transforms[i];
-              Mesh mesh = meshes[i];
-              Material material = materials[i];
+            for (auto i : it)
+            {
+                Transform transform = transforms[i];
+                Mesh mesh = meshes[i];
+                Material material = materials[i];
 
-              //vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, material._meshPipeline);
+                const auto* globalData = it.world().get<GlobalData>();
+                flecs::entity camera(it.world(), globalData->camera);
 
-              ////bind the mesh vertex buffer with offset 0
-              //VkDeviceSize offset = 0;
-              //vkCmdBindVertexBuffers(cmd, 0, 1, &mesh._vertexBuffer._buffer, &offset);
+                vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
 
-              //MeshPushConstants constants = {};
-              //constants.renderMatrix = mesh.GetRenderMatrix(material);
+                //bind the mesh vertex buffer with offset 0
+                VkDeviceSize offset = 0;
+                vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
 
-              ////upload the matrix to the GPU via push constants
-              //vkCmdPushConstants(cmd, _meshPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+                MeshPushConstants constants = {};
+                constants.renderMatrix = GetRenderMatrix(transform, camera);
 
-              ////we can now draw the mesh
-              //vkCmdDraw(cmd, (uint32_t)_triangleMesh._vertices.size(), 1, 0, 0);
-          }
-      }
+                //upload the matrix to the GPU via push constants
+                vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+
+                //we can now draw the mesh
+                vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+            }
+        }
     );
 }
 
 void RenderingECS::InitEntities()
 {
-    ecs.entity()
+    OrthoCamera ortho{Rect{Vec2::zero(), engine::Vec2{1700.0f, 900.0f}}};
+    auto camera = ecs.entity("Camera")
         .set<Transform>({})
+        .set<OrthoCamera>(ortho);
+    
+    ecs.set<GlobalData>({CreatePerspectiveCamera(Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
+
+    ecs.entity()
+        .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 0.5f})
         .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-        .set<Material>({});
+        .set<Material>({engine::Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
+        .set<LinearKinematics>({Vec3{0.0f, 0.00f, 0.00f}, Vec3::ZERO})
+        .set<AngularKinematics>({Vec3{0.0f, 0.0f, -90.0f}, Vec3::ZERO});
 }
 
 // Private Fields
@@ -822,9 +834,63 @@ void RenderingECS::UploadMesh(Mesh& mesh)
     vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
 }
 
-glm::mat4 RenderingECS::GetRenderMatrix(const Mesh& mesh, const Material& material)
+flecs::entity RenderingECS::CreatePerspectiveCamera(const Vec3 position /*= Vec3::ZERO*/,
+    const Vec3 rotation /*= Vec3::ZERO*/,
+    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
+    const float verticalFOV /*= 70.0f*/,
+    const float aspectRatio /*= 16.0f/9.0f*/,
+    const float nearPlaneOffset /*= 0.1f*/,
+    const float farPlaneOffset /*= 200.0f*/)
 {
-    return glm::mat4(1.0f);
+    Transform transform{position, rotation};
+    Rect extent{Vec2::zero(), resolution};
+    PerspectiveCamera perspective{extent, verticalFOV, aspectRatio, nearPlaneOffset, farPlaneOffset};
+    return ecs.entity("Camera")
+        .set<Transform>(transform)
+        .set<PerspectiveCamera>(perspective);
+}
+
+glm::mat4 RenderingECS::GetRenderMatrix(const Transform& transform, const flecs::entity camera)
+{
+    auto cameraTransform = camera.get<Transform>();
+
+
+    // Start with the identity matrix
+    glm::mat4 model = glm::mat4(1.0f); 
+
+    // Apply scaling
+    model = glm::scale(model, (glm::vec3)transform.scale);
+
+    // Apply rotation around the x, y, and z axes
+    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0, 1, 0));
+    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
+
+    // Compute the view matrix
+    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraTransform->position);
+
+    // Compute the projection matrix
+    glm::mat4 projection;
+    auto perspectiveCamera = camera.get<PerspectiveCamera>();
+    if (perspectiveCamera)
+    {
+        projection = glm::perspective(glm::radians(70.f), engine._windowExtent.width / (float)engine._windowExtent.height, 0.1f, 200.0f);
+    }
+    else
+    {
+        auto orthoCamera = camera.get<OrthoCamera>();
+        auto extent = orthoCamera->extent;
+        glm::ortho(extent.min.x, extent.max.x, extent.min.y, extent.max.y, orthoCamera->nearPlaneOffset, orthoCamera->farPlaneOffset);
+    }
+    
+
+    // Apply translation in world space
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
+
+    // Calculate the final mesh matrix
+    glm::mat4 meshMatrix = projection * view * worldTranslation * model;
+
+    return meshMatrix;
 }
 
 } // namespace hh

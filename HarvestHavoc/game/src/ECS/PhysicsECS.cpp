@@ -18,8 +18,8 @@ namespace hh {
 
 // Constructors and Destructors
 
-    PhysicsECS::PhysicsECS(flecs::world& ecs)
-    : IPhysicsECS(ecs) {}
+    PhysicsECS::PhysicsECS(flecs::world& ecs, ECSPipelineStages& stages)
+    : IPhysicsECS(ecs), stages(stages) {}
 
 // Public Methods
 
@@ -37,15 +37,33 @@ void PhysicsECS::InitComponents()
 void PhysicsECS::InitSystems()
 {
     ecs.system<Transform, LinearKinematics>()
-        .kind<Update>()
-        .iter([](flecs::iter& it, Transform* transform, LinearKinematics* linear)
+        .kind(stages.Update)
+        .iter([](flecs::iter& it, Transform* transforms, LinearKinematics* linears)
             {
                 float delta_time = it.delta_time();
                 for (auto i : it)
                 {
-                    linear[i].velocity += linear[i].acceleration * delta_time;
-                    transform[i].position += linear[i].velocity * delta_time;
-                    std::cout << "Entity " << it.entity(i).id() << " is at {" << transform[i].position << "}" << std::endl;
+                    Transform& transform = transforms[i];
+                    LinearKinematics& linear = linears[i];
+
+                    linear.velocity += linear.acceleration * delta_time * delta_time;
+                    transform.position += linear.velocity * delta_time;
+                }
+            }
+    );
+
+    ecs.system<Transform, AngularKinematics>()
+        .kind(stages.Update)
+        .iter([](flecs::iter& it, Transform* transforms, AngularKinematics* angulars)
+            {
+                float delta_time = it.delta_time();
+                for (auto i : it)
+                {
+                    Transform& transform = transforms[i];
+                    AngularKinematics& angular = angulars[i];
+
+                    angular.angularVelocity += angular.angularAcceleration * delta_time * delta_time;
+                    transform.rotation += angular.angularVelocity * delta_time;
                 }
             }
     );

@@ -20,6 +20,8 @@ namespace hh {
 /// Rest of description.
 struct Material {
 	engine::Color32 color{engine::Color32::MAGENTA};
+	VkPipeline pipeline;
+	VkPipelineLayout pipelineLayout;
 };
 
 } // namespace hh

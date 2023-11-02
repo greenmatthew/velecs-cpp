@@ -35,7 +35,7 @@ public:
 
     // Constructors and Destructors
 
-    RenderingECS(flecs::world& ecs, engine::VulkanEngine& engine);
+    RenderingECS(flecs::world& ecs, ECSPipelineStages& stages, engine::VulkanEngine& engine);
     
     /// \brief Default deconstructor.
     ~RenderingECS() = default;
@@ -61,6 +61,8 @@ protected:
 
 private:
     // Private Fields
+
+    ECSPipelineStages& stages;
 
     VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
     VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
@@ -157,7 +159,15 @@ private:
 
     void UploadMesh(Mesh& mesh);
 
-    glm::mat4 GetRenderMatrix(const Mesh& mesh, const Material& material) override;
+    flecs::entity CreatePerspectiveCamera(const engine::Vec3 position = engine::Vec3::ZERO,
+        const engine::Vec3 rotation = engine::Vec3::ZERO,
+        const engine::Vec2 resolution = engine::Vec2{1920.0f, 1080.0f},
+        const float verticalFOV = 70.0f,
+        const float aspectRatio = 16.0f/9.0f,
+        const float nearPlaneOffset = 0.1f,
+        const float farPlaneOffset = 200.0f);
+
+    glm::mat4 GetRenderMatrix(const Transform& transform, const flecs::entity camera);
 };
 
 } // namespace hh
