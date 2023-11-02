@@ -19,135 +19,131 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\include\ECS\IECSManager.h">
+    <ClInclude Include="velecs\include\ECS\IECSManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\Rect.h">
+    <ClInclude Include="velecs\include\Graphics\Rect.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Physics\AngularKinematics.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Physics\AngularKinematics.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Physics\LinearKinematics.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Physics\LinearKinematics.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Rendering\Material.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Rendering\Material.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Rendering\Mesh.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Rendering\Mesh.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Rendering\OrthoCamera.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Rendering\OrthoCamera.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Rendering\PerspectiveCamera.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Rendering\PerspectiveCamera.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\Components\Rendering\Transform.h">
+    <ClInclude Include="harvest_havoc\include\ECS\Components\Rendering\Transform.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\ECSCommon.h">
+    <ClInclude Include="harvest_havoc\include\ECS\ECSCommon.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\ECSManager.h">
+    <ClInclude Include="harvest_havoc\include\ECS\ECSManager.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\FileManagement\Directory.h">
+    <ClInclude Include="velecs\include\FileManagement\Directory.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\FileManagement\File.h">
+    <ClInclude Include="velecs\include\FileManagement\File.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\GameExceptions.h">
+    <ClInclude Include="velecs\include\Core\GameExceptions.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\FileManagement\Path.h">
+    <ClInclude Include="velecs\include\FileManagement\Path.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Debug.h">
+    <ClInclude Include="velecs\include\Debug.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\IEnableDisable.h">
+    <ClInclude Include="velecs\include\Core\IEnableDisable.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Core\Event.h">
+    <ClInclude Include="velecs\include\Core\Event.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Engine\vk_pipeline.h">
+    <ClInclude Include="velecs\include\Rendering\PipelineBuilder.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Engine\vk_shaders.h">
+    <ClInclude Include="velecs\include\Rendering\ShaderModule.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\Color32.h">
+    <ClInclude Include="velecs\include\Graphics\Color32.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\Mesh.h">
+    <ClInclude Include="velecs\include\Rendering\MeshPushConstants.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\MeshPushConstants.h">
+    <ClInclude Include="velecs\include\Rendering\Vertex.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\Vertex.h">
+    <ClInclude Include="velecs\include\Rendering\VertexInputAttributeDescriptor.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Graphics\VertexInputAttributeDescriptor.h">
+    <ClInclude Include="velecs\include\Math\Vec3.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Math\Vec3.h">
+    <ClInclude Include="velecs\include\Memory\AllocatedBuffer.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Engine\AllocatedBuffer.h">
+    <ClInclude Include="velecs\include\Memory\DeletionQueue.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="engine\include\Engine\DeletionQueue.h">
+    <ClInclude Include="harvest_havoc\include\ECS\IPhysicsECS.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\IPhysicsECS.h">
+    <ClInclude Include="harvest_havoc\include\ECS\IRenderingECS.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\IRenderingECS.h">
+    <ClInclude Include="harvest_havoc\include\ECS\IECSInterface.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\IECSInterface.h">
+    <ClInclude Include="harvest_havoc\include\ECS\PhysicsECS.h">
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="game\include\ECS\PhysicsECS.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="game\include\ECS\RenderingECS.h">
+    <ClInclude Include="harvest_havoc\include\ECS\RenderingECS.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -160,68 +156,64 @@
     <ClInclude Include="libs\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="libs\include\imgui\imstb_textedit.h" />
     <ClInclude Include="libs\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="engine\include\Math\Consts.h" />
-    <ClInclude Include="engine\include\Math\Vec2.h" />
-    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrap.h" />
-    <ClInclude Include="engine\libs\include\VkBootstrap\VkBootstrapDispatch.h" />
-    <ClInclude Include="engine\include\Engine\vk_engine.h" />
-    <ClInclude Include="engine\include\Engine\vk_initializers.h" />
+    <ClInclude Include="velecs\include\Math\Consts.h" />
+    <ClInclude Include="velecs\include\Math\Vec2.h" />
+    <ClInclude Include="velecs\libs\include\VkBootstrap\VkBootstrap.h" />
+    <ClInclude Include="velecs\libs\include\VkBootstrap\VkBootstrapDispatch.h" />
+    <ClInclude Include="velecs\include\VelECSEngine.h" />
+    <ClInclude Include="velecs\include\Engine\vk_initializers.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engine\src\Engine\DeletionQueue.cpp">
+    <ClCompile Include="velecs\src\Memory\DeletionQueue.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\FileManagement\Directory.cpp">
+    <ClCompile Include="velecs\src\FileManagement\Directory.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\FileManagement\File.cpp">
+    <ClCompile Include="velecs\src\FileManagement\File.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Core\IEnableDisable.cpp">
+    <ClCompile Include="velecs\src\Core\IEnableDisable.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\FileManagement\Path.cpp">
+    <ClCompile Include="velecs\src\FileManagement\Path.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Engine\vk_pipeline.cpp">
+    <ClCompile Include="velecs\src\Rendering\PipelineBuilder.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Engine\vk_shaders.cpp">
+    <ClCompile Include="velecs\src\Rendering\ShaderModule.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Graphics\Color32.cpp">
+    <ClCompile Include="velecs\src\Graphics\Color32.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Graphics\Mesh.cpp">
+    <ClCompile Include="velecs\src\Graphics\Rect.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Graphics\Rect.cpp">
+    <ClCompile Include="velecs\src\Rendering\Vertex.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Graphics\Vertex.cpp">
+    <ClCompile Include="velecs\src\Math\Vec3.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="engine\src\Math\Vec3.cpp">
+    <ClCompile Include="harvest_havoc\src\ECS\ECSManager.cpp" />
+    <ClCompile Include="harvest_havoc\src\ECS\PhysicsECS.cpp">
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="game\src\ECS\ECSManager.cpp" />
-    <ClCompile Include="game\src\ECS\PhysicsECS.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="game\src\ECS\RenderingECS.cpp">
+    <ClCompile Include="harvest_havoc\src\ECS\RenderingECS.cpp">
       <SubType>
       </SubType>
     </ClCompile>
@@ -233,11 +225,11 @@
     <ClCompile Include="libs\src\imgui\imgui_impl_vulkan.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_tables.cpp" />
     <ClCompile Include="libs\src\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="game\src\Main.cpp" />
-    <ClCompile Include="engine\src\Math\Vec2.cpp" />
-    <ClCompile Include="engine\libs\src\VkBootstrap\VkBootstrap.cpp" />
-    <ClCompile Include="engine\src\Engine\vk_engine.cpp" />
-    <ClCompile Include="engine\src\Engine\vk_initializers.cpp" />
+    <ClCompile Include="harvest_havoc\src\Main.cpp" />
+    <ClCompile Include="velecs\src\Math\Vec2.cpp" />
+    <ClCompile Include="velecs\libs\src\VkBootstrap\VkBootstrap.cpp" />
+    <ClCompile Include="velecs\src\VelECSEngine.cpp" />
+    <ClCompile Include="velecs\src\Engine\vk_initializers.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -292,25 +284,25 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
@@ -321,7 +313,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -330,8 +322,7 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
-</Command>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)harvest_havoc\shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
@@ -345,7 +336,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -356,8 +347,7 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
-</Command>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)harvest_havoc\shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
@@ -369,7 +359,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -378,8 +368,7 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
-</Command>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)harvest_havoc\shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
@@ -393,7 +382,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;engine/libs/include;engine/include;game/libs/include;game/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/include;$(SDL2_DIR)/include;libs/include;include;velecs/libs/include;velecs/include;harvest_havoc/libs/include;harvest_havoc/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -404,8 +393,7 @@
       <AdditionalDependencies>$(VULKAN_SDK)\Lib\vulkan-1.lib;$(SDL2_DIR)\Lib\SDL2.lib;$(SDL2_DIR)\Lib\SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"
-</Command>
+      <Command>powershell.exe -File "$(ProjectDir)build_scripts\CompileShaders.ps1" -projectDir "$(ProjectDir)harvest_havoc\shaders" -outputDir "$(SolutionDir)bin\$(Platform)\$(Configuration)\assets\shaders" -validatorPath "$(VULKAN_SDK)\Bin\glslangValidator.exe"</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>powershell.exe -File "$(ProjectDir)build_scripts\ExportRequiredDLLs.ps1" -destDir "$(SolutionDir)bin\$(Platform)\$(Configuration)</Command>
