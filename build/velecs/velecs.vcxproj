@@ -1,0 +1,353 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x86</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F613972B-6880-387A-96AD-D2ECE0143EC5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>velecs</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">velecs.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">velecs</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">velecs.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">velecs</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">velecs.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">velecs</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">velecs.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">velecs</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/Programs/SDKs/VulkanSDK/1.3.261.1/Include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/Programs/SDKs/VulkanSDK/1.3.261.1/Include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/Programs/SDKs/VulkanSDK/1.3.261.1/Include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "D:/Programs/SDKs/VulkanSDK/1.3.261.1/Include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>D:\Dev\VulkanProjects\HarvestHavoc\velecs\include;D:\Dev\VulkanProjects\HarvestHavoc\libs;D:\Programs\SDKs\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule D:/Dev/VulkanProjects/HarvestHavoc/velecs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"D:\Programs\IDEs\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Dev/VulkanProjects/HarvestHavoc -BD:/Dev/VulkanProjects/HarvestHavoc/build --check-stamp-file D:/Dev/VulkanProjects/HarvestHavoc/build/velecs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule D:/Dev/VulkanProjects/HarvestHavoc/velecs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"D:\Programs\IDEs\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Dev/VulkanProjects/HarvestHavoc -BD:/Dev/VulkanProjects/HarvestHavoc/build --check-stamp-file D:/Dev/VulkanProjects/HarvestHavoc/build/velecs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule D:/Dev/VulkanProjects/HarvestHavoc/velecs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"D:\Programs\IDEs\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Dev/VulkanProjects/HarvestHavoc -BD:/Dev/VulkanProjects/HarvestHavoc/build --check-stamp-file D:/Dev/VulkanProjects/HarvestHavoc/build/velecs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule D:/Dev/VulkanProjects/HarvestHavoc/velecs/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"D:\Programs\IDEs\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Dev/VulkanProjects/HarvestHavoc -BD:/Dev/VulkanProjects/HarvestHavoc/build --check-stamp-file D:/Dev/VulkanProjects/HarvestHavoc/build/velecs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">D:\Dev\VulkanProjects\HarvestHavoc\build\velecs\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Core\IEnableDisable.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Engine\vk_initializers.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\Directory.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\File.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\Path.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Graphics\Color32.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Graphics\Rect.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\IInput.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\InputAction.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\InputActionMap.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Math\Vec2.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Math\Vec3.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Memory\DeletionQueue.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\PipelineBuilder.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\ShaderModule.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\Vertex.cpp" />
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\VelECSEngine.cpp" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\Event.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\GameExceptions.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\IEnableDisable.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Debug.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\ECS\IECSManager.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Engine\vk_initializers.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\Directory.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\File.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\Path.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Graphics\Color32.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Graphics\Rect.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\IEnableDisablePassKey.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\IInput.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\InputAction.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\InputActionMap.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Consts.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Vec2.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Vec3.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Memory\AllocatedBuffer.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Memory\DeletionQueue.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\MeshPushConstants.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\PipelineBuilder.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\ShaderModule.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\Vertex.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\VertexInputAttributeDescriptor.h" />
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\VelECSEngine.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="D:\Dev\VulkanProjects\HarvestHavoc\build\ZERO_CHECK.vcxproj">
+      <Project>{B1CA3D27-4ACC-38E5-BE74-3ECC4A1795DA}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Dev\VulkanProjects\HarvestHavoc\build\libs\flecs.vcxproj">
+      <Project>{B45961D0-9D88-3F69-A8F2-A98D3934BCC3}</Project>
+      <Name>flecs</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Dev\VulkanProjects\HarvestHavoc\build\libs\imgui.vcxproj">
+      <Project>{6B5A7B20-1D6E-35F3-9B1F-C18C77D04BE6}</Project>
+      <Name>imgui</Name>
+    </ProjectReference>
+    <ProjectReference Include="D:\Dev\VulkanProjects\HarvestHavoc\build\libs\tiny_obj_loader.vcxproj">
+      <Project>{EB61745E-5D7A-3F65-92B4-26598074DCCD}</Project>
+      <Name>tiny_obj_loader</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="D:\Dev\VulkanProjects\HarvestHavoc\build\libs\vkbootstrap.vcxproj">
+      <Project>{E31A73C8-1217-3F64-B41D-B10D4FCE6E48}</Project>
+      <Name>vkbootstrap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

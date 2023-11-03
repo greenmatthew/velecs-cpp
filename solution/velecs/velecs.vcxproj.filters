@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Core\IEnableDisable.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Engine\vk_initializers.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\Directory.cpp">
+      <Filter>Source Files\FileManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\File.cpp">
+      <Filter>Source Files\FileManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\FileManagement\Path.cpp">
+      <Filter>Source Files\FileManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Graphics\Color32.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Graphics\Rect.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\IInput.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\InputAction.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Input\InputActionMap.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Math\Vec2.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Math\Vec3.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Memory\DeletionQueue.cpp">
+      <Filter>Source Files\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\PipelineBuilder.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\ShaderModule.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\Rendering\Vertex.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\src\VelECSEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\Event.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\GameExceptions.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Core\IEnableDisable.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\ECS\IECSManager.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Engine\vk_initializers.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\Directory.h">
+      <Filter>Header Files\FileManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\File.h">
+      <Filter>Header Files\FileManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\FileManagement\Path.h">
+      <Filter>Header Files\FileManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Graphics\Color32.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Graphics\Rect.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\IEnableDisablePassKey.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\IInput.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\InputAction.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Input\InputActionMap.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Consts.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Vec2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Math\Vec3.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Memory\AllocatedBuffer.h">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Memory\DeletionQueue.h">
+      <Filter>Header Files\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\MeshPushConstants.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\PipelineBuilder.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\ShaderModule.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\Vertex.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\Rendering\VertexInputAttributeDescriptor.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\include\VelECSEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Dev\VulkanProjects\HarvestHavoc\velecs\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6EB51B46-4993-3ACF-A366-CACF76DB9088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{45E66645-87C5-333A-8B69-C0F3CC9E1301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{EC6962A7-C608-39EB-B7CE-0A55ED7AC1AF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{088F0EC8-E9A2-35FC-8489-AAA9D827D94C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FileManagement">
+      <UniqueIdentifier>{36C3D1A7-4A85-39B2-BC72-8B9F33748D64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{3620E7F6-1A65-3D1B-A112-133A425C3CB1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{D94BAB47-42B2-385C-BF60-EBAE2297EE99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{4D2C7B13-E0FE-39AF-B1E2-9B0D462AF2ED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Memory">
+      <UniqueIdentifier>{9E15F53B-7576-374A-AC91-1AB3FCCD2476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{BFE1D028-C335-37DB-9B36-296F887BAF8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{2D72A824-2CFC-3B20-B47A-84EC4DD4A544}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{0CC72268-6962-3902-B1CF-FB763BDB0D1C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{3394EF59-2AF9-3AF9-AC60-734367DE8ABE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FileManagement">
+      <UniqueIdentifier>{22D3064F-6E98-336D-B0A1-49B70BF87E5C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{B749A147-A80E-36D6-A3A8-C4AA0C538F40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{A9B4C072-C4EE-368F-A4D1-E811E0EB2672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{E2CB7080-FA51-30A0-9A41-746F567FB14B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Memory">
+      <UniqueIdentifier>{49AED77F-7EF0-3309-9DAA-E44D5D7E5AC8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{C0AEEF75-E176-3A06-8E6E-3064C5C0E946}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
