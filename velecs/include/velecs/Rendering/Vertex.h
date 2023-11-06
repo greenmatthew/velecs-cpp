@@ -1,6 +1,6 @@
-/// \file    ECSManager.h
+/// \file    Vertex.h
 /// \author  Matthew Green
-/// \date    10/30/2023 16:17:35
+/// \date    10/29/2023 17:59:45
 /// 
 /// \section LICENSE
 /// 
@@ -10,44 +10,40 @@
 
 #pragma once
 
-#include <velecs/VelECSEngine.h>
+#include "velecs/Graphics/Color32.h"
+#include "velecs/Rendering/VertexInputAttributeDescriptor.h"
 
-#include <velecs/ECS/IECSManager.h>
+#include <glm/mat4x4.hpp>
+#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
 
-#include "ECS/ECSCommon.h"
+namespace velecs {
 
-#include "ECS/RenderingECS.h"
-#include "ECS/PhysicsECS.h"
-
-#include <functional>
-
-namespace hh {
-
-/// \class ECSManager
+/// \class Vertex
 /// \brief Brief description.
 ///
 /// Rest of description.
-class ECSManager : public velecs::IECSManager {
+struct Vertex {
 public:
     // Enums
 
     // Public Fields
 
-    ECSPipelineStages stages;
+    glm::vec3 position;
+    glm::vec3 normal;
+    Color32 color{Color32::MAGENTA};
 
     // Constructors and Destructors
     
     /// \brief Default constructor.
-    ECSManager(velecs::VelECSEngine& engine);
+    Vertex() = default;
     
     /// \brief Default deconstructor.
-    ~ECSManager() = default;
+    ~Vertex() = default;
 
     // Public Methods
 
-    void Init() override;
-
-    void Cleanup() override;
+    static VertexInputAttributeDescriptor GetVertexDescription();
 
 protected:
     // Protected Fields
@@ -57,12 +53,7 @@ protected:
 private:
     // Private Fields
 
-    std::unique_ptr<RenderingECS> renderingECS;
-    std::unique_ptr<PhysicsECS> physicsECS;
-
     // Private Methods
-
-    void InitPipeline() override;
 };
 
-} // namespace hh
+} // namespace velecs

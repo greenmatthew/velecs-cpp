@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Graphics/Rect.h>
+#include <velecs/Graphics/Rect.h>
 
 namespace hh {
 

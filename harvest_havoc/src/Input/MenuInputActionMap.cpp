@@ -8,7 +8,7 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include <Input/InputActionMap.h>
+#include <velecs/Input/InputActionMap.h>
 
 #include "Input/Input.h"
 #include "Input/MenuInputActionMap.h"

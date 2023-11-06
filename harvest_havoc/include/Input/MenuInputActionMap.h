@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include <Input/InputActionMap.h>
+#include <velecs/Input/InputActionMap.h>
+
 #include "Input/Input.h"
 
 namespace hh {

@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <ECS/IRenderingECS.h>
+#include <velecs/Memory/DeletionQueue.h>
 
-#include <Memory/DeletionQueue.h>
+#include <ECS/IRenderingECS.h>
 
 #include <vulkan/vulkan_core.h>
 
@@ -35,7 +35,7 @@ public:
 
     // Constructors and Destructors
 
-    RenderingECS(flecs::world& ecs, ECSPipelineStages& stages, velecs::VelECSEngine& engine);
+    RenderingECS(flecs::world& ecs, SDL_Window* const window, ECSPipelineStages& stages);
     
     /// \brief Default deconstructor.
     ~RenderingECS() = default;

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Math/Vec3.h>
+#include <velecs/Math/Vec3.h>
 
 namespace hh {
 

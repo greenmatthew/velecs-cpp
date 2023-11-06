@@ -10,17 +10,17 @@
 
 #include "ECS/RenderingECS.h"
 
-#include <VelECSEngine.h>
-#include <Memory/AllocatedBuffer.h>
-#include <Engine/vk_initializers.h>
-#include <Rendering/ShaderModule.h>
-#include <Rendering/PipelineBuilder.h>
+#include <velecs/VelECSEngine.h>
+#include <velecs/Memory/AllocatedBuffer.h>
+#include <velecs/Engine/vk_initializers.h>
+#include <velecs/Rendering/ShaderModule.h>
+#include <velecs/Rendering/PipelineBuilder.h>
 
-#include <Rendering/MeshPushConstants.h>
+#include <velecs/Rendering/MeshPushConstants.h>
 
-#include "Graphics/Color32.h"
+#include <velecs/Graphics/Color32.h>
 
-#include "FileManagement/Path.h"
+#include <velecs/FileManagement/Path.h>
 
 #include <iostream>
 #include <fstream>
@@ -59,8 +59,8 @@ namespace hh {
 
 // Constructors and Destructors
 
-RenderingECS::RenderingECS(flecs::world& ecs, ECSPipelineStages& stages, VelECSEngine& engine)
-    : IRenderingECS(ecs, engine), stages(stages) {}
+RenderingECS::RenderingECS(flecs::world& ecs, SDL_Window* const window, ECSPipelineStages& stages)
+    : IRenderingECS(ecs, window), stages(stages) {}
 
 // Public Methods
 
@@ -93,7 +93,7 @@ void RenderingECS::Cleanup()
     vkDestroySurfaceKHR(_instance, _surface, nullptr);
     vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
     vkDestroyInstance(_instance, nullptr);
-    SDL_DestroyWindow(engine._window);
+    SDL_DestroyWindow(window);
 }
 
 // Protected Fields

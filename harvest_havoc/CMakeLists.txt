@@ -3,7 +3,7 @@ project(harvest_havoc)
 file(GLOB_RECURSE HARVEST_HAVOC_HEADERS "include/*.h")
 file(GLOB_RECURSE HARVEST_HAVOC_SOURCES "src/*.cpp")
 
-add_library(harvest_havoc ${HARVEST_HAVOC_SOURCES} ${HARVEST_HAVOC_HEADERS})
+add_executable(harvest_havoc ${HARVEST_HAVOC_SOURCES} ${HARVEST_HAVOC_HEADERS})
 
 add_dependencies(harvest_havoc velecs)
 
@@ -16,10 +16,10 @@ get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 source_group(
     TREE "${ROOT_DIR}/include"
     PREFIX "Header Files"
-    FILES ${VELECS_HEADERS}
+    FILES ${HARVEST_HAVOC_HEADERS}
 )
 source_group(
     TREE "${ROOT_DIR}/src"
     PREFIX "Source Files"
-    FILES ${VELECS_SOURCES}
+    FILES ${HARVEST_HAVOC_SOURCES}
 )

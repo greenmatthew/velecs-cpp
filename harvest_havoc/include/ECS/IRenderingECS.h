@@ -14,10 +14,6 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace velecs {
-    class VelECSEngine;
-}
-
 namespace hh {
 
 /// \class IRenderingSystems
@@ -37,17 +33,19 @@ public:
 
     // Public Methods
 
+    VkExtent2D const GetWindowExtent() const;
+
 protected:
     // Protected Fields
 
+    SDL_Window* const window;
+    VkExtent2D _windowExtent{1700, 900}; /// \brief Desired dimensions of the rendering window.
+
     // Constructors
 
-    IRenderingECS(flecs::world& ecs, velecs::VelECSEngine& engine) : IECSInterface(ecs), engine(engine) {}
+    IRenderingECS(flecs::world& ecs, SDL_Window* const window) : IECSInterface(ecs), window(window) {}
 
     // Protected Methods
-
-    velecs::VelECSEngine& engine;
-
 private:
     // Private Fields
 

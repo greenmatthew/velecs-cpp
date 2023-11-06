@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <Graphics/Rect.h>
+#include <velecs/Graphics/Rect.h>
 
-#include <Math/Vec2.h>
+#include <velecs/Math/Vec2.h>
 
 namespace hh {
 

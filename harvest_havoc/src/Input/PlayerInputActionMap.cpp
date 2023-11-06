@@ -8,8 +8,8 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include <Input/InputActionMap.h>
-#include <VelECSEngine.h>
+#include <velecs/Input/InputActionMap.h>
+#include <velecs/VelECSEngine.h>
 
 #include "Input/Input.h"
 #include "Input/PlayerInputActionMap.h"

@@ -1,7 +1,0 @@
-D:/Dev/VulkanProjects/HarvestHavoc/solution/CMakeFiles/ALL_BUILD.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/CMakeFiles/ZERO_CHECK.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/libs/CMakeFiles/flecs.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/libs/CMakeFiles/imgui.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/libs/CMakeFiles/vkbootstrap.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/libs/CMakeFiles/tiny_obj_loader.dir
-D:/Dev/VulkanProjects/HarvestHavoc/solution/velecs/CMakeFiles/velecs.dir

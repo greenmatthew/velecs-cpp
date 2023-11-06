@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <Input/IInput.h>
-#include <Input/InputActionMap.h>
+#include <velecs/Input/IInput.h>
+#include <velecs/Input/InputActionMap.h>
 
 #include <memory>
 
@@ -27,8 +27,8 @@ public:
 
     // Public Fields
 
-    std::shared_ptr<PlayerInputActionMap> Player = CreateMap<PlayerInputActionMap>();  /// \brief Input action map for player controls
-    std::shared_ptr<MenuInputActionMap> Menu = CreateMap<MenuInputActionMap>(); /// \brief Input action map for menu navigation
+    std::shared_ptr<PlayerInputActionMap> Player = std::make_shared<PlayerInputActionMap>();  /// \brief Input action map for player controls
+    std::shared_ptr<MenuInputActionMap> Menu = std::make_shared<MenuInputActionMap>(); /// \brief Input action map for menu navigation
 
     // Public Methods
 

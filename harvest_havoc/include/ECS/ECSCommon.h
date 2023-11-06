@@ -12,8 +12,8 @@
 
 #include <flecs/flecs.h>
 
-#include "Math/Vec2.h"
-#include "Math/Vec3.h"
+#include <velecs/Math/Vec2.h>
+#include <velecs/Math/Vec3.h>
 
 #include "ECS/Components/Rendering/Transform.h"
 #include "ECS/Components/Rendering/Mesh.h"

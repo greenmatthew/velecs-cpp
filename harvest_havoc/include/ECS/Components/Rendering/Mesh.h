@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <Rendering/Vertex.h>
+#include <velecs/Rendering/Vertex.h>
 
-#include <Memory/AllocatedBuffer.h>
+#include <velecs/Memory/AllocatedBuffer.h>
 
 #include <vector>
 

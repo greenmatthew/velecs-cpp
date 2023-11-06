@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <Graphics/Color32.h>
+#include <velecs/Graphics/Color32.h>
 
 namespace hh {
 

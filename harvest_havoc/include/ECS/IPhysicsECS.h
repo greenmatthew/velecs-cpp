@@ -10,9 +10,10 @@
 
 #pragma once
 
+#include <velecs/Math/Consts.h>
+
 #include "ECS/IECSInterface.h"
 
-#include "Math/Consts.h"
 
 namespace hh {
 
