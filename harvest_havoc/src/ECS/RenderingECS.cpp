@@ -10,6 +10,10 @@
 
 #include "ECS/RenderingECS.h"
 
+#include "ECS/ECSManager.h"
+
+#include <velecs/VelECSEngine.h>
+
 #include <velecs/VelECSEngine.h>
 #include <velecs/Memory/AllocatedBuffer.h>
 #include <velecs/Engine/vk_initializers.h>
@@ -25,6 +29,8 @@
 #include <iostream>
 #include <fstream>
 #include <chrono>
+
+#include <vulkan/vulkan.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -59,8 +65,8 @@ namespace hh {
 
 // Constructors and Destructors
 
-RenderingECS::RenderingECS(flecs::world& ecs, SDL_Window* const window, ECSPipelineStages& stages)
-    : IRenderingECS(ecs, window), stages(stages) {}
+RenderingECS::RenderingECS(ECSManager& ecsManager)
+    : IRenderingECS(ecsManager) {}
 
 // Public Methods
 
@@ -93,7 +99,7 @@ void RenderingECS::Cleanup()
     vkDestroySurfaceKHR(_instance, _surface, nullptr);
     vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
     vkDestroyInstance(_instance, nullptr);
-    SDL_DestroyWindow(window);
+    SDL_DestroyWindow(ecsManager.engine.GetWindow());
 }
 
 // Protected Fields
@@ -109,6 +115,9 @@ void RenderingECS::InitComponents()
 
 void RenderingECS::InitSystems()
 {
+    auto pipelineEntity = ecs.entity("PipelineStages");
+    const PipelineStages* const stages = pipelineEntity.get<PipelineStages>();
+
     //ecs.system<Transform, Mesh, Material>()
     //    .kind<Draw>()
     //    .iter([](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
@@ -148,7 +157,7 @@ void RenderingECS::InitSystems()
     //);
 
     ecs.system()
-        .kind(stages.PreDraw)
+        .kind(stages->PreDraw)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
@@ -175,7 +184,7 @@ void RenderingECS::InitSystems()
 
             //make a clear-color from frame number. This will flash with a 120*pi frame period.
             VkClearValue clearValue = {};
-            float flash = abs(sin(engine._frameNumber / 3840.f));
+            float flash = abs(sin(_frameNumber / 3840.f));
             clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
 
             //start the main renderpass.
@@ -187,7 +196,7 @@ void RenderingECS::InitSystems()
             rpInfo.renderPass = _renderPass;
             rpInfo.renderArea.offset.x = 0;
             rpInfo.renderArea.offset.y = 0;
-            rpInfo.renderArea.extent = engine._windowExtent;
+            rpInfo.renderArea.extent = windowExtent;
             rpInfo.framebuffer = _framebuffers[swapchainImageIndex];
 
             //connect clear values
@@ -199,7 +208,7 @@ void RenderingECS::InitSystems()
     );
 
     ecs.system()
-        .kind(stages.PostDraw)
+        .kind(stages->PostDraw)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
@@ -254,12 +263,12 @@ void RenderingECS::InitSystems()
             VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
 
             //increase the number of frames drawn
-            engine._frameNumber++;
+            _frameNumber++;
         }
     );
 
     ecs.system<Transform, Mesh, Material>()
-        .kind(stages.Draw)
+        .kind(stages->Draw)
         .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
         {
             float deltaTime = it.delta_time();
@@ -270,8 +279,8 @@ void RenderingECS::InitSystems()
                 Mesh mesh = meshes[i];
                 Material material = materials[i];
 
-                const auto* globalData = it.world().get<GlobalData>();
-                flecs::entity camera(it.world(), globalData->camera);
+                const auto* mainCamera = it.world().get<MainCamera>();
+                flecs::entity camera(it.world(), mainCamera->camera);
 
                 vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
 
@@ -294,7 +303,7 @@ void RenderingECS::InitSystems()
 
 void RenderingECS::InitEntities()
 { 
-    ecs.set<GlobalData>({CreatePerspectiveCamera(Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
+    ecs.set<MainCamera>({CreatePerspectiveCamera(Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
     // ecs.set<GlobalData>({CreateOrthoCamera(Vec3{0.0f, 0.0f,-100.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f}, 0.0f, 200.0f)});
 
     ecs.entity()
@@ -314,13 +323,19 @@ void RenderingECS::InitVulkan()
     vkb::InstanceBuilder builder;
 
     auto inst_ret = builder.set_app_name("Harvest Havoc")
-    #ifdef _DEBUG
-        .request_validation_layers(true)
-    #endif
-        .require_api_version(1, 1, 0)
-        .use_default_debug_messenger()
-        .build();
-    
+        #ifdef _DEBUG
+            .request_validation_layers(true)
+        #endif
+            .require_api_version(1, 1, 0)
+            .use_default_debug_messenger()
+            .build();
+
+    // Check if instance creation was successful before proceeding
+    if (!inst_ret)
+    {
+        std::cerr << "Failed to create Vulkan instance. Error: " << inst_ret.error().message() << "\n";
+        exit(EXIT_FAILURE);
+    }
     vkb::Instance vkb_inst = inst_ret.value();
 
     //store the instance
@@ -329,7 +344,11 @@ void RenderingECS::InitVulkan()
     _debug_messenger = vkb_inst.debug_messenger;
 
     // get the surface of the window we opened with SDL
-    SDL_Vulkan_CreateSurface(engine._window, _instance, &_surface);
+    if (!SDL_Vulkan_CreateSurface(ecsManager.engine.GetWindow(), _instance, &_surface))
+    {
+        std::cerr << "Failed to create Vulkan surface. SDL Error: " << SDL_GetError() << "\n";
+        exit(EXIT_FAILURE);
+    }
 
     //use vkbootstrap to select a GPU.
     //We want a GPU that can write to the SDL surface and supports Vulkan 1.1
@@ -339,12 +358,19 @@ void RenderingECS::InitVulkan()
     VkPhysicalDeviceFeatures desiredFeatures = {};
     desiredFeatures.fillModeNonSolid = VK_TRUE;
 
-    vkb::PhysicalDevice physicalDevice = selector
+    auto phys_ret = selector
         .set_minimum_version(1, 1)
         .set_surface(_surface)
         .set_required_features(desiredFeatures)
-        .select()
-        .value();
+        .select();
+
+    // Check if physical device selection was successful before proceeding
+    if (!phys_ret)
+    {
+        std::cerr << "Failed to select Vulkan physical device. Error: " << phys_ret.error().message() << "\n";
+        exit(EXIT_FAILURE);
+    }
+    vkb::PhysicalDevice physicalDevice = phys_ret.value();
 
     //create the final Vulkan device
     vkb::DeviceBuilder deviceBuilder{ physicalDevice };
@@ -386,7 +412,7 @@ void RenderingECS::InitSwapchain()
         .build()
         .value();
     
-    vkbSwapchain.extent = engine._windowExtent;
+    vkbSwapchain.extent = windowExtent;
     vkbSwapchain.present_mode = VK_PRESENT_MODE_FIFO_KHR;
 
     //store swapchain and its related images
@@ -492,8 +518,8 @@ void RenderingECS::InitFrameBuffers()
 
     fb_info.renderPass = _renderPass;
     fb_info.attachmentCount = 1;
-    fb_info.width = engine._windowExtent.width;
-    fb_info.height = engine._windowExtent.height;
+    fb_info.width = windowExtent.width;
+    fb_info.height = windowExtent.height;
     fb_info.layers = 1;
 
     //grab how many images we have in the swapchain
@@ -576,13 +602,13 @@ void RenderingECS::InitPipelines()
     //build viewport and scissor from the swapchain extents
     pipelineBuilder._viewport.x = 0.0f;
     pipelineBuilder._viewport.y = 0.0f;
-    pipelineBuilder._viewport.width = (float)engine._windowExtent.width;
-    pipelineBuilder._viewport.height = (float)engine._windowExtent.height;
+    pipelineBuilder._viewport.width = (float)windowExtent.width;
+    pipelineBuilder._viewport.height = (float)windowExtent.height;
     pipelineBuilder._viewport.minDepth = 0.0f;
     pipelineBuilder._viewport.maxDepth = 1.0f;
 
     pipelineBuilder._scissor.offset = { 0, 0 };
-    pipelineBuilder._scissor.extent = engine._windowExtent;
+    pipelineBuilder._scissor.extent = windowExtent;
 
     //configure the rasterizer to draw filled triangles
     pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);

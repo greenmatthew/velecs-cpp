@@ -42,8 +42,6 @@ public:
 
     // Public Methods
 
-    static std::unique_ptr<IInput> Create();
-
     /// \brief Attempts to trigger the 'Pressed' state on all active input maps.
     /// 
     /// \param[in] keycode The SDL keycode representing the key that was pressed.
@@ -106,8 +104,6 @@ private:
     IInput() = default;
     
     // Private Methods
-
-    static std::unique_ptr<IInput> CreateUniquePtr();
 
     /// \brief Iterates through all input action maps, applying the specified callback function.
     /// 

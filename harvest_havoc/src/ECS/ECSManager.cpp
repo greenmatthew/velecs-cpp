@@ -26,8 +26,7 @@ namespace hh {
 // Constructors and Destructors
 
 ECSManager::ECSManager(velecs::VelECSEngine& engine)
-    : physicsECS(std::make_unique<PhysicsECS>(ecs, stages)),
-        renderingECS(std::make_unique<RenderingECS>(ecs, stages, engine)) {}
+    : IECSManager(engine, std::move(std::make_unique<RenderingECS>(*this)), std::move(std::make_unique<PhysicsECS>(*this))) {}
 
 // Public Methods
 
@@ -61,43 +60,59 @@ void ECSManager::InitPipeline()
         .cascade(flecs::DependsOn)
         .build();
     
-    stages.InputUpdate = ecs.entity("InputUpdatePhase")
+    flecs::entity inputUpdate = ecs.entity("InputUpdatePhase")
         .add(flecs::Final)
         .add(flecs::Phase)
         .depends_on(pipeline);
 
-    stages.Update = ecs.entity("UpdatePhase")
+    flecs::entity update = ecs.entity("UpdatePhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.InputUpdate);
+        .depends_on(inputUpdate);
     
-    stages.Collisions = ecs.entity("CollisionsPhase")
+    flecs::entity collisions = ecs.entity("CollisionsPhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.Update);
+        .depends_on(update);
     
-    stages.PreDraw = ecs.entity("PreDrawPhase")
+    flecs::entity preDraw = ecs.entity("PreDrawPhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.Collisions);
+        .depends_on(collisions);
 
-    stages.Draw = ecs.entity("DrawPhase")
+    flecs::entity draw = ecs.entity("DrawPhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.PreDraw);
+        .depends_on(preDraw);
 
-    stages.PostDraw = ecs.entity("PostDrawPhase")
+    flecs::entity postDraw = ecs.entity("PostDrawPhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.Draw);
+        .depends_on(draw);
     
-    stages.Housekeeping = ecs.entity("HousekeepingPhase")
+    flecs::entity housekeeping = ecs.entity("HousekeepingPhase")
         .add(flecs::Final)
         .add(flecs::Phase)
-        .depends_on(stages.PostDraw);
+        .depends_on(postDraw);
 
     // Set the custom pipeline on the world
     ecs.set_pipeline(pipeline);
+
+    ecs.component<PipelineStages>();
+
+    ecs.entity("PipelineStages")
+        .set<PipelineStages>
+        (
+            {
+                inputUpdate,
+                update,
+                collisions,
+                preDraw,
+                draw,
+                postDraw,
+                housekeeping
+            }
+        );
 
     // Add dummy systems backwards to the order of the phases
     // to ensure no false positives

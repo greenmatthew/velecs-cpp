@@ -11,7 +11,9 @@
 #pragma once
 
 #include <velecs/Input/IInput.h>
-#include <velecs/Input/InputActionMap.h>
+
+#include "PlayerInputActionMap.h"
+#include "MenuInputActionMap.h"
 
 #include <memory>
 

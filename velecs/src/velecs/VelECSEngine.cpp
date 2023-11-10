@@ -12,7 +12,7 @@
 #include "velecs/Engine/vk_initializers.h"
 #include "velecs/Rendering/PipelineBuilder.h"
 #include "velecs/Rendering/ShaderModule.h"
-
+#include "velecs/ECS/IECSManager.h"
 #include "velecs/FileManagement/Path.h"
 
 #include <iostream>
@@ -43,18 +43,29 @@ VelECSEngine& VelECSEngine::Init()
 
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN);
 
-    // ecsManager->ecs.get<GlobalData>()->camera;
-
     _window = SDL_CreateWindow(
         "Harvest Havoc",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        _windowExtent.width,
-        _windowExtent.height,
+        1700,
+        900,
         window_flags
     );
+    if (_window == nullptr)
+    {
+        std::cerr << "Failed to create window. SDL Error: " << SDL_GetError() << "\n";
+        exit(EXIT_FAILURE);
+    }
+
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    {
+        std::cerr << "Failed to initialize SDL. SDL Error: " << SDL_GetError() << "\n";
+        exit(EXIT_FAILURE);
+    }
+
 
     ecsManager->Init();
+    auto windowExtent = ecsManager->renderingECS->GetWindowExtent();
 
     //everything went fine
     _isInitialized = true;
@@ -101,6 +112,11 @@ VelECSEngine& VelECSEngine::Cleanup()
         ecsManager->Cleanup();
     }
     return *this;
+}
+
+SDL_Window* VelECSEngine::GetWindow()
+{
+    return _window;
 }
 
 // Protected Fields

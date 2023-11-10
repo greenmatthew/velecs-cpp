@@ -10,9 +10,13 @@
 
 #pragma once
 
+#include <velecs/ECS/IRenderingECS.h>
+
 #include <velecs/Memory/DeletionQueue.h>
 
-#include <ECS/IRenderingECS.h>
+#include "ECS/ECSManager.h"
+
+#include "ECS/ECSCommon.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -27,7 +31,7 @@ namespace hh {
 /// \brief Brief description.
 ///
 /// Rest of description.
-class RenderingECS : public IRenderingECS {
+class RenderingECS : public velecs::IRenderingECS {
 public:
     // Enums
 
@@ -35,7 +39,7 @@ public:
 
     // Constructors and Destructors
 
-    RenderingECS(flecs::world& ecs, SDL_Window* const window, ECSPipelineStages& stages);
+    RenderingECS(ECSManager& ecsManager);
     
     /// \brief Default deconstructor.
     ~RenderingECS() = default;
@@ -46,7 +50,7 @@ public:
     ///
     /// This method is responsible for cleaning up and releasing any resources to ensure a clean exit.
     /// It should be called before exiting the program to ensure memory and other resources are properly released.
-    void Cleanup();
+    void Cleanup() override;
 
     void Init() override;
 
@@ -62,7 +66,7 @@ protected:
 private:
     // Private Fields
 
-    ECSPipelineStages& stages;
+    int _frameNumber{0}; /// \brief Keeps track of the current frame number.
 
     VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
     VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
@@ -74,7 +78,7 @@ private:
     VkFormat _swapchainImageFormat{VK_FORMAT_UNDEFINED}; /// \brief The format used for swapchain images.
     std::vector<VkImage> _swapchainImages; /// \brief List of images within the swapchain.
     std::vector<VkImageView> _swapchainImageViews; /// \brief List of image views for accessing swapchain images.
-    uint32_t swapchainImageIndex;
+    uint32_t swapchainImageIndex{0};
 
     VkQueue _graphicsQueue{nullptr}; /// \brief Queue used for submitting graphics commands.
     uint32_t _graphicsQueueFamily{0}; /// \brief Index of the queue family for graphics operations.

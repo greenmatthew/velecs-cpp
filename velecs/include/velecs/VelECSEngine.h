@@ -10,11 +10,9 @@
 
 #pragma once
 
-#include "Memory/DeletionQueue.h"
+#include "velecs/Memory/DeletionQueue.h"
 
-#include "Rendering/MeshPushConstants.h"
-
-#include "ECS/IECSManager.h"
+#include "velecs/Rendering/MeshPushConstants.h"
 
 #include <vulkan/vulkan_core.h>
 
@@ -67,7 +65,7 @@ public:
     ///
     /// This method assigns the ECS Manager which will handle the creation and processing
     /// of components, entities, and systems within the ECS architecture.
-    VelECSEngine& SetECS(std::unique_ptr<IECSManager> ecsManager);
+    VelECSEngine& SetECS(std::unique_ptr<class IECSManager> ecsManager);
 
     /// \brief Runs the main event and rendering loop, handling input and drawing frames.
     /// \return Reference to the VelECSEngine instance, allowing for method chaining.
@@ -83,6 +81,8 @@ public:
     /// It should be called before exiting the program to ensure memory and other resources are properly released.
     VelECSEngine& Cleanup();
 
+    struct SDL_Window* GetWindow();
+
 protected:
     // Protected Fields
 
@@ -95,7 +95,6 @@ private:
     std::unique_ptr<IECSManager> ecsManager;
 
     bool _isInitialized{false}; /// \brief Indicates whether the engine has been initialized.
-    int _frameNumber{0}; /// \brief Keeps track of the current frame number.
     bool isQuitting = false; /// \brief Flag to indicate when the application is requesting a shutdown.
     SDL_Event event{NULL}; /// \brief Event structure for handling SDL events.
 

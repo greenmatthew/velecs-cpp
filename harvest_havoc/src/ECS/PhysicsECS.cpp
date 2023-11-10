@@ -18,8 +18,8 @@ namespace hh {
 
 // Constructors and Destructors
 
-    PhysicsECS::PhysicsECS(flecs::world& ecs, ECSPipelineStages& stages)
-    : IPhysicsECS(ecs), stages(stages) {}
+PhysicsECS::PhysicsECS(ECSManager& ecsManager)
+    : IPhysicsECS(ecsManager) {}
 
 // Public Methods
 
@@ -36,8 +36,11 @@ void PhysicsECS::InitComponents()
 
 void PhysicsECS::InitSystems()
 {
+    auto pipelineEntity = ecs.entity("PipelineStages");
+    const PipelineStages* const stages = pipelineEntity.get<PipelineStages>();
+
     ecs.system<Transform, LinearKinematics>()
-        .kind(stages.Update)
+        .kind(stages->Update)
         .iter([](flecs::iter& it, Transform* transforms, LinearKinematics* linears)
             {
                 float delta_time = it.delta_time();
@@ -67,7 +70,7 @@ void PhysicsECS::InitSystems()
     );
 
     ecs.system<Transform, AngularKinematics>()
-        .kind(stages.Update)
+        .kind(stages->Update)
         .iter([](flecs::iter& it, Transform* transforms, AngularKinematics* angulars)
             {
                 float delta_time = it.delta_time();

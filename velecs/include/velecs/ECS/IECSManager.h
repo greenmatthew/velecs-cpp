@@ -12,6 +12,13 @@
 
 #include <flecs/flecs.h>
 
+#include "velecs/VelECSEngine.h"
+
+#include "velecs/ECS/IRenderingECS.h"
+#include "velecs/ECS/IPhysicsECS.h"
+
+#include <memory>
+
 namespace velecs {
 
 /// \class IECSManager
@@ -24,9 +31,16 @@ public:
 
     // Public Fields
 
+    VelECSEngine& engine;
     flecs::world ecs;
+    std::unique_ptr<IRenderingECS> renderingECS;
+    std::unique_ptr<IPhysicsECS> physicsECS;
 
-    // Destructors
+    // Constructors and Destructors
+
+    /// \brief Default constructor.
+    IECSManager(velecs::VelECSEngine& engine, std::unique_ptr<IRenderingECS> renderingECS, std::unique_ptr<IPhysicsECS> physicsECS)
+        : engine(engine), renderingECS(std::move(renderingECS)), physicsECS(std::move(physicsECS)) {}
 
     /// \brief Default deconstructor.
     virtual ~IECSManager() = default;
@@ -38,11 +52,6 @@ public:
 
 protected:
     // Protected Fields
-
-    // Constructors
-
-    /// \brief Default constructor.
-    IECSManager() = default;
 
     // Protected Methods
 

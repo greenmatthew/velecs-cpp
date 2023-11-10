@@ -15,37 +15,16 @@
 #include <velecs/Math/Vec2.h>
 #include <velecs/Math/Vec3.h>
 
+#include "ECS/ECSManager.h"
+
+#include "ECS/Components/PipelineStages.h"
+
 #include "ECS/Components/Rendering/Transform.h"
 #include "ECS/Components/Rendering/Mesh.h"
 #include "ECS/Components/Rendering/Material.h"
 #include "ECS/Components/Rendering/OrthoCamera.h"
 #include "ECS/Components/Rendering/PerspectiveCamera.h"
+#include "ECS/Components/Rendering/MainCamera.h"
 
 #include "ECS/Components/Physics/LinearKinematics.h"
 #include "ECS/Components/Physics/AngularKinematics.h"
-
-namespace hh {
-
-/// \class ECSPipelineStages
-/// \brief Brief description.
-///
-/// Rest of description.
-struct ECSPipelineStages {
-	flecs::entity InputUpdate;
-	flecs::entity Update;
-	flecs::entity Collisions;
-	flecs::entity PreDraw;
-	flecs::entity Draw;
-	flecs::entity PostDraw;
-	flecs::entity Housekeeping;
-};
-
-/// \class GlobalData
-/// \brief Brief description.
-///
-/// Rest of description.
-struct GlobalData {
-	flecs::entity camera;
-};
-
-} // namespace hh

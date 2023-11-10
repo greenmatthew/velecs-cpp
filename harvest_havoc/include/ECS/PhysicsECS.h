@@ -10,7 +10,9 @@
 
 #pragma once
 
-#include "ECS/IPhysicsECS.h"
+#include <velecs/ECS/IPhysicsECS.h>
+
+#include "ECS/ECSCommon.h"
 
 namespace hh {
 
@@ -18,7 +20,7 @@ namespace hh {
 /// \brief Brief description.
 ///
 /// Rest of description.
-class PhysicsECS : public IPhysicsECS {
+class PhysicsECS : public velecs::IPhysicsECS {
 public:
     // Enums
 
@@ -26,7 +28,7 @@ public:
 
     // Constructors and Destructors
     
-    PhysicsECS(flecs::world& ecs, ECSPipelineStages& stages);
+    PhysicsECS(ECSManager& ecsManager);
     
     /// \brief Default deconstructor.
     ~PhysicsECS() = default;
@@ -44,8 +46,6 @@ protected:
 
 private:
     // Private Fields
-
-    ECSPipelineStages& stages;
 
     // Private Methods
 };

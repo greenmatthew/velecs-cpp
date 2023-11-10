@@ -1,6 +1,6 @@
-/// \file    IRenderingSystems.h
+/// \file    IECSInterface.h
 /// \author  Matthew Green
-/// \date    10/31/2023 12:19:13
+/// \date    10/31/2023 19:20:33
 /// 
 /// \section LICENSE
 /// 
@@ -10,17 +10,17 @@
 
 #pragma once
 
-#include "ECS/IECSInterface.h"
+#include <flecs/flecs.h>
 
-#include <glm/mat4x4.hpp>
+namespace velecs {
 
-namespace hh {
+class IECSManager;
 
-/// \class IRenderingSystems
+/// \class IECSInterface
 /// \brief Brief description.
 ///
 /// Rest of description.
-class IRenderingECS : public IECSInterface {
+class IECSInterface {
 public:
     // Enums
 
@@ -29,27 +29,34 @@ public:
     // Destructors
     
     /// \brief Default deconstructor.
-    virtual ~IRenderingECS() = default;
+    ~IECSInterface() = default;
 
     // Public Methods
 
-    VkExtent2D const GetWindowExtent() const;
+    virtual void Init();
+
+    virtual void Cleanup() {};
 
 protected:
     // Protected Fields
 
-    SDL_Window* const window;
-    VkExtent2D _windowExtent{1700, 900}; /// \brief Desired dimensions of the rendering window.
+    IECSManager& ecsManager;
+    flecs::world& ecs;
 
     // Constructors
 
-    IRenderingECS(flecs::world& ecs, SDL_Window* const window) : IECSInterface(ecs), window(window) {}
+    IECSInterface(IECSManager& ecsManager);
 
     // Protected Methods
+
+    virtual void InitComponents() {}
+    virtual void InitSystems() {}
+    virtual void InitEntities() {}
+
 private:
     // Private Fields
 
     // Private Methods
 };
 
-} // namespace hh
+} // namespace velecs

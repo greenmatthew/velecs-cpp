@@ -6,6 +6,8 @@ project(HarvestHavoc)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT harvest_havoc)
+
 # Additional libs
 add_subdirectory(libs)
 
@@ -16,6 +18,5 @@ find_package(Vulkan REQUIRED)
 
 target_link_libraries(vkbootstrap Vulkan::Vulkan)
 target_link_libraries(imgui Vulkan::Vulkan)
-target_link_libraries(velecs Vulkan::Vulkan flecs vkbootstrap imgui tiny_obj_loader)
-# Link the velecs library to the harvest_havoc target
-target_link_libraries(harvest_havoc Vulkan::Vulkan flecs velecs vkbootstrap imgui tiny_obj_loader)
+target_link_libraries(velecs Vulkan::Vulkan SDL2 SDL2main flecs vkbootstrap imgui tiny_obj_loader)
+target_link_libraries(harvest_havoc PRIVATE velecs Vulkan::Vulkan SDL2 SDL2main flecs vkbootstrap imgui tiny_obj_loader)

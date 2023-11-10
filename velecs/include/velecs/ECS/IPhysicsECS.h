@@ -1,6 +1,6 @@
-/// \file    IECSInterface.h
+/// \file    IPhysicsSystems.h
 /// \author  Matthew Green
-/// \date    10/31/2023 19:20:33
+/// \date    10/31/2023 18:52:56
 /// 
 /// \section LICENSE
 /// 
@@ -10,48 +10,35 @@
 
 #pragma once
 
-#include "ECS/ECSCommon.h"
+#include "velecs/ECS/IECSInterface.h"
 
-namespace hh {
+#include <velecs/Math/Consts.h>
 
-/// \class ISystems
+namespace velecs {
+
+/// \class IPhysicsSystems
 /// \brief Brief description.
 ///
 /// Rest of description.
-class IECSInterface {
+class IPhysicsECS : public IECSInterface {
 public:
     // Enums
 
     // Public Fields
 
-    // Destructors
-    
+    // Constructors and Destructors
+
+    IPhysicsECS(IECSManager& ecsManager) : IECSInterface(ecsManager) {}
+        
     /// \brief Default deconstructor.
-    ~IECSInterface() = default;
+    ~IPhysicsECS() = default;
 
     // Public Methods
-
-    virtual void Init()
-    {
-        InitComponents();
-        InitSystems();
-        InitEntities();
-    }
 
 protected:
     // Protected Fields
 
-    flecs::world& ecs;
-
-    // Constructors
-
-    IECSInterface(flecs::world& ecs) : ecs(ecs) {}
-
     // Protected Methods
-
-    virtual void InitComponents() {}
-    virtual void InitSystems() {}
-    virtual void InitEntities() {}
 
 private:
     // Private Fields
@@ -59,4 +46,4 @@ private:
     // Private Methods
 };
 
-} // namespace hh
+} // namespace velecs

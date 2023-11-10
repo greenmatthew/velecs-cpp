@@ -1,3 +1,13 @@
+/// @file    ColoredTriangle.frag
+/// @author  Matthew Green
+/// @date    2023-11-07 14:27:52
+/// 
+/// @section LICENSE
+/// 
+/// Copyright (c) 2023 Matthew Green - All rights reserved
+/// Unauthorized copying of this file, via any medium is strictly prohibited
+/// Proprietary and confidential
+
 #version 450 // GLSL v4.5
 
 layout(location = 0) in vec3 inColor; // Input color

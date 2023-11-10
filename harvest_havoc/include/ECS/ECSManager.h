@@ -10,14 +10,11 @@
 
 #pragma once
 
-#include <velecs/VelECSEngine.h>
-
 #include <velecs/ECS/IECSManager.h>
 
-#include "ECS/ECSCommon.h"
+#include <velecs/VelECSEngine.h>
 
-#include "ECS/RenderingECS.h"
-#include "ECS/PhysicsECS.h"
+#include "ECS/ECSCommon.h"
 
 #include <functional>
 
@@ -32,8 +29,6 @@ public:
     // Enums
 
     // Public Fields
-
-    ECSPipelineStages stages;
 
     // Constructors and Destructors
     
@@ -56,9 +51,6 @@ protected:
 
 private:
     // Private Fields
-
-    std::unique_ptr<RenderingECS> renderingECS;
-    std::unique_ptr<PhysicsECS> physicsECS;
 
     // Private Methods
 
