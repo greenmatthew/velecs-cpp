@@ -35,7 +35,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
 
-#include <VkBootstrap/VkBootstrap.h>
+#include <vkbootstrap/src/VkBootstrap.h>
 
 #define VMA_IMPLEMENTATION
 #include <vma/vk_mem_alloc.h>

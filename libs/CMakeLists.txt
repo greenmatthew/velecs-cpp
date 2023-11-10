@@ -5,11 +5,9 @@ set(VULKAN_SDK $ENV{VULKAN_SDK})
 
 find_package(Vulkan REQUIRED)
 
-add_library(imgui STATIC)
-add_library(vkbootstrap STATIC)
 add_library(glm INTERFACE)
 add_library(vma INTERFACE)
-add_library(tiny_obj_loader INTERFACE)
+
 
 # SDL2
 # Create a static library target for SDL2 using the provided static libs
@@ -34,6 +32,7 @@ set(FLECS_TESTS OFF CACHE BOOL "Build flecs tests")
 add_subdirectory(flecs)
 
 # imgui
+add_library(imgui STATIC)
 target_include_directories(imgui PUBLIC imgui)
 target_sources(imgui PRIVATE 
     imgui/imgui.h
@@ -49,12 +48,10 @@ target_sources(imgui PRIVATE
 target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2 SDL2main)
 
 # vkbootstrap
-target_sources(vkbootstrap PRIVATE 
-    vkbootstrap/VkBootstrap.h
-    vkbootstrap/VkBootstrap.cpp
-)
-target_include_directories(vkbootstrap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
+set(VK_BOOTSTRAP_DISABLE_WARNINGS OFF CACHE BOOL "Disable warnings during compilation")
+set(VK_BOOTSTRAP_WERROR OFF CACHE BOOL "Enable warnings as errors during compilation")
+add_subdirectory(vkbootstrap)
 
 # tiny_obj_loader (header only)
+add_library(tiny_obj_loader INTERFACE)
 target_include_directories(tiny_obj_loader INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
