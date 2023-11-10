@@ -16,7 +16,5 @@ add_subdirectory(harvest_havoc)
 
 find_package(Vulkan REQUIRED)
 
-target_link_libraries(vkbootstrap Vulkan::Vulkan)
-target_link_libraries(imgui Vulkan::Vulkan)
-target_link_libraries(velecs Vulkan::Vulkan SDL2 SDL2main flecs vkbootstrap imgui tiny_obj_loader)
-target_link_libraries(harvest_havoc PRIVATE velecs Vulkan::Vulkan SDL2 SDL2main flecs vkbootstrap imgui tiny_obj_loader)
+target_link_libraries(velecs Vulkan::Vulkan SDL2 SDL2main flecs_static vkbootstrap imgui tiny_obj_loader)
+target_link_libraries(harvest_havoc PRIVATE velecs Vulkan::Vulkan SDL2 SDL2main flecs_static vkbootstrap imgui tiny_obj_loader)
