@@ -43,8 +43,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <imgui/imgui.h>
-#include <imgui/imgui_impl_sdl.h>
-#include <imgui/imgui_impl_vulkan.h>
+#include <imgui/backends/imgui_impl_sdl2.h>
+#include <imgui/backends/imgui_impl_vulkan.h>
 
 #define VK_CHECK(x)                                                    \
     do                                                                 \
