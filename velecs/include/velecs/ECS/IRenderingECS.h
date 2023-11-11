@@ -18,7 +18,7 @@
 
 #include <glm/mat4x4.hpp>
 
-#include <flecs/flecs.h>
+#include <flecs.h>
 
 namespace velecs {
 

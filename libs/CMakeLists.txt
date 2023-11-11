@@ -53,5 +53,5 @@ set(VK_BOOTSTRAP_WERROR OFF CACHE BOOL "Enable warnings as errors during compila
 add_subdirectory(vkbootstrap)
 
 # tiny_obj_loader (header only)
-add_library(tiny_obj_loader INTERFACE)
-target_include_directories(tiny_obj_loader INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_library(tinyobjloader STATIC tinyobjloader/tiny_obj_loader.h tinyobjloader/tiny_obj_loader.cc)
+target_include_directories(tinyobjloader PUBLIC tinyobjloader)

@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <flecs/flecs.h>
+#include <flecs.h>
 
 namespace hh {
 

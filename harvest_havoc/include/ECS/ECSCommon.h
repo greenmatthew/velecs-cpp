@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <flecs/flecs.h>
+#include <flecs.h>
 
 #include <velecs/Math/Vec2.h>
 #include <velecs/Math/Vec3.h>

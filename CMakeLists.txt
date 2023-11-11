@@ -22,10 +22,10 @@ target_link_libraries(velecs
     Vulkan::Vulkan
     SDL2
     SDL2main
-    flecs_static
+    flecs::flecs_static
     vk-bootstrap
     imgui
-    tiny_obj_loader
+    tinyobjloader
 )
 
 target_link_libraries(HarvestHavoc PRIVATE
@@ -33,8 +33,8 @@ target_link_libraries(HarvestHavoc PRIVATE
     Vulkan::Vulkan
     SDL2
     SDL2main
-    flecs_static
+    flecs::flecs_static
     vk-bootstrap
     imgui
-    tiny_obj_loader
+    tinyobjloader
 )
