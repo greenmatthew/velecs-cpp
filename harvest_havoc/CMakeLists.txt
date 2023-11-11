@@ -1,13 +1,15 @@
-project(harvest_havoc)
-
 file(GLOB_RECURSE HARVEST_HAVOC_HEADERS "include/*.h")
 file(GLOB_RECURSE HARVEST_HAVOC_SOURCES "src/*.cpp")
 
-add_executable(harvest_havoc ${HARVEST_HAVOC_SOURCES} ${HARVEST_HAVOC_HEADERS})
+add_executable(HarvestHavoc ${HARVEST_HAVOC_SOURCES} ${HARVEST_HAVOC_HEADERS})
 
-add_dependencies(harvest_havoc velecs)
+set_target_properties(HarvestHavoc PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${FINAL_OUTPUT_BASE_DIR}/$<CONFIG>"
+)
 
-target_include_directories(harvest_havoc PUBLIC include)
+add_dependencies(HarvestHavoc velecs)
+
+target_include_directories(HarvestHavoc PUBLIC include)
 
 # Get the absolute path to the root of your project
 get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)

@@ -6,7 +6,9 @@ project(HarvestHavoc)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT harvest_havoc)
+set(FINAL_OUTPUT_BASE_DIR "${CMAKE_SOURCE_DIR}/bin" CACHE PATH "Final output directory for executables and resources")
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT HarvestHavoc)
 
 # Additional libs
 add_subdirectory(libs)
@@ -26,7 +28,7 @@ target_link_libraries(velecs
     tiny_obj_loader
 )
 
-target_link_libraries(harvest_havoc PRIVATE
+target_link_libraries(HarvestHavoc PRIVATE
     velecs
     Vulkan::Vulkan
     SDL2
