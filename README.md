@@ -25,6 +25,8 @@
 
      ![VULKAN_SDK Environment Variable](docs/README.md/build/env_vars_menu.png)
 
+---
+
 ### 2. Installing CMake on Windows
 
 #### 1. Download CMake for Windows:
@@ -57,6 +59,8 @@
 
 ### 3. Installing Visual Studio 2022
 
+---
+
 #### 1. Download Visual Studio 2022 Installer:
 
 1. Visit the [Visual Studio downloads page](https://visualstudio.microsoft.com/downloads/).
@@ -77,6 +81,8 @@
 
 1. After selecting the necessary workloads and options, proceed with the installation.
 2. The installer will download and install Visual Studio along with the selected components.
+
+---
 
 ### 4. Obtain the Source Code
 
@@ -105,6 +111,8 @@
 4. Switch to the latest release commit:
     >```git checkout <HASH>```
 
+---
+
 ### 5. Building the CMake Project
 1. Create a Build Directory:
     > ```mkdir bin```
@@ -114,6 +122,8 @@
     > ```cmake -G "Visual Studio 17 2022" -A x64 -B bin```
     
     This command tells CMake to generate build system files for Visual Studio 2019 (specifically for the x64 architecture) in the bin directory.
+
+---
 
 ### 6. Running the Project
 After generating the build system files, you have two main ways to build and run your project:
