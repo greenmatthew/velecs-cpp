@@ -1,3 +1,7 @@
+cmake_minimum_required(VERSION 3.10)
+
+add_subdirectory(assets)
+
 file(GLOB_RECURSE HARVEST_HAVOC_HEADERS "include/*.h")
 file(GLOB_RECURSE HARVEST_HAVOC_SOURCES "src/*.cpp")
 
@@ -7,7 +11,7 @@ set_target_properties(HarvestHavoc PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${FINAL_OUTPUT_BASE_DIR}/$<CONFIG>"
 )
 
-add_dependencies(HarvestHavoc velecs)
+add_dependencies(HarvestHavoc velecs shaders)
 
 target_include_directories(HarvestHavoc PUBLIC include)
 
