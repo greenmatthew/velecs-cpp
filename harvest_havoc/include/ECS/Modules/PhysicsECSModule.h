@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ECS/IECSModule.h"
+#include "ECS/Modules/IECSModule.h"
 
 namespace hh {
 

@@ -8,7 +8,7 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/PhysicsECSModule.h"
+#include "ECS/Modules/PhysicsECSModule.h"
 
 #include "ECS/Components/Rendering/Transform.h"
 

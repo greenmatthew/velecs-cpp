@@ -10,10 +10,10 @@
 
 #include "ECS/ECSManager.h"
 
-#include "ECS/PipelineECSModule.h"
+#include "ECS/Modules/PipelineECSModule.h"
 
-#include "ECS/InputECSModule.h"
-#include "ECS/PhysicsECSModule.h"
+#include "ECS/Modules/InputECSModule.h"
+#include "ECS/Modules/PhysicsECSModule.h"
 
 using namespace velecs;
 

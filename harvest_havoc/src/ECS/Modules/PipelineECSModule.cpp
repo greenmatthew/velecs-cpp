@@ -8,7 +8,7 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/PipelineECSModule.h"
+#include "ECS/Modules/PipelineECSModule.h"
 
 namespace hh {
 
