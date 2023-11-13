@@ -12,13 +12,11 @@
 
 #include "ECS/ECSManager.h"
 
-
 int main(int argc, char* argv[])
 {
      auto& engine = velecs::VelECSEngine::GetInstance();
 
      engine.SetECS(std::make_unique<hh::ECSManager>(engine))
-           // .SetInput(hh::Input::Create())
            .Init()
            .Run()
            .Cleanup();

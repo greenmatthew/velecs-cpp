@@ -65,7 +65,6 @@ VelECSEngine& VelECSEngine::Init()
 
 
     ecsManager->Init();
-    auto windowExtent = ecsManager->renderingECS->GetWindowExtent();
 
     //everything went fine
     _isInitialized = true;
@@ -88,15 +87,14 @@ VelECSEngine& VelECSEngine::Run()
 {
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
-    while (!isQuitting)
+    // while (!ecsManager->ecs.singleton<Input>().get<Input>()->isQuitting)
+    while (!ecsManager->GetIsQuitting())
     {
         auto currentFrameTime = std::chrono::high_resolution_clock::now();
         std::chrono::duration<float> elapsedTime = currentFrameTime - lastFrameTime;
         float deltaTime = elapsedTime.count();
 
         lastFrameTime = currentFrameTime;
-
-        InputUpdate();
 
         ecsManager->ecs.progress(deltaTime);
 

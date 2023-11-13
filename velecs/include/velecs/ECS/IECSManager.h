@@ -14,9 +14,6 @@
 
 #include "velecs/VelECSEngine.h"
 
-#include "velecs/ECS/IRenderingECS.h"
-#include "velecs/ECS/IPhysicsECS.h"
-
 #include <memory>
 
 namespace velecs {
@@ -33,14 +30,12 @@ public:
 
     VelECSEngine& engine;
     flecs::world ecs;
-    std::unique_ptr<IRenderingECS> renderingECS;
-    std::unique_ptr<IPhysicsECS> physicsECS;
 
     // Constructors and Destructors
 
     /// \brief Default constructor.
-    IECSManager(velecs::VelECSEngine& engine, std::unique_ptr<IRenderingECS> renderingECS, std::unique_ptr<IPhysicsECS> physicsECS)
-        : engine(engine), renderingECS(std::move(renderingECS)), physicsECS(std::move(physicsECS)) {}
+    IECSManager(velecs::VelECSEngine& engine)
+        : engine(engine) {}
 
     /// \brief Default deconstructor.
     virtual ~IECSManager() = default;
@@ -49,13 +44,12 @@ public:
 
     virtual void Init() = 0;
     virtual void Cleanup() = 0;
+    virtual bool GetIsQuitting() const = 0;
 
 protected:
     // Protected Fields
 
     // Protected Methods
-
-    virtual void InitPipeline() = 0;
 
 private:
     // Private Fields

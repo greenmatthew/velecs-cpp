@@ -14,8 +14,6 @@
 
 #include <velecs/VelECSEngine.h>
 
-#include "ECS/ECSCommon.h"
-
 #include <functional>
 
 namespace hh {
@@ -44,6 +42,8 @@ public:
 
     void Cleanup() override;
 
+    bool GetIsQuitting() const override;
+
 protected:
     // Protected Fields
 
@@ -53,8 +53,6 @@ private:
     // Private Fields
 
     // Private Methods
-
-    void InitPipeline() override;
 };
 
 } // namespace hh
