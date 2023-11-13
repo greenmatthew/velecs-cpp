@@ -1,9 +1,0 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="DeleteDLLs" BeforeTargets="Clean">
-        <Message Text="Deleting DLL files..." Importance="high" />
-        <ItemGroup>
-            <DllFiles Include="$(SolutionDir)bin\$(Platform)\$(Configuration)\*.dll"/>
-        </ItemGroup>
-        <Delete Files="@(DllFiles)" />
-    </Target>
-</Project>
