@@ -14,12 +14,10 @@
 
 int main(int argc, char* argv[])
 {
-     auto& engine = velecs::VelECSEngine::GetInstance();
+    auto& engine = velecs::VelECSEngine{};
 
-     engine.SetECS(std::make_unique<hh::ECSManager>(engine))
-           .Init()
-           .Run()
-           .Cleanup();
+    engine.SetECS(std::make_unique<hh::ECSManager>(engine))
+        .Run();
 
     return 0;
 }

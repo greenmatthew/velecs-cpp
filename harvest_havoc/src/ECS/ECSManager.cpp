@@ -12,6 +12,7 @@
 
 #include "ECS/Modules/PipelineECSModule.h"
 
+#include "ECS/Modules/RenderingECSModule.h"
 #include "ECS/Modules/InputECSModule.h"
 #include "ECS/Modules/PhysicsECSModule.h"
 
@@ -30,6 +31,7 @@ ECSManager::ECSManager(velecs::VelECSEngine& engine)
     // Do this before importing anything else.
     ecs.import<PipelineECSModule>();
 
+    ecs.import<RenderingECSModule>();
     ecs.import<InputECSModule>();
     ecs.import<PhysicsECSModule>();
 }
