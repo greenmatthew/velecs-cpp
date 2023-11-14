@@ -17,11 +17,8 @@ namespace hh {
 // Constructors and Destructors
 
 InputECSModule::InputECSModule(flecs::world& ecs)
+    : IECSModule(ecs)
 {
-    ecs.module<InputECSModule>();
-
-    const PipelineStages* const stages = ecs.singleton<PipelineStages>().get<PipelineStages>();
-
     ecs.component<Input>();
 
     ecs.set<Input>({});

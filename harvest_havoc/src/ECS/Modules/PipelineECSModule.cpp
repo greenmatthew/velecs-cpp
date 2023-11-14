@@ -22,13 +22,13 @@ PipelineECSModule::PipelineECSModule(flecs::world& ecs)
 
     ecs.component<PipelineStages>();
 
-    auto inputUpdate = ecs.entity("InputUpdatePhase").add(flecs::Final).add(flecs::Phase);
-    auto update = ecs.entity("UpdatePhase").add(flecs::Final).add(flecs::Phase).depends_on(inputUpdate);
-    auto collisions = ecs.entity("CollisionsPhase").add(flecs::Final).add(flecs::Phase).depends_on(update);
-    auto preDraw = ecs.entity("PreDrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(collisions);
-    auto draw = ecs.entity("DrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(preDraw);
-    auto postDraw = ecs.entity("PostDrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(draw);
-    auto housekeeping = ecs.entity("HousekeepingPhase").add(flecs::Final).add(flecs::Phase).depends_on(postDraw);
+    flecs::entity inputUpdate = ecs.entity("InputUpdatePhase").add(flecs::Final).add(flecs::Phase);
+    flecs::entity update = ecs.entity("UpdatePhase").add(flecs::Final).add(flecs::Phase).depends_on(inputUpdate);
+    flecs::entity collisions = ecs.entity("CollisionsPhase").add(flecs::Final).add(flecs::Phase).depends_on(update);
+    flecs::entity preDraw = ecs.entity("PreDrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(collisions);
+    flecs::entity draw = ecs.entity("DrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(preDraw);
+    flecs::entity postDraw = ecs.entity("PostDrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(draw);
+    flecs::entity housekeeping = ecs.entity("HousekeepingPhase").add(flecs::Final).add(flecs::Phase).depends_on(postDraw);
 
     ecs.set<PipelineStages>
     (

@@ -14,6 +14,8 @@
 
 #include "ECS/Components/PipelineStages.h"
 
+#include <type_traits>
+
 namespace hh {
 
 /// @class IECSModule
@@ -32,6 +34,8 @@ public:
     IECSModule(flecs::world& ecs)
         : stages(ecs.singleton<PipelineStages>().get<PipelineStages>())
     {
+        static_assert(std::is_base_of<IECSModule, TECSModule>::value, "TECSModule must be a subclass of IECSModule");
+
         ecs.import<TECSModule>();
     }
 

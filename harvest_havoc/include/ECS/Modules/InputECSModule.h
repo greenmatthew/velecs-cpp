@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "ECS/Modules/IECSModule.h"
+
 #include "ECS/Components/Input.h"
 #include "ECS/Components/PipelineStages.h"
 
@@ -25,7 +27,7 @@ namespace hh {
 /// This class is responsible for integrating the Input component with the ECS (Entity Component System),
 /// specifically using the Flecs framework. It includes functions for initializing the Input component
 /// within the ECS world and updating it based on SDL events.
-struct InputECSModule {
+struct InputECSModule : public IECSModule<InputECSModule> {
 
     /// @brief Constructs the InputECSModule and initializes the Input component in the ECS world.
     /// @param[in] ecs Reference to the ECS world in which the module operates.
