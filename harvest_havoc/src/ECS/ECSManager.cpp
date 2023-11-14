@@ -27,7 +27,6 @@ namespace hh {
 ECSManager::ECSManager(velecs::VelECSEngine& engine)
     : IECSManager(engine)
 {
-    // InitPipeline();
     // Do this before importing anything else.
     ecs.import<PipelineECSModule>();
 

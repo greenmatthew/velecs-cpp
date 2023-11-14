@@ -16,10 +16,11 @@
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Vec3.h"
 
-#include "velecs/ECS/Components/Rendering/Transform.h"
 #include "velecs/ECS/Components/Rendering/Mesh.h"
 
 #include <vulkan/vulkan_core.h>
+
+#include <vma/vk_mem_alloc.h>
 
 #include <vector>
 #include <memory>
@@ -27,6 +28,11 @@
 struct SDL_Window;
 
 namespace velecs {
+
+struct PerspectiveCamera;
+struct OrthoCamera;
+struct Transform;
+struct Material;
 
 /// @struct RenderingECSModule
 /// @brief Brief description.
@@ -155,27 +161,69 @@ private:
     /// It is called by the Init method during engine initialization.
     void InitImGUI();
 
+    void PreDrawStep(float deltaTime);
+
+    void PostDrawStep(float deltaTime);
+
+    void Draw
+    (
+        const float deltaTime,
+        const PerspectiveCamera * const perspectiveCamera,
+        const Transform* const cameraTransform,
+        const Transform& transform,
+        const Mesh& mesh,
+        const Material& material
+    );
+
+    void Draw
+    (
+        const float deltaTime,
+        const OrthoCamera * const orthoCamera,
+        const Transform* const cameraTransform,
+        const Transform& transform,
+        const Mesh& mesh,
+        const Material& material
+    );
+
     void LoadMeshes();
 
     void UploadMesh(Mesh& mesh);
 
-    static flecs::entity CreatePerspectiveCamera(flecs::world& ecs,
+    static flecs::entity CreatePerspectiveCamera
+    (
+        flecs::world& ecs,
         const Vec3 position = Vec3::ZERO,
         const Vec3 rotation = Vec3::ZERO,
         const Vec2 resolution = Vec2{1920.0f, 1080.0f},
         const float verticalFOV = 70.0f,
         const float aspectRatio = 16.0f/9.0f,
         const float nearPlaneOffset = 0.1f,
-        const float farPlaneOffset = 200.0f);
+        const float farPlaneOffset = 200.0f
+    );
     
-    static flecs::entity CreateOrthoCamera(flecs::world& ecs,
+    static flecs::entity CreateOrthoCamera
+    (
+        flecs::world& ecs,
         const Vec3 position = Vec3::ZERO,
         const Vec3 rotation = Vec3::ZERO,
         const Vec2 resolution = Vec2{1920.0f, 1080.0f},
         const float nearPlaneOffset = 0.1f,
-        const float farPlaneOffset = 200.0f);
+        const float farPlaneOffset = 200.0f
+    );
 
-    glm::mat4 GetRenderMatrix(const Transform& transform, const flecs::entity camera);
+    glm::mat4 GetRenderMatrix
+    (
+        const PerspectiveCamera* const perspectiveCamera,
+        const Transform* const cameraTransform,
+        const Transform& transform
+    );
+
+    glm::mat4 GetRenderMatrix
+    (
+        const OrthoCamera* const orthoCamera,
+        const Transform* const cameraTransform,
+        const Transform& transform
+    );
 };
 
 } // namespace velecs

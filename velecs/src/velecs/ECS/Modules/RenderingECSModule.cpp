@@ -22,8 +22,6 @@
 #include "velecs/ECS/Components/Physics/LinearKinematics.h"
 #include "velecs/ECS/Components/Physics/AngularKinematics.h"
 
-
-
 #include "velecs/Memory/AllocatedBuffer.h"
 #include "velecs/Engine/vk_initializers.h"
 #include "velecs/Rendering/ShaderModule.h"
@@ -98,49 +96,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
-
-            //wait until the GPU has finished rendering the last frame. Timeout of 1 second
-            VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
-            VK_CHECK(vkResetFences(_device, 1, &_renderFence));
-
-            //request image from the swapchain, one second timeout
-            VK_CHECK(vkAcquireNextImageKHR(_device, _swapchain, 1000000000, _presentSemaphore, nullptr, &swapchainImageIndex));
-
-            //now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
-            VK_CHECK(vkResetCommandBuffer(_mainCommandBuffer, 0));
-
-            //begin the command buffer recording. We will use this command buffer exactly once, so we want to let Vulkan know that
-            VkCommandBufferBeginInfo cmdBeginInfo = {};
-            cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-            cmdBeginInfo.pNext = nullptr;
-
-            cmdBeginInfo.pInheritanceInfo = nullptr;
-            cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-            VK_CHECK(vkBeginCommandBuffer(_mainCommandBuffer, &cmdBeginInfo));
-
-            //make a clear-color from frame number. This will flash with a 120*pi frame period.
-            VkClearValue clearValue = {};
-            float flash = abs(sin(_frameNumber / 3840.f));
-            clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
-
-            //start the main renderpass.
-            //We will use the clear color from above, and the framebuffer of the index the swapchain gave us
-            VkRenderPassBeginInfo rpInfo = {};
-            rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            rpInfo.pNext = nullptr;
-
-            rpInfo.renderPass = _renderPass;
-            rpInfo.renderArea.offset.x = 0;
-            rpInfo.renderArea.offset.y = 0;
-            rpInfo.renderArea.extent = windowExtent;
-            rpInfo.framebuffer = _framebuffers[swapchainImageIndex];
-
-            //connect clear values
-            rpInfo.clearValueCount = 1;
-            rpInfo.pClearValues = &clearValue;
-
-            vkCmdBeginRenderPass(_mainCommandBuffer, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
+            PreDrawStep(deltaTime);
         }
     );
 
@@ -149,58 +105,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         .iter([this](flecs::iter& it)
         {
             float deltaTime = it.delta_time();
-
-            //finalize the render pass
-            vkCmdEndRenderPass(_mainCommandBuffer);
-            //finalize the command buffer (we can no longer add commands, but it can now be executed)
-            VK_CHECK(vkEndCommandBuffer(_mainCommandBuffer));
-
-
-            //prepare the submission to the queue.
-            //we want to wait on the _presentSemaphore, as that semaphore is signaled when the swapchain is ready
-            //we will signal the _renderSemaphore, to signal that rendering has finished
-
-            VkSubmitInfo submit = {};
-            submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-            submit.pNext = nullptr;
-
-            VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-
-            submit.pWaitDstStageMask = &waitStage;
-
-            submit.waitSemaphoreCount = 1;
-            submit.pWaitSemaphores = &_presentSemaphore;
-
-            submit.signalSemaphoreCount = 1;
-            submit.pSignalSemaphores = &_renderSemaphore;
-
-            submit.commandBufferCount = 1;
-            submit.pCommandBuffers = &_mainCommandBuffer;
-
-            //submit command buffer to the queue and execute it.
-            // _renderFence will now block until the graphic commands finish execution
-            VK_CHECK(vkQueueSubmit(_graphicsQueue, 1, &submit, _renderFence));
-
-
-            // this will put the image we just rendered into the visible window.
-            // we want to wait on the _renderSemaphore for that,
-            // as it's necessary that drawing commands have finished before the image is displayed to the user
-            VkPresentInfoKHR presentInfo = {};
-            presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-            presentInfo.pNext = nullptr;
-
-            presentInfo.pSwapchains = &_swapchain;
-            presentInfo.swapchainCount = 1;
-
-            presentInfo.pWaitSemaphores = &_renderSemaphore;
-            presentInfo.waitSemaphoreCount = 1;
-
-            presentInfo.pImageIndices = &swapchainImageIndex;
-
-            VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
-
-            //increase the number of frames drawn
-            _frameNumber++;
+            PostDrawStep(deltaTime);
         }
     );
 
@@ -216,23 +121,23 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                 Mesh mesh = meshes[i];
                 Material material = materials[i];
 
-                const auto* mainCamera = it.world().get<MainCamera>();
-                flecs::entity camera(it.world(), mainCamera->camera);
+                const auto camera = it.world().singleton<MainCamera>().get<MainCamera>()->camera;
+                const auto cameraTransform = camera.get<Transform>();
 
-                vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
-
-                //bind the mesh vertex buffer with offset 0
-                VkDeviceSize offset = 0;
-                vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
-
-                MeshPushConstants constants = {};
-                constants.renderMatrix = GetRenderMatrix(transform, camera);
-
-                //upload the matrix to the GPU via push constants
-                vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
-
-                //we can now draw the mesh
-                vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+                if (camera.has<PerspectiveCamera>())
+                {
+                    const auto perspectiveCamera = camera.get<PerspectiveCamera>();
+                    Draw(deltaTime, perspectiveCamera, cameraTransform, transform, mesh, material);
+                }
+                else if (camera.has<OrthoCamera>())
+                {
+                    const auto orthoCamera = camera.get<OrthoCamera>();
+                    Draw(deltaTime, orthoCamera, cameraTransform, transform, mesh, material);
+                }
+                else
+                {
+                    std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
+                }
             }
         }
     );
@@ -250,17 +155,17 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
 RenderingECSModule::~RenderingECSModule()
 {
-    //make sure the GPU has stopped doing its things
-    vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
+    // make sure the GPU has stopped doing its things
+    // vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
 
-    _mainDeletionQueue.Flush();
+    // _mainDeletionQueue.Flush();
 
-    vmaDestroyAllocator(_allocator);
-    vkDestroyDevice(_device, nullptr);
-    vkDestroySurfaceKHR(_instance, _surface, nullptr);
-    vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
-    vkDestroyInstance(_instance, nullptr);
-    SDL_DestroyWindow(_window);
+    // vmaDestroyAllocator(_allocator);
+    // vkDestroyDevice(_device, nullptr);
+    // vkDestroySurfaceKHR(_instance, _surface, nullptr);
+    // vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
+    // vkDestroyInstance(_instance, nullptr);
+    // SDL_DestroyWindow(_window);
 }
 
 // Public Methods
@@ -776,6 +681,162 @@ void RenderingECSModule::InitImGUI()
     // );
 }
 
+void RenderingECSModule::PreDrawStep(float deltaTime)
+{
+    //wait until the GPU has finished rendering the last frame. Timeout of 1 second
+    VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
+    VK_CHECK(vkResetFences(_device, 1, &_renderFence));
+
+    //request image from the swapchain, one second timeout
+    VK_CHECK(vkAcquireNextImageKHR(_device, _swapchain, 1000000000, _presentSemaphore, nullptr, &swapchainImageIndex));
+
+    //now that we are sure that the commands finished executing, we can safely reset the command buffer to begin recording again.
+    VK_CHECK(vkResetCommandBuffer(_mainCommandBuffer, 0));
+
+    //begin the command buffer recording. We will use this command buffer exactly once, so we want to let Vulkan know that
+    VkCommandBufferBeginInfo cmdBeginInfo = {};
+    cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    cmdBeginInfo.pNext = nullptr;
+
+    cmdBeginInfo.pInheritanceInfo = nullptr;
+    cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+    VK_CHECK(vkBeginCommandBuffer(_mainCommandBuffer, &cmdBeginInfo));
+
+    //make a clear-color from frame number. This will flash with a 120*pi frame period.
+    VkClearValue clearValue = {};
+    float flash = abs(sin(_frameNumber / 3840.f));
+    clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
+
+    //start the main renderpass.
+    //We will use the clear color from above, and the framebuffer of the index the swapchain gave us
+    VkRenderPassBeginInfo rpInfo = {};
+    rpInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    rpInfo.pNext = nullptr;
+
+    rpInfo.renderPass = _renderPass;
+    rpInfo.renderArea.offset.x = 0;
+    rpInfo.renderArea.offset.y = 0;
+    rpInfo.renderArea.extent = windowExtent;
+    rpInfo.framebuffer = _framebuffers[swapchainImageIndex];
+
+    //connect clear values
+    rpInfo.clearValueCount = 1;
+    rpInfo.pClearValues = &clearValue;
+
+    vkCmdBeginRenderPass(_mainCommandBuffer, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
+
+void RenderingECSModule::PostDrawStep(float deltaTime)
+{
+    //finalize the render pass
+    vkCmdEndRenderPass(_mainCommandBuffer);
+    //finalize the command buffer (we can no longer add commands, but it can now be executed)
+    VK_CHECK(vkEndCommandBuffer(_mainCommandBuffer));
+
+
+    //prepare the submission to the queue.
+    //we want to wait on the _presentSemaphore, as that semaphore is signaled when the swapchain is ready
+    //we will signal the _renderSemaphore, to signal that rendering has finished
+
+    VkSubmitInfo submit = {};
+    submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submit.pNext = nullptr;
+
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+    submit.pWaitDstStageMask = &waitStage;
+
+    submit.waitSemaphoreCount = 1;
+    submit.pWaitSemaphores = &_presentSemaphore;
+
+    submit.signalSemaphoreCount = 1;
+    submit.pSignalSemaphores = &_renderSemaphore;
+
+    submit.commandBufferCount = 1;
+    submit.pCommandBuffers = &_mainCommandBuffer;
+
+    //submit command buffer to the queue and execute it.
+    // _renderFence will now block until the graphic commands finish execution
+    VK_CHECK(vkQueueSubmit(_graphicsQueue, 1, &submit, _renderFence));
+
+
+    // this will put the image we just rendered into the visible window.
+    // we want to wait on the _renderSemaphore for that,
+    // as it's necessary that drawing commands have finished before the image is displayed to the user
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.pNext = nullptr;
+
+    presentInfo.pSwapchains = &_swapchain;
+    presentInfo.swapchainCount = 1;
+
+    presentInfo.pWaitSemaphores = &_renderSemaphore;
+    presentInfo.waitSemaphoreCount = 1;
+
+    presentInfo.pImageIndices = &swapchainImageIndex;
+
+    VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
+
+    //increase the number of frames drawn
+    _frameNumber++;
+}
+
+
+void RenderingECSModule::Draw
+(
+    const float deltaTime,
+    const PerspectiveCamera* const perspectiveCamera,
+    const Transform* const cameraTransform,
+    const Transform& transform,
+    const Mesh& mesh,
+    const Material& material
+)
+{
+    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
+
+    //bind the mesh vertex buffer with offset 0
+    VkDeviceSize offset = 0;
+    vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
+
+    MeshPushConstants constants = {};
+    
+    constants.renderMatrix = GetRenderMatrix(perspectiveCamera, cameraTransform, transform);
+
+    //upload the matrix to the GPU via push constants
+    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+
+    //we can now draw the mesh
+    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+}
+
+void RenderingECSModule::Draw
+(
+    const float deltaTime,
+    const OrthoCamera* const orthoCamera,
+    const Transform* const cameraTransform,
+    const Transform& transform,
+    const Mesh& mesh,
+    const Material& material
+)
+{
+    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
+
+    //bind the mesh vertex buffer with offset 0
+    VkDeviceSize offset = 0;
+    vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
+
+    MeshPushConstants constants = {};
+    
+    constants.renderMatrix = GetRenderMatrix(orthoCamera, cameraTransform, transform);
+
+    //upload the matrix to the GPU via push constants
+    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
+
+    //we can now draw the mesh
+    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+}
+
 void RenderingECSModule::LoadMeshes()
 {
     //make the array 3 vertices long
@@ -867,10 +928,13 @@ flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
         .set<OrthoCamera>(ortho);
 }
 
-glm::mat4 RenderingECSModule::GetRenderMatrix(const Transform& transform, const flecs::entity camera)
+glm::mat4 RenderingECSModule::GetRenderMatrix
+(
+    const PerspectiveCamera* const perspectiveCamera,
+    const Transform* const cameraTransform,
+    const Transform& transform
+)
 {
-    auto cameraTransform = camera.get<Transform>();
-
     // Start with the identity matrix
     glm::mat4 model = glm::mat4(1.0f); 
 
@@ -886,38 +950,13 @@ glm::mat4 RenderingECSModule::GetRenderMatrix(const Transform& transform, const 
     glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraTransform->position);
 
     // Compute the projection matrix
-    glm::mat4 projection;
-    auto perspectiveCamera = camera.get<PerspectiveCamera>();
-    if (perspectiveCamera)
-    {
-        projection = glm::perspective(glm::radians(perspectiveCamera->verticalFov),
-            perspectiveCamera->aspectRatio,
-            perspectiveCamera->nearPlaneOffset,
-            perspectiveCamera->farPlaneOffset);
-    }
-    else
-    {
-        auto orthoCamera = camera.get<OrthoCamera>();
-        Rect extent = orthoCamera->extent;
-        float halfWidth = extent.GetHalfWidth()*0.001f;
-        float halfLength = extent.GetHalfLength()*0.001f;
-        projection = glm::ortho(
-            -halfWidth, halfWidth,
-            -halfLength, halfLength,
-            orthoCamera->nearPlaneOffset,
-            orthoCamera->farPlaneOffset);
-        static bool once = true;
-        if (once)
-        {
-            for (int y = 0; y < 4; y++) {
-                for (int x = 0; x < 4; x++) {
-                    std::cout << projection[x][y] << " ";
-                }
-                std::cout << std::endl;
-            }
-            once = false;
-        }
-    }
+    glm::mat4 projection = glm::perspective
+    (
+        glm::radians(perspectiveCamera->verticalFov),
+        perspectiveCamera->aspectRatio,
+        perspectiveCamera->nearPlaneOffset,
+        perspectiveCamera->farPlaneOffset
+    );
 
     // Apply translation in world space
     glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
@@ -925,17 +964,47 @@ glm::mat4 RenderingECSModule::GetRenderMatrix(const Transform& transform, const 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;
 
-    static bool once2 = true;
-    if (once2)
-    {
-        for (int y = 0; y < 4; y++) {
-            for (int x = 0; x < 4; x++) {
-                std::cout << meshMatrix[x][y] << " ";
-            }
-            std::cout << std::endl;
-        }
-        once2 = false;
-    }
+    return meshMatrix;
+}
+    
+glm::mat4 RenderingECSModule::GetRenderMatrix
+(
+    const OrthoCamera* const orthoCamera,
+    const Transform* const cameraTransform,
+    const Transform& transform
+)
+{
+    // Start with the identity matrix
+    glm::mat4 model = glm::mat4(1.0f); 
+
+    // Apply scaling
+    model = glm::scale(model, (glm::vec3)transform.scale);
+
+    // Apply rotation around the x, y, and z axes
+    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1, 0, 0));
+    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0, 1, 0));
+    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
+
+    // Compute the view matrix
+    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraTransform->position);
+
+    // Compute the projection matrix
+    Rect extent = orthoCamera->extent;
+    float halfWidth = extent.GetHalfWidth()*0.001f;
+    float halfLength = extent.GetHalfLength()*0.001f;
+    glm::mat4 projection = glm::ortho
+    (
+        -halfWidth, halfWidth,
+        -halfLength, halfLength,
+        orthoCamera->nearPlaneOffset,
+        orthoCamera->farPlaneOffset
+    );
+
+    // Apply translation in world space
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
+
+    // Calculate the final mesh matrix
+    glm::mat4 meshMatrix = projection * view * worldTranslation * model;
 
     return meshMatrix;
 }
