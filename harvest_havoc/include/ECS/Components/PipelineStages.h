@@ -14,7 +14,7 @@
 
 namespace hh {
 
-/// @class PipelineStages
+/// @struct PipelineStages
 /// @brief Brief description.
 ///
 /// Rest of description.

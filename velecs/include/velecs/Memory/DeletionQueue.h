@@ -1,8 +1,8 @@
-/// \file    DeletionQueue.h
-/// \author  Matthew Green
-/// \date    10/29/2023 18:19:21
+/// @file    DeletionQueue.h
+/// @author  Matthew Green
+/// @date    10/29/2023 18:19:21
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -15,8 +15,8 @@
 
 namespace velecs {
 
-/// \class DeletionQueue
-/// \brief Brief description.
+/// @class DeletionQueue
+/// @brief Brief description.
 ///
 /// Rest of description.
 class DeletionQueue {
@@ -29,10 +29,10 @@ public:
 
     // Constructors and Destructors
     
-    /// \brief Default constructor.
+    /// @brief Default constructor.
     DeletionQueue() = default;
     
-    /// \brief Default deconstructor.
+    /// @brief Default deconstructor.
     ~DeletionQueue() = default;
 
     // Public Methods

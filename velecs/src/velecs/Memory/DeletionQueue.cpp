@@ -1,8 +1,8 @@
-/// \file    DeletionQueue.cpp
-/// \author  Matthew Green
-/// \date    10/29/2023 18:19:36
+/// @file    DeletionQueue.cpp
+/// @author  Matthew Green
+/// @date    10/29/2023 18:19:36
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

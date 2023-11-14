@@ -1,8 +1,8 @@
-/// \file    Directory.h
-/// \author  Matthew Green
-/// \date    10/23/2023 23:18:22
+/// @file    Directory.h
+/// @author  Matthew Green
+/// @date    10/23/2023 23:18:22
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -14,8 +14,8 @@
 
 namespace velecs {
 
-/// \class Directory
-/// \brief Brief description.
+/// @class Directory
+/// @brief Brief description.
 ///
 /// Rest of description.
 class Directory {
@@ -26,9 +26,9 @@ public:
 
     // Public Methods
 
-    /// \brief Checks whether a given path points to a directory.
-    /// \param[in] dirPath The path to check.
-    /// \return True if a directory exists at the specified path, false otherwise.
+    /// @brief Checks whether a given path points to a directory.
+    /// @param[in] dirPath The path to check.
+    /// @return True if a directory exists at the specified path, false otherwise.
     static bool Exists(const std::string& dirPath);
 
 protected:

@@ -1,8 +1,8 @@
-/// \file    PlayerInputActionMap.cpp
-/// \author  Matthew Green
-/// \date    10/16/2023 18:51:33
+/// @file    PlayerInputActionMap.cpp
+/// @author  Matthew Green
+/// @date    10/16/2023 18:51:33
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

@@ -28,7 +28,7 @@ struct SDL_Window;
 
 namespace hh {
 
-/// @class RenderingECSModule
+/// @struct RenderingECSModule
 /// @brief Brief description.
 ///
 /// Rest of description.
@@ -56,40 +56,40 @@ protected:
 private:
     // Private Fields
 
-    int _frameNumber{0}; /// \brief Keeps track of the current frame number.
+    int _frameNumber{0}; /// @brief Keeps track of the current frame number.
 
-    SDL_Window* _window{nullptr}; /// \brief Pointer to the SDL window structure.
+    SDL_Window* _window{nullptr}; /// @brief Pointer to the SDL window structure.
 
     VkExtent2D windowExtent{1700, 900}; /// @brief Desired dimensions of the rendering window.
 
-    VkInstance _instance{nullptr}; /// \brief Handle to the Vulkan library.
-    VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// \brief Handle for Vulkan debug messaging.
-    VkPhysicalDevice _chosenGPU{nullptr}; /// \brief The chosen GPU for rendering operations.
-    VkDevice _device{nullptr}; /// \brief Handle to the Vulkan device.
-    VkSurfaceKHR _surface{nullptr}; /// \brief Handle to the Vulkan window surface.
+    VkInstance _instance{nullptr}; /// @brief Handle to the Vulkan library.
+    VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// @brief Handle for Vulkan debug messaging.
+    VkPhysicalDevice _chosenGPU{nullptr}; /// @brief The chosen GPU for rendering operations.
+    VkDevice _device{nullptr}; /// @brief Handle to the Vulkan device.
+    VkSurfaceKHR _surface{nullptr}; /// @brief Handle to the Vulkan window surface.
 
-    VkSwapchainKHR _swapchain{nullptr}; /// \brief Handle to the Vulkan swapchain.
-    VkFormat _swapchainImageFormat{VK_FORMAT_UNDEFINED}; /// \brief The format used for swapchain images.
-    std::vector<VkImage> _swapchainImages; /// \brief List of images within the swapchain.
-    std::vector<VkImageView> _swapchainImageViews; /// \brief List of image views for accessing swapchain images.
+    VkSwapchainKHR _swapchain{nullptr}; /// @brief Handle to the Vulkan swapchain.
+    VkFormat _swapchainImageFormat{VK_FORMAT_UNDEFINED}; /// @brief The format used for swapchain images.
+    std::vector<VkImage> _swapchainImages; /// @brief List of images within the swapchain.
+    std::vector<VkImageView> _swapchainImageViews; /// @brief List of image views for accessing swapchain images.
     uint32_t swapchainImageIndex{0};
 
-    VkQueue _graphicsQueue{nullptr}; /// \brief Queue used for submitting graphics commands.
-    uint32_t _graphicsQueueFamily{0}; /// \brief Index of the queue family for graphics operations.
-    VkCommandPool _commandPool{nullptr}; /// \brief Pool for allocating command buffers.
-    VkCommandBuffer _mainCommandBuffer{nullptr}; /// \brief Main command buffer for recording rendering commands.
+    VkQueue _graphicsQueue{nullptr}; /// @brief Queue used for submitting graphics commands.
+    uint32_t _graphicsQueueFamily{0}; /// @brief Index of the queue family for graphics operations.
+    VkCommandPool _commandPool{nullptr}; /// @brief Pool for allocating command buffers.
+    VkCommandBuffer _mainCommandBuffer{nullptr}; /// @brief Main command buffer for recording rendering commands.
 
-    VkRenderPass _renderPass{nullptr}; /// \brief Handle to the Vulkan render pass.
-    std::vector<VkFramebuffer> _framebuffers; /// \brief List of framebuffers for rendering.
+    VkRenderPass _renderPass{nullptr}; /// @brief Handle to the Vulkan render pass.
+    std::vector<VkFramebuffer> _framebuffers; /// @brief List of framebuffers for rendering.
 
-    VkSemaphore _presentSemaphore{nullptr}, _renderSemaphore{nullptr}; /// \brief Semaphore for synchronizing image presentation.
-    VkFence _renderFence{nullptr}; /// \brief Fence for synchronizing rendering operations.
+    VkSemaphore _presentSemaphore{nullptr}, _renderSemaphore{nullptr}; /// @brief Semaphore for synchronizing image presentation.
+    VkFence _renderFence{nullptr}; /// @brief Fence for synchronizing rendering operations.
 
-    VkPipelineLayout _trianglePipelineLayout{nullptr}; /// \brief Handle to the pipeline layout.
-    VkPipeline _trianglePipeline{nullptr}; /// \brief Handle to the pipeline.
-    VkPipeline _redTrianglePipeline{nullptr}; /// \brief Handle to the pipeline.
-    VkPipeline _triangleWireFramePipeline{nullptr}; /// \brief Handle to the pipeline.
-    VkPipeline _rainbowTrianglePipeline{nullptr}; /// \brief Handle to the pipeline.
+    VkPipelineLayout _trianglePipelineLayout{nullptr}; /// @brief Handle to the pipeline layout.
+    VkPipeline _trianglePipeline{nullptr}; /// @brief Handle to the pipeline.
+    VkPipeline _redTrianglePipeline{nullptr}; /// @brief Handle to the pipeline.
+    VkPipeline _triangleWireFramePipeline{nullptr}; /// @brief Handle to the pipeline.
+    VkPipeline _rainbowTrianglePipeline{nullptr}; /// @brief Handle to the pipeline.
 
     size_t renderPipelineIndex{4};
 
@@ -107,49 +107,49 @@ private:
 
     void InitWindow();
 
-    /// \brief Initializes Vulkan-specific structures, such as the instance, debug messenger, and physical device selection.
+    /// @brief Initializes Vulkan-specific structures, such as the instance, debug messenger, and physical device selection.
     ///
     /// This method encapsulates the setup of critical Vulkan structures required for rendering.
     /// It is called by the Init method during engine initialization.
     void InitVulkan();
 
-    /// \brief Initializes the swapchain for rendering.
+    /// @brief Initializes the swapchain for rendering.
     ///
     /// This method sets up the swapchain which is critical for rendering frames to the screen.
     /// It is called by the Init method during engine initialization.
     void InitSwapchain();
 
-    /// \brief Initializes command buffers and pools for rendering.
+    /// @brief Initializes command buffers and pools for rendering.
     ///
     /// This method sets up the command pool and main command buffer used for rendering.
     /// It is called by the Init method during engine initialization.
     void InitCommands();
 
-    /// \brief Initializes the default render pass used for rendering.
+    /// @brief Initializes the default render pass used for rendering.
     ///
     /// This method sets up the render pass which defines how rendering operations are handled.
     /// It is called by the Init method during engine initialization.
     void InitDefaultRenderPass();
 
-    /// \brief Initializes framebuffers used for rendering.
+    /// @brief Initializes framebuffers used for rendering.
     ///
     /// This method sets up the framebuffers which hold references to the images used in rendering.
     /// It is called by the Init method during engine initialization.
     void InitFrameBuffers();
 
-    /// \brief Initializes synchronization structures used for rendering.
+    /// @brief Initializes synchronization structures used for rendering.
     ///
     /// This method sets up semaphores and fences used to synchronize rendering operations.
     /// It is called by the Init method during engine initialization.
     void InitSyncStructures();
 
-    /// \brief Initializes the rendering pipelines by loading shader modules.
+    /// @brief Initializes the rendering pipelines by loading shader modules.
     ///
     /// This method loads the shader modules necessary for rendering, including a vertex shader and a fragment shader for rendering triangles.
     /// It leverages the load_shader_module method to load SPIR-V compiled shaders from file, and reports any errors encountered during the loading process.
     void InitPipelines();
 
-    /// \brief Initializes the ImGUI user interface.
+    /// @brief Initializes the ImGUI user interface.
     ///
     /// This method sets up ImGUI which is used for rendering the user interface.
     /// It is called by the Init method during engine initialization.

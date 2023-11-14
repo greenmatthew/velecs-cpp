@@ -1,8 +1,8 @@
-/// \file    Color32.h
-/// \author  Matthew Green
-/// \date    10/26/2023 15:00:14
+/// @file    Color32.h
+/// @author  Matthew Green
+/// @date    10/26/2023 15:00:14
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -15,8 +15,8 @@
 
 namespace velecs {
 
-/// \class Color32
-/// \brief Brief description.
+/// @struct Color32
+/// @brief Brief description.
 ///
 /// Rest of description.
 struct Color32 {
@@ -49,44 +49,44 @@ public:
     static const Color32 INDIGO;
     static const Color32 VIOLET;
 
-    uint8_t r; /// \brief The red channel.
-    uint8_t g; /// \brief The green channel.
-    uint8_t b; /// \brief The blue channel.
-    uint8_t a; /// \brief The alpha channel.
+    uint8_t r; /// @brief The red channel.
+    uint8_t g; /// @brief The green channel.
+    uint8_t b; /// @brief The blue channel.
+    uint8_t a; /// @brief The alpha channel.
 
     // Constructors and Destructors
 
     Color32();
     
-    /// \brief Default deconstructor.
+    /// @brief Default deconstructor.
     ~Color32() = default;
 
     // Public Methods
 
-    /// \brief Constructs a Color32 with specified channel values.
-    /// \param[in] r Red channel value.
-    /// \param[in] g Green channel value.
-    /// \param[in] b Blue channel value.
-    /// \param[in] a Alpha channel value (default is 255).
+    /// @brief Constructs a Color32 with specified channel values.
+    /// @param[in] r Red channel value.
+    /// @param[in] g Green channel value.
+    /// @param[in] b Blue channel value.
+    /// @param[in] a Alpha channel value (default is 255).
     static Color32 FromUInt8(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a = 255U);
 
-    /// \brief Constructs a Color32 with specified channel values.
-    /// \param[in] r Red channel value.
-    /// \param[in] g Green channel value.
-    /// \param[in] b Blue channel value.
-    /// \param[in] a Alpha channel value (default is 1.0).
+    /// @brief Constructs a Color32 with specified channel values.
+    /// @param[in] r Red channel value.
+    /// @param[in] g Green channel value.
+    /// @param[in] b Blue channel value.
+    /// @param[in] a Alpha channel value (default is 1.0).
     static Color32 FromFloat(const float r, const float g, const float b, const float a = 1.0f);
 
     static Color32 FromHSV(const float h, const float s, const float v, const float a = 1.0f);
 
-    /// \brief Overloaded subscript operator for array-like access to color components.
-    /// \param[in] index Index of the color component (0 for red, 1 for green, 2 for blue, 3 for alpha).
-    /// \return Reference to the specified color component.
+    /// @brief Overloaded subscript operator for array-like access to color components.
+    /// @param[in] index Index of the color component (0 for red, 1 for green, 2 for blue, 3 for alpha).
+    /// @return Reference to the specified color component.
     uint8_t& operator[](const std::size_t index);
 
-    /// \brief Const overloaded subscript operator for array-like access to color components.
-    /// \param[in] index Index of the color component (0 for red, 1 for green, 2 for blue, 3 for alpha).
-    /// \return Const reference to the specified color component.
+    /// @brief Const overloaded subscript operator for array-like access to color components.
+    /// @param[in] index Index of the color component (0 for red, 1 for green, 2 for blue, 3 for alpha).
+    /// @return Const reference to the specified color component.
     const uint8_t& operator[](const std::size_t index) const;
 
     bool operator==(const Color32 other) const;
@@ -129,11 +129,11 @@ private:
 
     // Constructor
 
-    /// \brief Constructs a Color32 with specified channel values.
-    /// \param[in] r Red channel value.
-    /// \param[in] g Green channel value.
-    /// \param[in] b Blue channel value.
-    /// \param[in] a Alpha channel value (default is 255).
+    /// @brief Constructs a Color32 with specified channel values.
+    /// @param[in] r Red channel value.
+    /// @param[in] g Green channel value.
+    /// @param[in] b Blue channel value.
+    /// @param[in] a Alpha channel value (default is 255).
     Color32(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a = 255U);
 
     // Private Methods

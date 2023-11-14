@@ -1,8 +1,8 @@
-/// \file    Rect.cpp
-/// \author  Matthew Green
-/// \date    11/01/2023 19:26:53
+/// @file    Rect.cpp
+/// @author  Matthew Green
+/// @date    11/01/2023 19:26:53
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -16,11 +16,11 @@ namespace velecs {
 
 // Constructors and Destructors
 
-/// \brief Constructor.
+/// @brief Constructor.
 Rect::Rect(const Vec2 min, const Vec2 max)
 	: min(min), max(max) {}
 
-/// \brief Constructor.
+/// @brief Constructor.
 Rect::Rect(const float left, const float bottom, const float right, const float top)
 	: min(Vec2{ left, bottom }), max(Vec2{ right, top }) {}
 

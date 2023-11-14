@@ -1,8 +1,8 @@
-/// \file    MenuInputActionMap.h
-/// \author  Matthew Green
-/// \date    10/16/2023 18:49:47
+/// @file    MenuInputActionMap.h
+/// @author  Matthew Green
+/// @date    10/16/2023 18:49:47
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -16,8 +16,8 @@
 
 namespace hh {
 
-/// \class MenuInputActionMap
-/// \brief Manages the mappings of SDL keycodes to input actions for menu interactions.
+/// @class MenuInputActionMap
+/// @brief Manages the mappings of SDL keycodes to input actions for menu interactions.
 /// 
 /// The MenuInputActionMap class is a specialized subclass of InputActionMap tailored for handling
 /// input events within menus. It defines specific input actions related to menu interactions, such as 
@@ -30,22 +30,22 @@ public:
 
     // Public Fields
     
-    std::shared_ptr<velecs::InputAction> Escape; /// \brief The input action associated with the Escape key, typically used to exit a menu.
+    std::shared_ptr<velecs::InputAction> Escape; /// @brief The input action associated with the Escape key, typically used to exit a menu.
 
     // Constructors and Destructors
 
-    /// \brief Default constructor.
+    /// @brief Default constructor.
     MenuInputActionMap() = default;
 
-    /// \brief Default destructor.
+    /// @brief Default destructor.
     ~MenuInputActionMap() = default;
 
     // Public Methods
 
-    /// \brief Initializes the MenuInputActionMap, creating necessary input action bindings.
+    /// @brief Initializes the MenuInputActionMap, creating necessary input action bindings.
     void Init() override;
 
-    /// \brief Defines behavior when switching action maps, if necessary for menu interactions.
+    /// @brief Defines behavior when switching action maps, if necessary for menu interactions.
     void Switch() override;
 
 protected:

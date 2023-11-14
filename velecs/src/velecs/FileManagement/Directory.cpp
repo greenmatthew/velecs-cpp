@@ -1,8 +1,8 @@
-/// \file    Directory.cpp
-/// \author  Matthew Green
-/// \date    10/23/2023 23:18:32
+/// @file    Directory.cpp
+/// @author  Matthew Green
+/// @date    10/23/2023 23:18:32
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

@@ -18,7 +18,7 @@
 
 namespace hh {
 
-/// @class IECSModule
+/// @struct IECSModule
 /// @brief Brief description.
 ///
 /// Rest of description.

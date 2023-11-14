@@ -21,7 +21,7 @@
 
 namespace hh {
 
-/// @class InputECSModule
+/// @struct InputECSModule
 /// @brief Manages the input component in the ECS architecture.
 ///
 /// This class is responsible for integrating the Input component with the ECS (Entity Component System),

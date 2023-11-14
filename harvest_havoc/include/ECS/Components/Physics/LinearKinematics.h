@@ -1,8 +1,8 @@
-/// \file    LinearKinematics.h
-/// \author  Matthew Green
-/// \date    10/30/2023 19:48:10
+/// @file    LinearKinematics.h
+/// @author  Matthew Green
+/// @date    10/30/2023 19:48:10
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -14,8 +14,8 @@
 
 namespace hh {
 
-/// \struct LinearKinematics
-/// \brief Brief description.
+/// @struct LinearKinematics
+/// @brief Brief description.
 ///
 /// Rest of description.
 struct LinearKinematics {

@@ -14,7 +14,7 @@
 
 namespace hh {
 
-/// @class MainCamera
+/// @struct MainCamera
 /// @brief Brief description.
 ///
 /// Rest of description.

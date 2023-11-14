@@ -14,7 +14,7 @@
 
 namespace hh {
 
-    /// @class PhysicsECSModule
+    /// @struct PhysicsECSModule
     /// @brief Manages the physics system within the ECS framework.
     ///
     /// This module is responsible for integrating and managing physics-related components and systems 

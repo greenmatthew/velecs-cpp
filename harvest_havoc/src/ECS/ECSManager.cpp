@@ -1,8 +1,8 @@
-/// \file    ECSManager.cpp
-/// \author  Matthew Green
-/// \date    10/30/2023 16:17:43
+/// @file    ECSManager.cpp
+/// @author  Matthew Green
+/// @date    10/30/2023 16:17:43
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

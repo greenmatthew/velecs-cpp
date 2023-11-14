@@ -1,8 +1,8 @@
-/// \file    Mesh.h
-/// \author  Matthew Green
-/// \date    10/31/2023 12:45:23
+/// @file    Mesh.h
+/// @author  Matthew Green
+/// @date    10/31/2023 12:45:23
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -18,8 +18,8 @@
 
 namespace hh {
 
-/// \class Material
-/// \brief Brief description.
+/// @struct Material
+/// @brief Brief description.
 ///
 /// Rest of description.
 struct Mesh {

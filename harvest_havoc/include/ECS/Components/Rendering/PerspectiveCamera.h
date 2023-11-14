@@ -1,8 +1,8 @@
-/// \file    PerspectiveCamera.h
-/// \author  Matthew Green
-/// \date    11/01/2023 19:49:11
+/// @file    PerspectiveCamera.h
+/// @author  Matthew Green
+/// @date    11/01/2023 19:49:11
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -14,8 +14,8 @@
 
 namespace hh {
 
-/// \class PerspectiveCamera
-/// \brief Represents a perspective camera.
+/// @struct PerspectiveCamera
+/// @brief Represents a perspective camera.
 ///
 /// The PerspectiveCamera struct encapsulates the properties of a perspective camera,
 /// including its vertical field of view, aspect ratio, and clipping planes. 
@@ -25,21 +25,21 @@ namespace hh {
 struct PerspectiveCamera {
     // Public Fields
 
-    velecs::Rect extent; /// \brief The visible area of the camera in the scene.
+    velecs::Rect extent; /// @brief The visible area of the camera in the scene.
 
-    float verticalFov; /// \brief The vertical field of view of the camera in degrees.
-    float aspectRatio; /// \brief The aspect ratio of the camera (width / height).
+    float verticalFov; /// @brief The vertical field of view of the camera in degrees.
+    float aspectRatio; /// @brief The aspect ratio of the camera (width / height).
 
-    float nearPlaneOffset; /// \brief The offset of the near clipping plane along the Z-axis.
-    float farPlaneOffset; /// \brief The offset of the far clipping plane along the Z-axis.
+    float nearPlaneOffset; /// @brief The offset of the near clipping plane along the Z-axis.
+    float farPlaneOffset; /// @brief The offset of the far clipping plane along the Z-axis.
 
     // Constructors and Destructors
 
-    /// \brief Constructor.
-    /// \param[in] verticalFov The vertical field of view of the camera.
-    /// \param[in] aspectRatio The aspect ratio of the camera.
-    /// \param[in] nearPlaneOffset The offset of the near clipping plane.
-    /// \param[in] farPlaneOffset The offset of the far clipping plane.
+    /// @brief Constructor.
+    /// @param[in] verticalFov The vertical field of view of the camera.
+    /// @param[in] aspectRatio The aspect ratio of the camera.
+    /// @param[in] nearPlaneOffset The offset of the near clipping plane.
+    /// @param[in] farPlaneOffset The offset of the far clipping plane.
     PerspectiveCamera(const velecs::Rect extent = velecs::Rect{ velecs::Vec2::zero(), velecs::Vec2{1920.0f, 1080.0f} },
         const float verticalFov = 70.0f,
         const float aspectRatio = 16.0f / 9.0f,
@@ -51,7 +51,7 @@ struct PerspectiveCamera {
             nearPlaneOffset(nearPlaneOffset),
             farPlaneOffset(farPlaneOffset) {}
 
-    /// \brief Default deconstructor.
+    /// @brief Default deconstructor.
     ~PerspectiveCamera() = default;
 };
 

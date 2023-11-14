@@ -1,8 +1,8 @@
-/// \file    ShaderModule.cpp
-/// \author  Matthew Green
-/// \date    10/24/2023 17:49:07
+/// @file    ShaderModule.cpp
+/// @author  Matthew Green
+/// @date    10/24/2023 17:49:07
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

@@ -18,7 +18,7 @@
 
 namespace hh {
 
-/// @class PipelineECSModule
+/// @struct PipelineECSModule
 /// @brief Brief description.
 ///
 /// Rest of description.

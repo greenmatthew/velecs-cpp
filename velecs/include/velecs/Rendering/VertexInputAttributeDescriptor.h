@@ -1,8 +1,8 @@
-/// \file    VertexInputAttributeDescriptor.h
-/// \author  Matthew Green
-/// \date    10/29/2023 18:03:32
+/// @file    VertexInputAttributeDescriptor.h
+/// @author  Matthew Green
+/// @date    10/29/2023 18:03:32
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -16,8 +16,8 @@
 
 namespace velecs {
 
-/// \class VertexInputAttributeDescriptor
-/// \brief Brief description.
+/// @class VertexInputAttributeDescriptor
+/// @brief Brief description.
 ///
 /// Rest of description.
 class VertexInputAttributeDescriptor {
@@ -33,10 +33,10 @@ public:
 
     // Constructors and Destructors
     
-    /// \brief Default constructor.
+    /// @brief Default constructor.
     VertexInputAttributeDescriptor() = default;
     
-    /// \brief Default deconstructor.
+    /// @brief Default deconstructor.
     ~VertexInputAttributeDescriptor() = default;
 
     // Public Methods

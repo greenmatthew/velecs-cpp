@@ -1,8 +1,8 @@
-/// \file    IEnableDisablePassKey.h
-/// \author  Matthew Green
-/// \date    10/17/2023 19:48:57
+/// @file    IEnableDisablePassKey.h
+/// @author  Matthew Green
+/// @date    10/17/2023 19:48:57
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -14,8 +14,8 @@ namespace velecs {
 
 class IInput;  ///< Forward declaration of the Input class
 
-/// \class IEnableDisablePassKey
-/// \brief Provides a passkey mechanism for enabling or disabling certain functionalities.
+/// @class IEnableDisablePassKey
+/// @brief Provides a passkey mechanism for enabling or disabling certain functionalities.
 /// 
 /// The IEnableDisablePassKey class is meant to be used as a friend class to control
 /// access to certain functionalities within other classes. By keeping its constructors private
@@ -38,21 +38,21 @@ protected:
 private:
     // Friends
 
-    friend class IInput; /// \brief Grants the Input class access to the private constructor of IEnableDisablePassKey.
+    friend class IInput; /// @brief Grants the Input class access to the private constructor of IEnableDisablePassKey.
 
     // Private Fields
 
     // Constructors and Destructors
     
-    /// \brief Default constructor. Accessible only to friend classes.
+    /// @brief Default constructor. Accessible only to friend classes.
     IEnableDisablePassKey() = default;
     
-    /// \brief Copy constructor. Deleted to prevent copying.
+    /// @brief Copy constructor. Deleted to prevent copying.
     IEnableDisablePassKey(const IEnableDisablePassKey&) = delete;
     
-    /// \brief Copy assignment operator. Deleted to prevent copy assignment.
+    /// @brief Copy assignment operator. Deleted to prevent copy assignment.
     /// 
-    /// \return Reference to this IEnableDisablePassKey instance.
+    /// @return Reference to this IEnableDisablePassKey instance.
     IEnableDisablePassKey& operator=(const IEnableDisablePassKey&) = delete;
 
     // Private Methods

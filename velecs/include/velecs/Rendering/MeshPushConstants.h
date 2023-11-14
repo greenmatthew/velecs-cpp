@@ -1,8 +1,8 @@
-/// \file    MeshPushConstants.h
-/// \author  Matthew Green
-/// \date    10/29/2023 18:14:22
+/// @file    MeshPushConstants.h
+/// @author  Matthew Green
+/// @date    10/29/2023 18:14:22
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -15,8 +15,8 @@
 
 namespace velecs {
 
-/// \class MeshPushConstants
-/// \brief Brief description.
+/// @class MeshPushConstants
+/// @brief Brief description.
 ///
 /// Rest of description.
 class MeshPushConstants {
@@ -30,10 +30,10 @@ public:
 
     // Constructors and Destructors
     
-    /// \brief Default constructor.
+    /// @brief Default constructor.
     MeshPushConstants() = default;
     
-    /// \brief Default deconstructor.
+    /// @brief Default deconstructor.
     ~MeshPushConstants() = default;
 
     // Public Methods

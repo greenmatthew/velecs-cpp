@@ -1,8 +1,8 @@
-/// \file    Input.h
-/// \author  Matthew Green
-/// \date    10/24/2023 20:43:56
+/// @file    Input.h
+/// @author  Matthew Green
+/// @date    10/24/2023 20:43:56
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -19,8 +19,8 @@
 
 namespace hh {
 
-/// \class Input
-/// \brief Brief description.
+/// @class Input
+/// @brief Brief description.
 ///
 /// Rest of description.
 class Input : public velecs::IInput {
@@ -29,16 +29,16 @@ public:
 
     // Public Fields
 
-    std::shared_ptr<PlayerInputActionMap> Player = std::make_shared<PlayerInputActionMap>();  /// \brief Input action map for player controls
-    std::shared_ptr<MenuInputActionMap> Menu = std::make_shared<MenuInputActionMap>(); /// \brief Input action map for menu navigation
+    std::shared_ptr<PlayerInputActionMap> Player = std::make_shared<PlayerInputActionMap>();  /// @brief Input action map for player controls
+    std::shared_ptr<MenuInputActionMap> Menu = std::make_shared<MenuInputActionMap>(); /// @brief Input action map for menu navigation
 
     // Public Methods
 
     void Init(std::weak_ptr<IInput> input) override;
 
-    /// \brief Switches to the specified input action map.
+    /// @brief Switches to the specified input action map.
     /// 
-    /// \param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
+    /// @param[in] inputActionMapPtr A shared pointer to the input action map to switch to.
     void SwitchTo(std::shared_ptr<velecs::InputActionMap> inputActionMapPtr);
 
 protected:
@@ -51,27 +51,27 @@ private:
 
     // Constructors and Destructors
 
-    /// \brief Default constructor.
+    /// @brief Default constructor.
     Input() = default;
     
-    /// \brief Default destructor.
+    /// @brief Default destructor.
     ~Input() = default;
 
     // Deleted copy constructor and assignment operator
 
-    /// \brief Deleted copy constructor.
+    /// @brief Deleted copy constructor.
     /// 
     /// Copy constructor is deleted to prevent copying of instances of this class.
     /// 
-    /// \param[in] other The instance to copy.
+    /// @param[in] other The instance to copy.
     Input(const Input& other) = delete;
 
-    /// \brief Deleted copy assignment operator.
+    /// @brief Deleted copy assignment operator.
     /// 
     /// Copy assignment operator is deleted to prevent copying of instances of this class.
     /// 
-    /// \param[in] other The instance to assign from.
-    /// \return Reference to this instance.
+    /// @param[in] other The instance to assign from.
+    /// @return Reference to this instance.
     Input& operator=(const Input& other) = delete;
 
     // Private Methods

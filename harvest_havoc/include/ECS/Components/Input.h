@@ -15,7 +15,7 @@
 
 namespace hh {
 
-/// @class Input
+/// @struct Input
 /// @brief Manages the input state for SDL_Keycode keys.
 ///
 /// This class provides functionality to check the state of keys (Idle, Pressed, Held, Released)

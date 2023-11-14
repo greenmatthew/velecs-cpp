@@ -1,8 +1,8 @@
-/// \file    Input.cpp
-/// \author  Matthew Green
-/// \date    10/24/2023 20:56:44
+/// @file    Input.cpp
+/// @author  Matthew Green
+/// @date    10/24/2023 20:56:44
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

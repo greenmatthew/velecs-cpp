@@ -1,8 +1,8 @@
-/// \file    Vec2.cpp
-/// \author  Matthew Green
-/// \date    10/15/2023 12:36:20
+/// @file    Vec2.cpp
+/// @author  Matthew Green
+/// @date    10/15/2023 12:36:20
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited

@@ -1,8 +1,8 @@
-/// \file    InputAction.h
-/// \author  Matthew Green
-/// \date    10/16/2023 19:45:08
+/// @file    InputAction.h
+/// @author  Matthew Green
+/// @date    10/16/2023 19:45:08
 /// 
-/// \section LICENSE
+/// @section LICENSE
 /// 
 /// Copyright (c) 2023 Matthew Green - All rights reserved
 /// Unauthorized copying of this file, via any medium is strictly prohibited
@@ -31,8 +31,8 @@ enum class ButtonState
     Disabled,
 };
 
-/// \class InputAction
-/// \brief Encapsulates an action triggered by an input event.
+/// @class InputAction
+/// @brief Encapsulates an action triggered by an input event.
 /// 
 /// The InputAction class encapsulates a single action that can be triggered by a keyboard input event.
 /// It exposes events for button pressed, held, and released states, and can be used to create complex
@@ -43,19 +43,19 @@ public:
 
     // Public Fields
 
-    /// \brief Event triggered when the associated key is pressed.
+    /// @brief Event triggered when the associated key is pressed.
     /// 
     /// This event stores callbacks that are invoked whenever the input system detects a valid key press 
     /// for the associated key of this InputAction instance.
     Event<> OnPressed;
 
-    /// \brief Event triggered when the associated key is held down.
+    /// @brief Event triggered when the associated key is held down.
     /// 
     /// This event stores callbacks that are invoked whenever the input system detects a valid key hold 
     /// for the associated key of this InputAction instance.
     Event<> OnHeld;
 
-    /// \brief Event triggered when the associated key is released.
+    /// @brief Event triggered when the associated key is released.
     /// 
     /// This event stores callbacks that are invoked whenever the input system detects a valid key release 
     /// for the associated key of this InputAction instance.
@@ -63,38 +63,38 @@ public:
 
     // Constructors and Destructors
 
-    /// \brief Constructor initializing the InputAction with a specified keycode.
-    /// \param[in] keycode The SDL_Keycode associated with this action.
+    /// @brief Constructor initializing the InputAction with a specified keycode.
+    /// @param[in] keycode The SDL_Keycode associated with this action.
     InputAction(const SDL_Keycode keycode);
 
-    /// \brief Default destructor.
+    /// @brief Default destructor.
     /// 
     /// The destructor is defaulted since there are no resources to clean up.
     ~InputAction() = default;
 
     // Public Methods
 
-    /// \brief Factory method to create a new InputAction instance.
-    /// \param[in] keycode The SDL_Keycode to associate with the new InputAction instance.
-    /// \return A shared pointer to the newly created InputAction instance.
+    /// @brief Factory method to create a new InputAction instance.
+    /// @param[in] keycode The SDL_Keycode to associate with the new InputAction instance.
+    /// @return A shared pointer to the newly created InputAction instance.
     static std::shared_ptr<InputAction> Create(const SDL_Keycode keycode);
 
-    /// \brief Attempt to invoke the OnPressed event.
-    /// \return A boolean value indicating whether the OnPressed event was successfully invoked.
+    /// @brief Attempt to invoke the OnPressed event.
+    /// @return A boolean value indicating whether the OnPressed event was successfully invoked.
     bool TryInvokeOnPressed();
 
-    /// \brief Attempt to invoke the OnHeld event.
-    /// \return A boolean value indicating whether the OnHeld event was successfully invoked.
+    /// @brief Attempt to invoke the OnHeld event.
+    /// @return A boolean value indicating whether the OnHeld event was successfully invoked.
     bool TryInvokeOnHeld();
 
-    /// \brief Attempt to invoke the OnReleased event.
-    /// \return A boolean value indicating whether the OnReleased event was successfully invoked.
+    /// @brief Attempt to invoke the OnReleased event.
+    /// @return A boolean value indicating whether the OnReleased event was successfully invoked.
     bool TryInvokeOnReleased();
 
-    /// \brief Sets the state to Idle.
+    /// @brief Sets the state to Idle.
     void SetStateToIdle();
 
-    /// \brief Sets the state to Disabled.
+    /// @brief Sets the state to Disabled.
     void SetStateToDisabled();
 
 protected:
@@ -105,8 +105,8 @@ protected:
 private:
     // Private Fields
 
-    const SDL_Keycode keycode; /// \brief The SDL keycode associated with this action
-    ButtonState state = ButtonState::Idle; /// \brief The current state of the action
+    const SDL_Keycode keycode; /// @brief The SDL keycode associated with this action
+    ButtonState state = ButtonState::Idle; /// @brief The current state of the action
 
     // Constructors
 
