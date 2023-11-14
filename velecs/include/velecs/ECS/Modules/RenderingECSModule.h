@@ -10,23 +10,23 @@
 
 #pragma once
 
-#include <velecs/Memory/DeletionQueue.h>
-#include <velecs/Math/Vec2.h>
-#include <velecs/Math/Vec3.h>
+#include "velecs/ECS/Modules/IECSModule.h"
 
-#include "ECS/Components/Rendering/Transform.h"
-#include "ECS/Components/Rendering/Mesh.h"
+#include "velecs/Memory/DeletionQueue.h"
+#include "velecs/Math/Vec2.h"
+#include "velecs/Math/Vec3.h"
+
+#include "velecs/ECS/Components/Rendering/Transform.h"
+#include "velecs/ECS/Components/Rendering/Mesh.h"
 
 #include <vulkan/vulkan_core.h>
 
 #include <vector>
 #include <memory>
 
-#include "ECS/Modules/IECSModule.h"
-
 struct SDL_Window;
 
-namespace hh {
+namespace velecs {
 
 /// @struct RenderingECSModule
 /// @brief Brief description.
@@ -93,7 +93,7 @@ private:
 
     size_t renderPipelineIndex{4};
 
-    velecs::DeletionQueue _mainDeletionQueue;
+    DeletionQueue _mainDeletionQueue;
 
     VmaAllocator _allocator{nullptr};
 
@@ -160,22 +160,22 @@ private:
     void UploadMesh(Mesh& mesh);
 
     static flecs::entity CreatePerspectiveCamera(flecs::world& ecs,
-        const velecs::Vec3 position = velecs::Vec3::ZERO,
-        const velecs::Vec3 rotation = velecs::Vec3::ZERO,
-        const velecs::Vec2 resolution = velecs::Vec2{1920.0f, 1080.0f},
+        const Vec3 position = Vec3::ZERO,
+        const Vec3 rotation = Vec3::ZERO,
+        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
         const float verticalFOV = 70.0f,
         const float aspectRatio = 16.0f/9.0f,
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f);
     
     static flecs::entity CreateOrthoCamera(flecs::world& ecs,
-        const velecs::Vec3 position = velecs::Vec3::ZERO,
-        const velecs::Vec3 rotation = velecs::Vec3::ZERO,
-        const velecs::Vec2 resolution = velecs::Vec2{1920.0f, 1080.0f},
+        const Vec3 position = Vec3::ZERO,
+        const Vec3 rotation = Vec3::ZERO,
+        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f);
 
     glm::mat4 GetRenderMatrix(const Transform& transform, const flecs::entity camera);
 };
 
-} // namespace hh
+} // namespace velecs

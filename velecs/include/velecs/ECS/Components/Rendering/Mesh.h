@@ -1,6 +1,6 @@
-/// @file    Transform.h
+/// @file    Mesh.h
 /// @author  Matthew Green
-/// @date    10/30/2023 19:48:02
+/// @date    10/31/2023 12:45:23
 /// 
 /// @section LICENSE
 /// 
@@ -10,18 +10,20 @@
 
 #pragma once
 
-#include <velecs/Math/Vec3.h>
+#include "velecs/Rendering/Vertex.h"
+#include "velecs/Memory/AllocatedBuffer.h"
 
-namespace hh {
+#include <vector>
 
-/// @struct Transform
+namespace velecs {
+
+/// @struct Material
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct Transform {
-    velecs::Vec3 position{velecs::Vec3::ZERO};
-    velecs::Vec3 rotation{velecs::Vec3::ZERO};
-    velecs::Vec3 scale{velecs::Vec3::ONE};
+struct Mesh {
+    std::vector<Vertex> _vertices;
+    AllocatedBuffer _vertexBuffer;
 };
 
-} // namespace hh
+} // namespace velecs

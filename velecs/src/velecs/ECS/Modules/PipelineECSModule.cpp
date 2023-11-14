@@ -8,9 +8,9 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/Modules/PipelineECSModule.h"
+#include "velecs/ECS/Modules/PipelineECSModule.h"
 
-namespace hh {
+namespace velecs {
 
 // Public Fields
 
@@ -108,4 +108,4 @@ PipelineECSModule::PipelineECSModule(flecs::world& ecs)
 
 // Private Methods
 
-} // namespace hh
+} // namespace velecs

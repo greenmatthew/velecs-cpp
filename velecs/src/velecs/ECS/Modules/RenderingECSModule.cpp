@@ -8,31 +8,32 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/Modules/RenderingECSModule.h"
+#include "velecs/VelECSEngine.h"
 
-#include "ECS/Components/Rendering/Transform.h"
-#include "ECS/Components/Rendering/Mesh.h"
-#include "ECS/Components/Rendering/Material.h"
-#include "ECS/Components/Rendering/PerspectiveCamera.h"
-#include "ECS/Components/Rendering/OrthoCamera.h"
-#include "ECS/Components/Rendering/MainCamera.h"
+#include "velecs/ECS/Modules/RenderingECSModule.h"
 
-#include "ECS/Components/Physics/LinearKinematics.h"
-#include "ECS/Components/Physics/AngularKinematics.h"
+#include "velecs/ECS/Components/Rendering/Transform.h"
+#include "velecs/ECS/Components/Rendering/Mesh.h"
+#include "velecs/ECS/Components/Rendering/Material.h"
+#include "velecs/ECS/Components/Rendering/PerspectiveCamera.h"
+#include "velecs/ECS/Components/Rendering/OrthoCamera.h"
+#include "velecs/ECS/Components/Rendering/MainCamera.h"
 
-#include <velecs/VelECSEngine.h>
+#include "velecs/ECS/Components/Physics/LinearKinematics.h"
+#include "velecs/ECS/Components/Physics/AngularKinematics.h"
 
-#include <velecs/VelECSEngine.h>
-#include <velecs/Memory/AllocatedBuffer.h>
-#include <velecs/Engine/vk_initializers.h>
-#include <velecs/Rendering/ShaderModule.h>
-#include <velecs/Rendering/PipelineBuilder.h>
 
-#include <velecs/Rendering/MeshPushConstants.h>
 
-#include <velecs/Graphics/Color32.h>
+#include "velecs/Memory/AllocatedBuffer.h"
+#include "velecs/Engine/vk_initializers.h"
+#include "velecs/Rendering/ShaderModule.h"
+#include "velecs/Rendering/PipelineBuilder.h"
 
-#include <velecs/FileManagement/Path.h>
+#include "velecs/Rendering/MeshPushConstants.h"
+
+#include "velecs/Graphics/Color32.h"
+
+#include "velecs/FileManagement/Path.h"
 
 #include <iostream>
 #include <fstream>
@@ -65,9 +66,7 @@
         }                                                              \
     } while (0)
 
-using namespace velecs;
-
-namespace hh {
+namespace velecs {
 
 // Public Fields
 
@@ -244,7 +243,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     ecs.entity()
         .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 1.0f})
         .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-        .set<Material>({velecs::Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
+        .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
         .set<LinearKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3{0.1f, 0.0f, 0.0f}})
         .set<AngularKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3::ZERO});
 }
@@ -941,4 +940,4 @@ glm::mat4 RenderingECSModule::GetRenderMatrix(const Transform& transform, const 
     return meshMatrix;
 }
 
-} // namespace hh
+} // namespace velecs

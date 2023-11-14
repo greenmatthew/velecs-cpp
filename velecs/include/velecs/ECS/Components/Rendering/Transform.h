@@ -1,6 +1,6 @@
-/// @file    LinearKinematics.h
+/// @file    Transform.h
 /// @author  Matthew Green
-/// @date    10/30/2023 19:48:10
+/// @date    10/30/2023 19:48:02
 /// 
 /// @section LICENSE
 /// 
@@ -10,17 +10,18 @@
 
 #pragma once
 
-#include <velecs/Math/Vec3.h>
+#include "velecs/Math/Vec3.h"
 
-namespace hh {
+namespace velecs {
 
-/// @struct LinearKinematics
+/// @struct Transform
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct LinearKinematics {
-    velecs::Vec3 velocity{velecs::Vec3::ZERO};
-    velecs::Vec3 acceleration{velecs::Vec3::ZERO};
+struct Transform {
+    Vec3 position{Vec3::ZERO};
+    Vec3 rotation{Vec3::ZERO};
+    Vec3 scale{Vec3::ONE};
 };
 
-} // namespace hh
+} // namespace velecs

@@ -1,6 +1,6 @@
-/// @file    MainCamera.h
+/// @file    Material.h
 /// @author  Matthew Green
-/// @date    2023-11-09 16:17:25
+/// @date    10/31/2023 12:45:31
 /// 
 /// @section LICENSE
 /// 
@@ -10,16 +10,18 @@
 
 #pragma once
 
-#include <flecs.h>
+#include "velecs/Graphics/Color32.h"
 
-namespace hh {
+namespace velecs {
 
-/// @struct MainCamera
+/// @struct Material
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct MainCamera {
-    flecs::entity camera;
+struct Material {
+	Color32 color{Color32::MAGENTA};
+	VkPipeline pipeline;
+	VkPipelineLayout pipelineLayout;
 };
 
-} // namespace hh
+} // namespace velecs

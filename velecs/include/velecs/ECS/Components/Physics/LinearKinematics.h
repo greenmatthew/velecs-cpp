@@ -1,6 +1,6 @@
-/// @file    Mesh.h
+/// @file    LinearKinematics.h
 /// @author  Matthew Green
-/// @date    10/31/2023 12:45:23
+/// @date    10/30/2023 19:48:10
 /// 
 /// @section LICENSE
 /// 
@@ -10,21 +10,17 @@
 
 #pragma once
 
-#include <velecs/Rendering/Vertex.h>
+#include "velecs/Math/Vec3.h"
 
-#include <velecs/Memory/AllocatedBuffer.h>
+namespace velecs {
 
-#include <vector>
-
-namespace hh {
-
-/// @struct Material
+/// @struct LinearKinematics
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct Mesh {
-    std::vector<velecs::Vertex> _vertices;
-    velecs::AllocatedBuffer _vertexBuffer;
+struct LinearKinematics {
+    Vec3 velocity{Vec3::ZERO};
+    Vec3 acceleration{Vec3::ZERO};
 };
 
-} // namespace hh
+} // namespace velecs

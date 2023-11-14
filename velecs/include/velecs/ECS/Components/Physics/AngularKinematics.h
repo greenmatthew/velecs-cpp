@@ -1,6 +1,6 @@
-/// @file    Material.h
+/// @file    AngularKinematics.h
 /// @author  Matthew Green
-/// @date    10/31/2023 12:45:31
+/// @date    10/30/2023 19:48:21
 /// 
 /// @section LICENSE
 /// 
@@ -10,18 +10,17 @@
 
 #pragma once
 
-#include <velecs/Graphics/Color32.h>
+#include "velecs/Math/Vec3.h"
 
-namespace hh {
+namespace velecs {
 
-/// @struct Material
+/// @struct AngularKinematics
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct Material {
-	velecs::Color32 color{velecs::Color32::MAGENTA};
-	VkPipeline pipeline;
-	VkPipelineLayout pipelineLayout;
+struct AngularKinematics {
+    Vec3 angularVelocity{Vec3::ZERO};
+    Vec3 angularAcceleration{Vec3::ZERO};
 };
 
-} // namespace hh
+} // namespace velecs

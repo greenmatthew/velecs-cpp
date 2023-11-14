@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <velecs/Math/Consts.h>
-#include <velecs/Math/Vec3.h>
+#include "velecs/Math/Consts.h"
+#include "velecs/Math/Vec3.h"
 
 #include <glm/vec2.hpp>
 

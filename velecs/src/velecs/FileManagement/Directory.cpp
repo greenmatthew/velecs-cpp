@@ -33,4 +33,4 @@ bool Directory::Exists(const std::string& dirPath)
 
 // Private Methods
 
-} // namespace velecs::
+} // namespace 

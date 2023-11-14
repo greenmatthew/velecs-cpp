@@ -10,10 +10,11 @@
 
 #pragma once
 
-#include <unordered_map>
 #include <SDL2/SDL.h>
 
-namespace hh {
+#include <unordered_map>
+
+namespace velecs {
 
 /// @struct Input
 /// @brief Manages the input state for SDL_Keycode keys.
@@ -60,4 +61,4 @@ struct Input {
     bool IsIdle(const SDL_Keycode keycode) const;
 };
 
-} // namespace hh
+} // namespace velecs

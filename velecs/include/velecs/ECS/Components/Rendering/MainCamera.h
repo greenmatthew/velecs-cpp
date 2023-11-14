@@ -1,6 +1,6 @@
-/// @file    PipelineECSModule.h
+/// @file    MainCamera.h
 /// @author  Matthew Green
-/// @date    2023-11-13 14:28:45
+/// @date    2023-11-09 16:17:25
 /// 
 /// @section LICENSE
 /// 
@@ -10,22 +10,16 @@
 
 #pragma once
 
-#include "ECS/Components/PipelineStages.h"
-
 #include <flecs.h>
 
-#include <iostream>
+namespace velecs {
 
-namespace hh {
-
-/// @struct PipelineECSModule
+/// @struct MainCamera
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct PipelineECSModule {
-
-    /// @brief Constructor.
-    PipelineECSModule(flecs::world& ecs);
+struct MainCamera {
+    flecs::entity camera;
 };
 
-} // namespace hh
+} // namespace velecs

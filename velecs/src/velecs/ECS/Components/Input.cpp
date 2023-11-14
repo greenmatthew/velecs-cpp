@@ -8,9 +8,9 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/Components/Input.h"
+#include "velecs/ECS/Components/Input.h"
 
-namespace hh {
+namespace velecs {
 
 // Public Fields
 
@@ -67,4 +67,4 @@ bool Input::IsIdle(const SDL_Keycode keycode) const
 
 // Private Methods
 
-} // namespace hh
+} // namespace velecs

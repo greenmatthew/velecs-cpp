@@ -34,7 +34,7 @@ public:
     // Constructors and Destructors
 
     /// @brief Default constructor.
-    IECSManager(velecs::VelECSEngine& engine)
+    IECSManager(VelECSEngine& engine)
         : engine(engine) {}
 
     /// @brief Default deconstructor.

@@ -8,30 +8,18 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/Modules/PhysicsECSModule.h"
+#include "velecs/ECS/Modules/PhysicsECSModule.h"
 
-#include "ECS/Components/Rendering/Transform.h"
+#include "velecs/ECS/Components/Rendering/Transform.h"
 
-#include "ECS/Components/Physics/LinearKinematics.h"
-#include "ECS/Components/Physics/AngularKinematics.h"
+#include "velecs/ECS/Components/Physics/LinearKinematics.h"
+#include "velecs/ECS/Components/Physics/AngularKinematics.h"
 
-#include "ECS/Components/PipelineStages.h"
+#include "velecs/ECS/Components/PipelineStages.h"
 
-#include <velecs/Math/Vec3.h>
+#include "velecs/Math/Vec3.h"
 
-using namespace velecs;
-
-namespace hh {
-
-void Test1(flecs::entity e, Transform& input)
-{
-    std::cout << "Test1" << std::endl;
-}
-
-void Test2(flecs::entity e, Transform& input)
-{
-    std::cout << "Test2" << std::endl;
-}
+namespace velecs {
 
 // Public Fields
 
@@ -107,4 +95,4 @@ PhysicsECSModule::PhysicsECSModule(flecs::world& ecs)
 
 // Private Methods
 
-} // namespace hh
+} // namespace velecs

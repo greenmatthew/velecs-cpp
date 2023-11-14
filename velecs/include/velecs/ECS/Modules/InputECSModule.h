@@ -10,16 +10,16 @@
 
 #pragma once
 
-#include "ECS/Modules/IECSModule.h"
+#include "velecs/ECS/Modules/IECSModule.h"
 
-#include "ECS/Components/Input.h"
-#include "ECS/Components/PipelineStages.h"
+#include "velecs/ECS/Components/Input.h"
+#include "velecs/ECS/Components/PipelineStages.h"
 
 #include <flecs.h>
 
 #include <iostream>
 
-namespace hh {
+namespace velecs {
 
 /// @struct InputECSModule
 /// @brief Manages the input component in the ECS architecture.
@@ -42,4 +42,4 @@ struct InputECSModule : public IECSModule<InputECSModule> {
     static void UpdateInput(flecs::entity e, Input& input);
 };
 
-} // namespace hh
+} // namespace velecs

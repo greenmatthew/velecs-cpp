@@ -12,7 +12,7 @@
 
 #include <flecs.h>
 
-namespace hh {
+namespace velecs {
 
 /// @struct PipelineStages
 /// @brief Brief description.
@@ -28,4 +28,4 @@ struct PipelineStages {
 	flecs::entity Housekeeping;
 };
 
-} // namespace hh
+} // namespace velecs

@@ -8,9 +8,9 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-#include "ECS/Modules/InputECSModule.h"
+#include "velecs/ECS/Modules/InputECSModule.h"
 
-namespace hh {
+namespace velecs {
 
 // Public Fields
 
@@ -112,4 +112,4 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
 
 // Private ECS/Methods
 
-} // namespace hh
+} // namespace velecs

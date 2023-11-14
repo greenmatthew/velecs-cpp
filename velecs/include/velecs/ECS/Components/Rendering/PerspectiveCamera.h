@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <velecs/Graphics/Rect.h>
+#include "velecs/Graphics/Rect.h"
 
-namespace hh {
+namespace velecs {
 
 /// @struct PerspectiveCamera
 /// @brief Represents a perspective camera.
@@ -25,7 +25,7 @@ namespace hh {
 struct PerspectiveCamera {
     // Public Fields
 
-    velecs::Rect extent; /// @brief The visible area of the camera in the scene.
+    Rect extent; /// @brief The visible area of the camera in the scene.
 
     float verticalFov; /// @brief The vertical field of view of the camera in degrees.
     float aspectRatio; /// @brief The aspect ratio of the camera (width / height).
@@ -40,7 +40,7 @@ struct PerspectiveCamera {
     /// @param[in] aspectRatio The aspect ratio of the camera.
     /// @param[in] nearPlaneOffset The offset of the near clipping plane.
     /// @param[in] farPlaneOffset The offset of the far clipping plane.
-    PerspectiveCamera(const velecs::Rect extent = velecs::Rect{ velecs::Vec2::zero(), velecs::Vec2{1920.0f, 1080.0f} },
+    PerspectiveCamera(const Rect extent = Rect{ Vec2::zero(), Vec2{1920.0f, 1080.0f} },
         const float verticalFov = 70.0f,
         const float aspectRatio = 16.0f / 9.0f,
         const float nearPlaneOffset = 0.1f,
@@ -55,4 +55,4 @@ struct PerspectiveCamera {
     ~PerspectiveCamera() = default;
 };
 
-} // namespace hh
+} // namespace velecs

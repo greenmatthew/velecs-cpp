@@ -12,11 +12,11 @@
 
 #include <flecs.h>
 
-#include "ECS/Components/PipelineStages.h"
+#include "velecs/ECS/Components/PipelineStages.h"
 
 #include <type_traits>
 
-namespace hh {
+namespace velecs {
 
 /// @struct IECSModule
 /// @brief Brief description.
@@ -54,4 +54,4 @@ private:
     // Private Methods
 };
 
-} // namespace hh
+} // namespace velecs

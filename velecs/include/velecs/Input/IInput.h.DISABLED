@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include <velecs/Core/IEnableDisable.h>
-#include <velecs/Input/InputAction.h>
-#include <velecs/Input/InputActionMap.h>
+#include "velecs/Core/IEnableDisable.h"
+#include "velecs/Input/InputAction.h"
+#include "velecs/Input/InputActionMap.h"
 
 #include <vector>
 #include <unordered_map>

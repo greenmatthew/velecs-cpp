@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "ECS/Modules/IECSModule.h"
+#include "velecs/ECS/Modules/IECSModule.h"
 
-namespace hh {
+namespace velecs {
 
     /// @struct PhysicsECSModule
     /// @brief Manages the physics system within the ECS framework.
@@ -30,4 +30,4 @@ namespace hh {
         PhysicsECSModule(flecs::world& ecs);
     };
 
-} // namespace hh
+} // namespace velecs
