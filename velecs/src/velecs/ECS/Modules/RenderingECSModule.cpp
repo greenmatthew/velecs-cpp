@@ -8,6 +8,10 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
+// Include this to allow debug specific info and Vulkan validation layers
+// These only happen when built in debug mode, so you can safely leave this defined at all times.
+#include <velecs/Debug.h>
+
 #include "velecs/VelECSEngine.h"
 
 #include "velecs/ECS/Modules/RenderingECSModule.h"
@@ -156,16 +160,16 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 RenderingECSModule::~RenderingECSModule()
 {
     // make sure the GPU has stopped doing its things
-    // vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
+    vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
 
-    // _mainDeletionQueue.Flush();
+    _mainDeletionQueue.Flush();
 
-    // vmaDestroyAllocator(_allocator);
-    // vkDestroyDevice(_device, nullptr);
-    // vkDestroySurfaceKHR(_instance, _surface, nullptr);
-    // vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
-    // vkDestroyInstance(_instance, nullptr);
-    // SDL_DestroyWindow(_window);
+    vmaDestroyAllocator(_allocator);
+    vkDestroyDevice(_device, nullptr);
+    vkDestroySurfaceKHR(_instance, _surface, nullptr);
+    vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
+    vkDestroyInstance(_instance, nullptr);
+    SDL_DestroyWindow(_window);
 }
 
 // Public Methods
@@ -210,10 +214,15 @@ void RenderingECSModule::InitVulkan()
 {
     vkb::InstanceBuilder builder;
 
+    #ifdef DEBUG_MODE
+        const bool enableValidationLayers = true;
+        std::cout << "[INFO] DEBUG_MODE defined; using Vulkan Validation Layers." << std::endl;
+    #else
+        const bool enableValidationLayers = false;
+    #endif
+
     auto inst_ret = builder.set_app_name("Harvest Havoc")
-        #ifdef _DEBUG
-            .request_validation_layers(true)
-        #endif
+            .request_validation_layers(enableValidationLayers)
             .require_api_version(1, 1, 0)
             .use_default_debug_messenger()
             .build();
@@ -224,12 +233,34 @@ void RenderingECSModule::InitVulkan()
         std::cerr << "Failed to create Vulkan instance. Error: " << inst_ret.error().message() << "\n";
         exit(EXIT_FAILURE);
     }
+
+    // #ifdef DEBUG_MODE
+    // // After building the instance, but before creating the device:
+    // if (inst_ret)
+    // {
+    //     std::cout << "Available validation layers:" << std::endl;
+    //     uint32_t layerCount;
+    //     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+    //     std::vector<VkLayerProperties> availableLayers(layerCount);
+    //     vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+    //     for (const auto& layer : availableLayers)
+    //     {
+    //         std::cout << "\t" << layer.layerName << std::endl;
+    //     }
+    // }
+    // #endif
+
     vkb::Instance vkb_inst = inst_ret.value();
 
     //store the instance
     _instance = vkb_inst.instance;
     //store the debug messenger
     _debug_messenger = vkb_inst.debug_messenger;
+
+    if (_debug_messenger == nullptr)
+    {
+        std::cout << "Failed to create debug messenger." << std::endl;
+    }
 
     // get the surface of the window we opened with SDL
     if (!SDL_Vulkan_CreateSurface(_window, _instance, &_surface))

@@ -7,6 +7,8 @@ add_library(velecs ${VELECS_SOURCES} ${VELECS_HEADERS})
 
 target_include_directories(velecs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+target_precompile_headers(velecs PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/velecs/pch.h")
+
 # Get the absolute path to the root of your project
 get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
 

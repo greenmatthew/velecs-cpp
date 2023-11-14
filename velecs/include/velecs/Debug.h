@@ -10,26 +10,17 @@
 
 #pragma once
 
-/// @def _DEBUG
-/// Check if _DEBUG macro is defined to enable debug mode. _DEBUG is VS' debug flag definition.
-#ifdef _DEBUG
-
+// Define DEBUG_MODE if either _DEBUG (Visual Studio) or NDEBUG (not in Release mode, typically CMake) is defined.
+#if defined(_DEBUG) || !defined(NDEBUG)
     #define DEBUG_MODE // Comment out if you want to turn off debug code, without modifying the VS project.
-    
 #endif
 
-/// @def DEBUG_MODE
-/// Define DEBUG_MODE if _DEBUG is defined.
 #ifdef DEBUG_MODE
-
-    /// @def DEBUG_INPUTACTION
-    /// Enable additional debugging for input actions.
+    // Enable additional debugging for input actions.
     // #define DEBUG_INPUTACTION
     
     #ifdef DEBUG_INPUTACTION
-        /// @def DEBUG_INPUTACTION_HELD
-        /// Uncomment to enable debugging for held input actions.
+        // Uncomment to enable debugging for held input actions.
         // #define DEBUG_INPUTACTION_HELD
     #endif
-
 #endif

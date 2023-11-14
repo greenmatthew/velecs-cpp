@@ -46,7 +46,6 @@ VelECSEngine& VelECSEngine::Run()
 {
     auto lastFrameTime = std::chrono::high_resolution_clock::now();
 
-    // while (!ecsManager->ecs.singleton<Input>().get<Input>()->isQuitting)
     while (!ecsManager->GetIsQuitting())
     {
         auto currentFrameTime = std::chrono::high_resolution_clock::now();

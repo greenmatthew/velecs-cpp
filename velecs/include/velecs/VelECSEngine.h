@@ -67,8 +67,7 @@ protected:
 private:
     // Private Fields
 
-    // std::unique_ptr<IInput> input;
-    std::unique_ptr<IECSManager> ecsManager;
+    std::unique_ptr<IECSManager> ecsManager{nullptr};
 
     // Private Methods
 };
