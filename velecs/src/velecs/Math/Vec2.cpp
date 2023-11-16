@@ -138,7 +138,7 @@ float Vec2::L2Norm() const
 Vec2 Vec2::Normalize() const
 {
     float magnitude = L2Norm();
-    return (magnitude != 0) ? Vec2(x / magnitude, y / magnitude) : Vec2(0, 0);
+    return (magnitude != 0) ? (*this)/magnitude : Vec2::zero();
 }
 
 Vec2 Vec2::ProjOntoI() const

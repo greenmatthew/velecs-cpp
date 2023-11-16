@@ -8,40 +8,24 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-// Include this to allow debug specific info and Vulkan validation layers
-// These only happen when built in debug mode, so you can safely leave this defined at all times.
-#include <velecs/Debug.h>
 
-#include "velecs/VelECSEngine.h"
 
 #include "velecs/ECS/Modules/RenderingECSModule.h"
+#include "velecs/ECS/Modules/PhysicsECSModule.h"
 
-#include "velecs/ECS/Components/Rendering/Transform.h"
-#include "velecs/ECS/Components/Rendering/Mesh.h"
-#include "velecs/ECS/Components/Rendering/Material.h"
-#include "velecs/ECS/Components/Rendering/PerspectiveCamera.h"
-#include "velecs/ECS/Components/Rendering/OrthoCamera.h"
-#include "velecs/ECS/Components/Rendering/MainCamera.h"
-
-#include "velecs/ECS/Components/Physics/LinearKinematics.h"
-#include "velecs/ECS/Components/Physics/AngularKinematics.h"
+#include "velecs/VelECSEngine.h"
 
 #include "velecs/Memory/AllocatedBuffer.h"
 #include "velecs/Engine/vk_initializers.h"
 #include "velecs/Rendering/ShaderModule.h"
 #include "velecs/Rendering/PipelineBuilder.h"
-
 #include "velecs/Rendering/MeshPushConstants.h"
-
 #include "velecs/Graphics/Color32.h"
-
 #include "velecs/FileManagement/Path.h"
 
 #include <iostream>
 #include <fstream>
 #include <chrono>
-
-#include <vulkan/vulkan.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_vulkan.h>
@@ -77,6 +61,8 @@ namespace velecs {
 RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     : IECSModule(ecs)
 {
+    ecs.import<PhysicsECSModule>();
+
     InitWindow();
 
     InitVulkan();
@@ -94,6 +80,19 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     ecs.component<Transform>();
     ecs.component<Mesh>();
     ecs.component<Material>();
+
+    flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "CommonECSModule::PR_Entity");
+    flecs::entity renderPrefab = ecs.prefab("PR_Render")
+        .is_a(entityPrefab)
+        .override<Mesh>()
+        .override<Material>();
+
+    flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
+        .is_a(entityPrefab)
+        .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
+        .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout});
+    
+    std::cout << "triangleRenderPrefab.path(): " << triangleRenderPrefab.path() << std::endl;
 
     ecs.system()
         .kind(stages->PreDraw)
@@ -119,24 +118,34 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         {
             float deltaTime = it.delta_time();
 
+            const auto mainCameraEntity = it.world().singleton<MainCamera>();
+            const auto cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
+            const auto cameraTransform = cameraEntity.get<Transform>();
+
+            std::cout << "Camera Abs Pos 1: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
+
             for (auto i : it)
             {
                 Transform transform = transforms[i];
                 Mesh mesh = meshes[i];
                 Material material = materials[i];
+                flecs::entity entity = it.entity(i);
 
-                const auto camera = it.world().singleton<MainCamera>().get<MainCamera>()->camera;
-                const auto cameraTransform = camera.get<Transform>();
-
-                if (camera.has<PerspectiveCamera>())
+                if (mesh._vertices.empty() || material.pipeline == VK_NULL_HANDLE || material.pipelineLayout == VK_NULL_HANDLE)
                 {
-                    const auto perspectiveCamera = camera.get<PerspectiveCamera>();
-                    Draw(deltaTime, perspectiveCamera, cameraTransform, transform, mesh, material);
+                    continue; // Not enough data to render? Skip entity
                 }
-                else if (camera.has<OrthoCamera>())
+
+                if (cameraEntity.has<PerspectiveCamera>())
                 {
-                    const auto orthoCamera = camera.get<OrthoCamera>();
-                    Draw(deltaTime, orthoCamera, cameraTransform, transform, mesh, material);
+                    std::cout << "Camera Abs Pos 2: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
+                    const auto perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
+                    Draw(deltaTime, cameraEntity, perspectiveCamera, cameraTransform, entity, transform, mesh, material);
+                }
+                else if (cameraEntity.has<OrthoCamera>())
+                {
+                    const auto orthoCamera = cameraEntity.get<OrthoCamera>();
+                    Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
                 }
                 else
                 {
@@ -146,15 +155,16 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         }
     );
 
-    ecs.set<MainCamera>({CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
+    // ecs.set<MainCamera>({CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
     // ecs.set<GlobalData>({CreateOrthoCamera(Vec3{0.0f, 0.0f,-100.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f}, 0.0f, 200.0f)});
 
-    ecs.entity()
-        .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 1.0f})
-        .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-        .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
-        .set<LinearKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3{0.1f, 0.0f, 0.0f}})
-        .set<AngularKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3::ZERO});
+    // flecs::entity triangle = ecs.entity()
+    //     .is_a(renderPrefab)
+    //     .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 1.0f})
+    //     .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
+    //     .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
+    //     .set<LinearKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3{0.5f, 0.0f, 0.0f}})
+    //     .set<AngularKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3::ZERO});
 }
 
 RenderingECSModule::~RenderingECSModule()
@@ -173,6 +183,38 @@ RenderingECSModule::~RenderingECSModule()
 }
 
 // Public Methods
+
+flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
+    const Vec3 position /*= Vec3::ZERO*/,
+    const Vec3 rotation /*= Vec3::ZERO*/,
+    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
+    const float verticalFOV /*= 70.0f*/,
+    const float aspectRatio /*= 16.0f/9.0f*/,
+    const float nearPlaneOffset /*= 0.1f*/,
+    const float farPlaneOffset /*= 200.0f*/)
+{
+    Transform transform{position, rotation};
+    Rect extent{Vec2::zero(), resolution};
+    PerspectiveCamera perspective{extent, verticalFOV, aspectRatio, nearPlaneOffset, farPlaneOffset};
+    return ecs.entity("Camera")
+        .set<Transform>(transform)
+        .set<PerspectiveCamera>(perspective);
+}
+
+flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
+    const Vec3 position /*= Vec3::ZERO*/,
+    const Vec3 rotation /*= Vec3::ZERO*/,
+    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
+    const float nearPlaneOffset /*= 0.1f*/,
+    const float farPlaneOffset /*= 200.0f*/)
+{
+    Transform transform{position, rotation};
+    Rect extent{Vec2::zero(), resolution};
+    OrthoCamera ortho{extent, nearPlaneOffset, farPlaneOffset};
+    return ecs.entity("Camera")
+        .set<Transform>(transform)
+        .set<OrthoCamera>(ortho);
+}
 
 // Protected Fields
 
@@ -813,12 +855,13 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
     _frameNumber++;
 }
 
-
 void RenderingECSModule::Draw
 (
     const float deltaTime,
+    const flecs::entity cameraEntity,
     const PerspectiveCamera* const perspectiveCamera,
     const Transform* const cameraTransform,
+    const flecs::entity entity,
     const Transform& transform,
     const Mesh& mesh,
     const Material& material
@@ -832,7 +875,8 @@ void RenderingECSModule::Draw
 
     MeshPushConstants constants = {};
     
-    constants.renderMatrix = GetRenderMatrix(perspectiveCamera, cameraTransform, transform);
+    std::cout << "Camera Abs Pos 3: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
+    constants.renderMatrix = GetRenderMatrix(cameraEntity, perspectiveCamera, cameraTransform, entity, transform);
 
     //upload the matrix to the GPU via push constants
     vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
@@ -844,8 +888,10 @@ void RenderingECSModule::Draw
 void RenderingECSModule::Draw
 (
     const float deltaTime,
+    const flecs::entity cameraEntity,
     const OrthoCamera* const orthoCamera,
     const Transform* const cameraTransform,
+    const flecs::entity entity,
     const Transform& transform,
     const Mesh& mesh,
     const Material& material
@@ -859,7 +905,7 @@ void RenderingECSModule::Draw
 
     MeshPushConstants constants = {};
     
-    constants.renderMatrix = GetRenderMatrix(orthoCamera, cameraTransform, transform);
+    constants.renderMatrix = GetRenderMatrix(cameraEntity, orthoCamera, cameraTransform, entity, transform);
 
     //upload the matrix to the GPU via push constants
     vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
@@ -927,45 +973,17 @@ void RenderingECSModule::UploadMesh(Mesh& mesh)
     vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
 }
 
-flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
-    const float verticalFOV /*= 70.0f*/,
-    const float aspectRatio /*= 16.0f/9.0f*/,
-    const float nearPlaneOffset /*= 0.1f*/,
-    const float farPlaneOffset /*= 200.0f*/)
-{
-    Transform transform{position, rotation};
-    Rect extent{Vec2::zero(), resolution};
-    PerspectiveCamera perspective{extent, verticalFOV, aspectRatio, nearPlaneOffset, farPlaneOffset};
-    return ecs.entity("Camera")
-        .set<Transform>(transform)
-        .set<PerspectiveCamera>(perspective);
-}
-
-flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
-    const float nearPlaneOffset /*= 0.1f*/,
-    const float farPlaneOffset /*= 200.0f*/)
-{
-    Transform transform{position, rotation};
-    Rect extent{Vec2::zero(), resolution};
-    OrthoCamera ortho{extent, nearPlaneOffset, farPlaneOffset};
-    return ecs.entity("Camera")
-        .set<Transform>(transform)
-        .set<OrthoCamera>(ortho);
-}
-
 glm::mat4 RenderingECSModule::GetRenderMatrix
 (
+    const flecs::entity cameraEntity,
     const PerspectiveCamera* const perspectiveCamera,
     const Transform* const cameraTransform,
+    const flecs::entity entity,
     const Transform& transform
 )
 {
+    std::cout << "Camera Abs Pos 4: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
+
     // Start with the identity matrix
     glm::mat4 model = glm::mat4(1.0f); 
 
@@ -978,7 +996,9 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
 
     // Compute the view matrix
-    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraTransform->position);
+    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition(cameraEntity.parent());
+    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
+    std::cout << cameraAbsPos << std::endl;
 
     // Compute the projection matrix
     glm::mat4 projection = glm::perspective
@@ -990,7 +1010,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     );
 
     // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition(entity.parent()));
 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;
@@ -1000,8 +1020,10 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     
 glm::mat4 RenderingECSModule::GetRenderMatrix
 (
+    const flecs::entity cameraEntity,
     const OrthoCamera* const orthoCamera,
     const Transform* const cameraTransform,
+    const flecs::entity entity,
     const Transform& transform
 )
 {

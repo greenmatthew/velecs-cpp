@@ -121,6 +121,27 @@ public:
     /// @returns The L2 norm.
     inline float Magnitude() const { return L2Norm(); }
 
+    /// @brief Normalizes this Vec3, making its magnitude equal to 1.
+    /// @returns The normalized Vec3.
+    /// @note If the original magnitude is 0, returns the zero vector.
+    Vec3 Normalize() const;
+
+    /// @brief Projects the vector onto the i basis vector (x-axis).
+    /// @returns The projection of the vector onto the i basis vector,
+    /// resulting in a vector along the x-axis with the same x component as the original vector.
+    Vec3 ProjOntoI() const;
+
+    /// @brief Projects the vector onto the j basis vector (y-axis).
+    /// @returns The projection of the vector onto the j basis vector,
+    /// resulting in a vector along the y-axis with the same y component as the original vector.
+    Vec3 ProjOntoJ() const;
+
+    /// @brief Projects the vector onto the k basis vector (z-axis).
+    /// @returns The projection of the vector onto the k basis vector,
+    /// resulting in a vector along the z-axis with the same z component as the original vector.
+    Vec3 ProjOntoK() const;
+
+
     /// @brief Outputs a Vec3 object to an output stream in a formatted manner.
     /// @param[in] os The output stream to write to.
     /// @param[in] vec The Vec3 object to output.

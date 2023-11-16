@@ -10,6 +10,8 @@
 
 #include "velecs/ECS/Modules/PipelineECSModule.h"
 
+#include <iostream>
+
 namespace velecs {
 
 // Public Fields
@@ -19,6 +21,7 @@ namespace velecs {
 PipelineECSModule::PipelineECSModule(flecs::world& ecs)
 {
     ecs.module<PipelineECSModule>();
+    std::cout << "[INFO] [ECSManager] Started import of '" << typeid(PipelineECSModule).name() << "' ECS module on flecs::world::id(): " << ecs.id() << " @ 0x" << ecs.c_ptr() << '.' << std::endl;
 
     ecs.component<PipelineStages>();
 

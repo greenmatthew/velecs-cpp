@@ -20,8 +20,8 @@ namespace velecs {
 const Vec3 Vec3::ZERO         {  0.0f,  0.0f,  0.0f };
 const Vec3 Vec3::ONE          {  1.0f,  1.0f,  1.0f };
 const Vec3 Vec3::NEG_ONE      { -1.0f, -1.0f, -1.0f };
-const Vec3 Vec3::UP           {  0.0f,  1.0f,  0.0f };
-const Vec3 Vec3::DOWN         {  0.0f, -1.0f,  0.0f };
+const Vec3 Vec3::UP           {  0.0f, -1.0f,  0.0f };
+const Vec3 Vec3::DOWN         {  0.0f,  1.0f,  0.0f };
 const Vec3 Vec3::RIGHT        {  1.0f,  0.0f,  0.0f };
 const Vec3 Vec3::LEFT         { -1.0f,  0.0f,  0.0f };
 const Vec3 Vec3::FORWARD      {  0.0f,  0.0f, -1.0f };
@@ -95,6 +95,27 @@ float Vec3::L1Norm() const
 float Vec3::L2Norm() const
 {
     return std::sqrt(x*x + y*y + z*z);
+}
+
+Vec3 Vec3::Normalize() const
+{
+    float magnitude = L2Norm();
+    return (magnitude != 0) ? (*this)/magnitude : Vec3::ZERO;
+}
+
+Vec3 Vec3::ProjOntoI() const
+{
+    return Vec3(this->x, 0.0f, 0.0f);
+}
+
+Vec3 Vec3::ProjOntoJ() const
+{
+    return Vec3(0.0f, this->y, 0.0f);
+}
+
+Vec3 Vec3::ProjOntoK() const
+{
+    return Vec3(0.0f, 0.0f, this->z);
 }
 
 

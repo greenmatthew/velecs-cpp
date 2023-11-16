@@ -47,6 +47,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
             if (event.key.repeat == 0)
             {
                 input.currKeyFlags[keycode] = true;
+                #ifdef DEBUG_INPUT
                 std::cout << "Key Pressed: " << SDL_GetKeyName(keycode) << '\n';
                 std::cout << "Key GetState(): ";
                 switch (input.GetState(keycode))
@@ -68,6 +69,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
                 std::cout << "input.prevKeyFlags: " << input.prevKeyFlags[keycode] << '\n';
                 std::cout << "input.currKeyFlags[keycode]: " << input.currKeyFlags[keycode] << '\n';
                 std::cout << '\n' << std::endl;
+                #endif
             }
             break;
         }
@@ -75,6 +77,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
         {
             SDL_Keycode keycode = event.key.keysym.sym;
             input.currKeyFlags[keycode] = false;
+            #ifdef DEBUG_INPUT
             std::cout << "Key Released: " << SDL_GetKeyName(keycode) << '\n';
             std::cout << "Key GetState(): ";
             switch (input.GetState(keycode))
@@ -96,6 +99,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
             std::cout << "input.prevKeyFlags: " << input.prevKeyFlags[keycode] << '\n';
             std::cout << "input.currKeyFlags[keycode]: " << input.currKeyFlags[keycode] << '\n';
             std::cout << '\n' << std::endl;
+            #endif
             break;
         }
         default:

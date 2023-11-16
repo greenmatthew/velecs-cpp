@@ -51,7 +51,10 @@ bool Input::IsPressed(const SDL_Keycode keycode) const
 
 bool Input::IsHeld(const SDL_Keycode keycode) const
 {
-    return GetState(keycode) == State::Held;
+    // If the button was just pressed, while its in the pressed state,
+    // its still considered 'Held'
+    return GetState(keycode) == State::Pressed ||
+        GetState(keycode) == State::Held;
 }
 
 bool Input::IsIdle(const SDL_Keycode keycode) const

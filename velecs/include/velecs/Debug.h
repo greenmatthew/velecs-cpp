@@ -16,11 +16,7 @@
 #endif
 
 #ifdef DEBUG_MODE
-    // Enable additional debugging for input actions.
-    // #define DEBUG_INPUTACTION
-    
-    #ifdef DEBUG_INPUTACTION
-        // Uncomment to enable debugging for held input actions.
-        // #define DEBUG_INPUTACTION_HELD
-    #endif
+
+    // Enable additional debugging for input.
+    // #define DEBUG_INPUT
 #endif

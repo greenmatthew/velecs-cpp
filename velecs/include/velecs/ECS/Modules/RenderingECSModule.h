@@ -16,23 +16,22 @@
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Vec3.h"
 
+#include "velecs/ECS/Components/Rendering/Transform.h"
 #include "velecs/ECS/Components/Rendering/Mesh.h"
+#include "velecs/ECS/Components/Rendering/Material.h"
+#include "velecs/ECS/Components/Rendering/PerspectiveCamera.h"
+#include "velecs/ECS/Components/Rendering/OrthoCamera.h"
+#include "velecs/ECS/Components/Rendering/MainCamera.h"
 
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 #include <vma/vk_mem_alloc.h>
 
 #include <vector>
-#include <memory>
 
 struct SDL_Window;
 
 namespace velecs {
-
-struct PerspectiveCamera;
-struct OrthoCamera;
-struct Transform;
-struct Material;
 
 /// @struct RenderingECSModule
 /// @brief Brief description.
@@ -53,6 +52,28 @@ public:
     ~RenderingECSModule();
 
     // Public Methods
+
+    static flecs::entity CreatePerspectiveCamera
+    (
+        flecs::world& ecs,
+        const Vec3 position = Vec3::ZERO,
+        const Vec3 rotation = Vec3::ZERO,
+        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
+        const float verticalFOV = 70.0f,
+        const float aspectRatio = 16.0f/9.0f,
+        const float nearPlaneOffset = 0.1f,
+        const float farPlaneOffset = 200.0f
+    );
+    
+    static flecs::entity CreateOrthoCamera
+    (
+        flecs::world& ecs,
+        const Vec3 position = Vec3::ZERO,
+        const Vec3 rotation = Vec3::ZERO,
+        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
+        const float nearPlaneOffset = 0.1f,
+        const float farPlaneOffset = 200.0f
+    );
 
 protected:
     // Protected Fields
@@ -168,8 +189,10 @@ private:
     void Draw
     (
         const float deltaTime,
-        const PerspectiveCamera * const perspectiveCamera,
+        const flecs::entity cameraEntity,
+        const PerspectiveCamera* const perspectiveCamera,
         const Transform* const cameraTransform,
+        const flecs::entity entity,
         const Transform& transform,
         const Mesh& mesh,
         const Material& material
@@ -178,8 +201,10 @@ private:
     void Draw
     (
         const float deltaTime,
+        const flecs::entity cameraEntity,
         const OrthoCamera * const orthoCamera,
         const Transform* const cameraTransform,
+        const flecs::entity entity,
         const Transform& transform,
         const Mesh& mesh,
         const Material& material
@@ -189,39 +214,21 @@ private:
 
     void UploadMesh(Mesh& mesh);
 
-    static flecs::entity CreatePerspectiveCamera
-    (
-        flecs::world& ecs,
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
-        const float verticalFOV = 70.0f,
-        const float aspectRatio = 16.0f/9.0f,
-        const float nearPlaneOffset = 0.1f,
-        const float farPlaneOffset = 200.0f
-    );
-    
-    static flecs::entity CreateOrthoCamera
-    (
-        flecs::world& ecs,
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
-        const float nearPlaneOffset = 0.1f,
-        const float farPlaneOffset = 200.0f
-    );
-
     glm::mat4 GetRenderMatrix
     (
+        const flecs::entity cameraEntity,
         const PerspectiveCamera* const perspectiveCamera,
         const Transform* const cameraTransform,
+        const flecs::entity entity,
         const Transform& transform
     );
 
     glm::mat4 GetRenderMatrix
     (
+        const flecs::entity cameraEntity,
         const OrthoCamera* const orthoCamera,
         const Transform* const cameraTransform,
+        const flecs::entity entity,
         const Transform& transform
     );
 };

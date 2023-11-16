@@ -14,7 +14,9 @@
 
 #include "velecs/VelECSEngine.h"
 
-#include <memory>
+#include "velecs/Math/Vec3.h"
+
+#include <string>
 
 namespace velecs {
 

@@ -12,6 +12,8 @@
 
 #include "velecs/Graphics/Color32.h"
 
+#include <vulkan/vulkan_core.h>
+
 namespace velecs {
 
 /// @struct Material
@@ -19,9 +21,9 @@ namespace velecs {
 ///
 /// Rest of description.
 struct Material {
-	Color32 color{Color32::MAGENTA};
-	VkPipeline pipeline;
-	VkPipelineLayout pipelineLayout;
+    Color32 color{Color32::MAGENTA};
+    VkPipeline pipeline{VK_NULL_HANDLE};
+    VkPipelineLayout pipelineLayout{VK_NULL_HANDLE};
 };
 
 } // namespace velecs

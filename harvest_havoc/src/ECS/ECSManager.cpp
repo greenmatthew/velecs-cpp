@@ -16,6 +16,8 @@
 #include <velecs/ECS/Modules/InputECSModule.h>
 #include <velecs/ECS/Modules/PhysicsECSModule.h>
 
+#include "ECS/Modules/PlayerECSModule.h"
+
 using namespace velecs;
 
 namespace hh {
@@ -27,12 +29,10 @@ namespace hh {
 ECSManager::ECSManager(velecs::VelECSEngine& engine)
     : IECSManager(engine)
 {
-    // Do this before importing anything else.
-    ecs.import<PipelineECSModule>();
-
-    ecs.import<RenderingECSModule>();
+    // Required for ability to shutdown the application
     ecs.import<InputECSModule>();
-    ecs.import<PhysicsECSModule>();
+    
+    ecs.import<PlayerECSModule>();
 }
 
 // Public Methods
@@ -49,7 +49,19 @@ void ECSManager::Cleanup()
 
 bool ECSManager::GetIsQuitting() const
 {
-    return ecs.singleton<Input>().get<Input>()->isQuitting;
+    flecs::entity inputEntity = ecs.singleton<Input>();
+    if (inputEntity == flecs::entity::null())
+    {
+        throw std::runtime_error("Missing import of " + std::string(typeid(InputECSModule).name()) + ". Without it, the application cannot close properly.");
+    }
+
+    const Input * const input = inputEntity.get<Input>();
+    if (input == nullptr)
+    {
+        throw std::runtime_error("Missing import of " + std::string(typeid(InputECSModule).name()) + ". Without it, the application cannot close properly.");
+    }
+
+    return input->isQuitting;
 }
 
 // Protected Fields

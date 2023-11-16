@@ -10,11 +10,10 @@
 
 #pragma once
 
+#include "velecs/ECS/Modules/PipelineECSModule.h"
+#include "velecs/ECS/Modules/CommonECSModule.h"
+
 #include <flecs.h>
-
-#include "velecs/ECS/Components/PipelineStages.h"
-
-#include <type_traits>
 
 namespace velecs {
 
@@ -32,11 +31,18 @@ public:
     // Constructors and Destructors
 
     IECSModule(flecs::world& ecs)
-        : stages(ecs.singleton<PipelineStages>().get<PipelineStages>())
+        : ecsPtr(&ecs)
     {
         static_assert(std::is_base_of<IECSModule, TECSModule>::value, "TECSModule must be a subclass of IECSModule");
 
+        ecs.import<PipelineECSModule>();
+
+        stages = ecs.singleton<PipelineStages>().get<PipelineStages>();
+
+        ecs.import<CommonECSModule>();
+
         ecs.import<TECSModule>();
+        std::cout << "[INFO] [ECSManager] Started import of '" << typeid(TECSModule).name() << "' ECS module on flecs::world::id(): " << ecs.id() << " @ 0x" << ecs.c_ptr() << '.' << std::endl;
     }
 
     // Public Methods
@@ -48,8 +54,15 @@ protected:
 
     // Protected Methods
 
+    flecs::world& ecs()
+    {
+        return *ecsPtr;
+    }
+
 private:
     // Private Fields
+
+    flecs::world* ecsPtr;
 
     // Private Methods
 };

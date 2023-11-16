@@ -1,6 +1,6 @@
-/// @file    PipelineECSModule.h
+/// @file    Player.h
 /// @author  Matthew Green
-/// @date    2023-11-13 14:28:45
+/// @date    2023-11-14 16:40:25
 /// 
 /// @section LICENSE
 /// 
@@ -10,20 +10,15 @@
 
 #pragma once
 
-#include "velecs/ECS/Components/PipelineStages.h"
+#include <string>
 
-#include <flecs.h>
+namespace hh {
 
-namespace velecs {
-
-/// @struct PipelineECSModule
+/// @struct Player
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct PipelineECSModule {
-
-    /// @brief Constructor.
-    PipelineECSModule(flecs::world& ecs);
+struct Player {
 };
 
-} // namespace velecs
+} // namespace hh

@@ -12,6 +12,9 @@
 
 #include "velecs/ECS/Modules/IECSModule.h"
 
+#include "velecs/ECS/Components/Physics/LinearKinematics.h"
+#include "velecs/ECS/Components/Physics/AngularKinematics.h"
+
 namespace velecs {
 
     /// @struct PhysicsECSModule
