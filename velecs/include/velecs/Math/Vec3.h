@@ -85,6 +85,25 @@ public:
     /// @returns A glm::vec3 with the same components as this Vec3.
     operator glm::vec3() const;
 
+    /// @brief Assigns the values of another Vec3 object to this Vec3 object.
+    /// @param[in] other The other Vec3 object whose values will be assigned to this Vec3 object.
+    /// @return A reference to this Vec3 object, after the assignment.
+    Vec3& operator=(const Vec3 other);
+
+    /// @brief Checks if this Vec3 is equal to the specified Vec3.
+    /// @param[in] other The Vec3 to compare with.
+    /// @return True if the Vec3s are equal, false otherwise.
+    bool operator==(const Vec3 other) const;
+
+    /// @brief Checks if this Vec3 is not equal to the specified Vec3.
+    /// @param[in] other The Vec3 to compare with.
+    /// @return True if the Vec3s are not equal, false otherwise.
+    bool operator!=(const Vec3 other) const;
+
+    /// @brief Negates this Vec3.
+    /// @return A new Vec3 that is the negation of this Vec3.
+    Vec3 operator-() const;
+
     /// @brief Overloads the addition assignment operator to add another Vec3 to this Vec3 and assign the result to this Vec3.
     /// @details This method adds the corresponding components of the other Vec3 to this Vec3 and assigns the result to this Vec3.
     /// @param[in] other The other Vec3 to add to this Vec3.

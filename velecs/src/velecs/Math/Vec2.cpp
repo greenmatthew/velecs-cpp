@@ -57,23 +57,22 @@ Vec2::operator glm::vec3() const
 
 Vec2& Vec2::operator=(const Vec2 other)
 {
-    if (this != &other) // Self assignment guard
-    {
-        x = other.x;
-        y = other.y;
-    }
+    x = other.x;
+    y = other.y;
 
     return *this; // Return ref to allow chaining assignment operations
 }
 
 bool Vec2::operator==(const Vec2 other) const
 {
-    return x == other.x && y == other.y;
+    return x == other.x &&
+        y == other.y;
 }
 
 bool Vec2::operator!=(const Vec2 other) const
 {
-    return x != other.x || y != other.y;
+    return x != other.x ||
+        y != other.y;
 }
 
 Vec2 Vec2::operator-() const

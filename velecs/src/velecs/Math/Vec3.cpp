@@ -56,6 +56,34 @@ Vec3::operator glm::vec3() const
     return glm::vec3(x, y, z);
 }
 
+Vec3& Vec3::operator=(const Vec3 other)
+{
+    x = other.x;
+    y = other.y;
+    z = other.z;
+
+    return *this; // Return ref to allow chaining assignment operations
+}
+
+bool Vec3::operator==(const Vec3 other) const
+{
+    return x == other.x &&
+        y == other.y &&
+        z == other.z;
+}
+
+bool Vec3::operator!=(const Vec3 other) const
+{
+    return x != other.x ||
+        y != other.y ||
+        z != other.z;
+}
+
+Vec3 Vec3::operator-() const
+{
+    return Vec3(-x, -y, -z);
+}
+
 Vec3& Vec3::operator+=(const Vec3 other)
 {
     x += other.x;
