@@ -17,6 +17,4 @@
 
 #ifdef DEBUG_MODE
 
-    // Enable additional debugging for input.
-    // #define DEBUG_INPUT
 #endif
