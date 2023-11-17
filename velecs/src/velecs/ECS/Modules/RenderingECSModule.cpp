@@ -1030,7 +1030,8 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
 
     // Compute the view matrix
-    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraTransform->position);
+    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition(cameraEntity.parent());
+    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
 
     // Compute the projection matrix
     Rect extent = orthoCamera->extent;
@@ -1045,7 +1046,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     );
 
     // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.position);
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition(entity.parent()));
 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;

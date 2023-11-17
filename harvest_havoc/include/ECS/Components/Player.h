@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <velecs/Math/Vec3.h>
+
 #include <string>
 
 namespace hh {
@@ -19,6 +21,35 @@ namespace hh {
 ///
 /// Rest of description.
 struct Player {
+public:
+    // Enums
+
+    // Public Fields
+
+    velecs::Vec3 targetCamPos{ 0.0f, 0.0f, -2.0f };
+    float camZoomSpeed{ 10.0f }; // m/s
+    float camMinZoom{ -2.0f }; // m
+    float camMaxZoom{ -20.0f }; // m
+
+    // Constructors and Destructors
+
+    /// @brief Default constructor.
+    Player() = default;
+
+    /// @brief Default deconstructor.
+    ~Player() = default;
+
+    // Public Methods
+
+protected:
+    // Protected Fields
+
+    // Protected Methods
+
+private:
+    // Private Fields
+
+    // Private Methods
 };
 
 } // namespace hh

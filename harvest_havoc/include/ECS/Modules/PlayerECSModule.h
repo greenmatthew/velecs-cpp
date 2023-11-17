@@ -40,7 +40,14 @@ private:
         const velecs::Vec3 rotation = velecs::Vec3::ZERO
     );
 
-    void HandleInput(const float deltaTime, Player& player, velecs::Transform& transform, velecs::LinearKinematics& linear);
+    void HandleInput
+    (
+        const float deltaTime,
+        const velecs::Input* const input,
+        velecs::Transform* const cameraTransform,
+        Player& player, velecs::Transform& transform,
+        velecs::LinearKinematics& linear
+    );
 };
 
 } // namespace hh
