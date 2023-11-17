@@ -41,7 +41,9 @@ struct Input {
     bool isQuitting = false; /// @brief Flag to indicate if the game is quitting.
     std::unordered_map<SDL_Keycode, bool> prevKeyFlags; /// @brief Stores the previous frame's key states.
     std::unordered_map<SDL_Keycode, bool> currKeyFlags; /// @brief Stores the current frame's key states.
-    Vec2 mouseWheel = Vec2::ZERO;
+    Vec2 mousePos{Vec2::ZERO}; /// @brief The mouse cursor's absolute position.
+    Vec2 mouseDelta{Vec2::ZERO}; /// @brief The mouse cursor's displacement from the last frame to the current frame.
+    Vec2 mouseWheel{Vec2::ZERO}; /// @brief The mouse wheel's displacement from the last frame to the current frame in notches.
 
     /// @brief Gets the state of a specific key.
     /// @param[in] keycode The SDL_Keycode for the key being checked.

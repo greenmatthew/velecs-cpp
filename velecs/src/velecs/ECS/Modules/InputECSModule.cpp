@@ -36,6 +36,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
 {
     input.prevKeyFlags = input.currKeyFlags;
     SDL_Event event;
+    Vec2 mouseDelta = Vec2::ZERO;
     Vec2 mouseWheel = Vec2::ZERO;
     while (SDL_PollEvent(&event) != 0)
     {
@@ -105,6 +106,10 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
             #endif
             break;
         }
+        case SDL_MOUSEMOTION:
+            input.mousePos = Vec2(event.motion.x, event.motion.y);
+            mouseDelta += Vec2(event.motion.xrel, event.motion.yrel);
+            break;
         case SDL_MOUSEWHEEL:
             mouseWheel += Vec2(event.wheel.x, event.wheel.y);
             break;
@@ -113,6 +118,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
         }
     }
 
+    input.mouseDelta = mouseDelta;
     input.mouseWheel = mouseWheel;
 }
 
