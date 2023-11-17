@@ -12,6 +12,8 @@
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Consts.h"
 
+#include <sstream>
+#include <algorithm>
 
 namespace velecs {
 
@@ -122,10 +124,63 @@ Vec3 Vec3::ProjOntoK() const
     return Vec3(0.0f, 0.0f, this->z);
 }
 
+float Vec3::Dot(const Vec3 a, const Vec3 b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
 
+Vec3 Vec3::Cross(const Vec3 a, const Vec3 b)
+{
+    return Vec3
+    (
+        a.y * b.z - a.z * b.y,
+        a.z * b.x - a.x * b.z,
+        a.x * b.y - a.y * b.x
+    );
+}
 
+Vec3 Vec3::Hadamard(const Vec3 a, const Vec3 b)
+{
+    return Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
+}
 
+Vec3 Vec3::Clamp(const Vec3 vec, const Vec3 min, const Vec3 max)
+{
+    return Vec3
+    (
+        std::clamp(vec.x, min.x, max.x),
+        std::clamp(vec.y, min.y, max.y),
+        std::clamp(vec.z, min.z, max.z)
+    );
+}
 
+Vec3 Vec3::Lerp(const Vec3 a, const Vec3 b, float t)
+{
+    return Vec3
+    (
+        a.x + t * (b.x - a.x),
+        a.y + t * (b.y - a.y),
+        a.z + t * (b.z - a.z)
+    );
+}
+
+float Vec3::Angle(const Vec3 a, const Vec3 b)
+{
+    float dotProduct = Dot(a, b);
+    float magnitudes = a.L2Norm() * b.L2Norm();
+    if (magnitudes == 0) return 0;  // avoid division by zero
+    float cosineTheta = dotProduct / magnitudes;
+    // Clamp cosineTheta to the range [-1, 1] to avoid NaN due to floating point errors.
+    cosineTheta = std::max(-1.0f, std::min(1.0f, cosineTheta));
+    return std::acos(cosineTheta);  // result is in radians
+}
+
+std::string Vec3::ToString() const
+{
+    std::ostringstream oss;
+    oss << '(' << x << ", " << y << ", " << z << ')';
+    return oss.str();
+}
 
 Vec3 operator+(const Vec3 lhs, const Vec3 rhs)
 {
@@ -140,11 +195,6 @@ Vec3 operator-(const Vec3 lhs, const Vec3 rhs)
 Vec3 operator*(const Vec3 lhs, const float rhs)
 {
     return Vec3{lhs.x * rhs, lhs.y * rhs, lhs.z * rhs};
-}
-
-Vec3 operator*(const float lhs, const Vec3 rhs)
-{
-    return Vec3{lhs * rhs.x, lhs * rhs.y, lhs * rhs.z};
 }
 
 Vec3 operator/(const Vec3 lhs, const float rhs)

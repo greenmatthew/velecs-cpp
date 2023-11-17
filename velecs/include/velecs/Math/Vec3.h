@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "velecs/Math/Consts.h"
+
 #include <glm/vec3.hpp>
 
 #include <iostream>
@@ -147,14 +149,70 @@ public:
     /// resulting in a vector along the z-axis with the same z component as the original vector.
     Vec3 ProjOntoK() const;
 
+    /// @brief Computes the dot product of two Vec3 objects.
+    /// @param a The first Vec3 object.
+    /// @param b The second Vec3 object.
+    /// @returns The dot product of a and b.
+    static float Dot(const Vec3 a, const Vec3 b);
+
+    /// @brief Computes the cross product of two Vec3 objects.
+    /// @param a The first Vec3 object.
+    /// @param b The second Vec3 object.
+    /// @returns The cross product of a and b.
+    static Vec3 Cross(const Vec3 a, const Vec3 b);
+
+    /// @brief Computes the Hadamard product of two Vec3 objects.
+    /// @param a The first Vec3 object.
+    /// @param b The second Vec3 object.
+    /// @returns The Hadamard product of a and b.
+    static Vec3 Hadamard(const Vec3 a, const Vec3 b);
+
+    /// @brief Alias for Hadamard, computes the element-wise multiplication of two Vec3s.
+    /// @param a The first Vec3.
+    /// @param b The second Vec3.
+    /// @returns The element-wise multiplication of the two Vec3s.
+    inline static Vec3 ElementwiseMultiply(const Vec3 a, const Vec3 b) { return Hadamard(a, b); }
+
+    /// @brief Clamps the components of a Vec3 between the corresponding components of two other Vec3s.
+    /// @param vec The Vec3 to clamp.
+    /// @param min The Vec3 representing the minimum values.
+    /// @param max The Vec3 representing the maximum values.
+    /// @returns The clamped Vec3.
+    static Vec3 Clamp(const Vec3 vec, const Vec3 min, const Vec3 max);
+
+    /// @brief Computes a linear interpolation between two Vec3s.
+    /// @param a The first Vec3.
+    /// @param b The second Vec3.
+    /// @param t The interpolation factor. A value of 0 returns a, and a value of 1 returns b.
+    /// @returns The interpolated Vec3.
+    static Vec3 Lerp(const Vec3 a, const Vec3 b, float t);
+
+    /// @brief Computes the angle between two vectors in radians.
+    /// @param a The first vector.
+    /// @param b The second vector.
+    /// @returns The angle between the vectors in radians.
+    static float Angle(const Vec3 a, const Vec3 b);
+
+    /// @brief Computes the angle between two vectors in degrees.
+    /// @param a The first vector.
+    /// @param b The second vector.
+    /// @returns The angle between the vectors in degrees.
+    inline static float AngleDeg(const Vec3 a, const Vec3 b)
+    {
+        return Angle(a, b) * (180.0f / PI);  // convert radians to degrees
+    }
+
+    /// @brief Converts the Vec3 to a string representation.
+    /// @returns A string representation of the Vec3.
+    std::string ToString() const;
 
     /// @brief Outputs a Vec3 object to an output stream in a formatted manner.
     /// @param[in] os The output stream to write to.
     /// @param[in] vec The Vec3 object to output.
     /// @return The same output stream, for chaining.
-    friend std::ostream& operator<<(std::ostream& os, const Vec3 vec)
+    inline friend std::ostream& operator<<(std::ostream& os, const Vec3 vec)
     {
-        os << '(' << vec.x << ", " << vec.y << ", " << vec.z << ')';
+        os << vec.ToString();
         return os;
     }
 
@@ -190,19 +248,22 @@ Vec3 operator-(const Vec3 lhs, const Vec3 rhs);
 /// @returns A new Vec3 object representing the product of the Vec3 object and the scalar value.
 Vec3 operator*(const Vec3 lhs, const float rhs);
 
-/// @brief Overloads the multiplication operator to multiply a scalar value by a Vec3 object.
-/// @details This method multiplies each component of the Vec3 object by the scalar value. 
-/// This overload ensures that multiplication is commutative.
-/// @param[in] lhs The scalar value by which to multiply the Vec3 object.
-/// @param[in] rhs The Vec3 object to be multiplied.
-/// @returns A new Vec3 object representing the product of the scalar value and the Vec3 object.
-Vec3 operator*(const float lhs, const Vec3 rhs);
-
 /// @brief Overloads the division operator to divide a Vec3 by a scalar.
 /// @details This method divides the components of the Vec3 by the specified scalar value.
 /// @param[in] lhs The Vec3 operand.
 /// @param[in] rhs The scalar operand.
 /// @returns A new Vec3 object representing the quotient of the Vec3 and scalar operands.
 Vec3 operator/(const Vec3 lhs, const float rhs);
+
+/// @brief Overloads the multiplication operator to multiply a scalar value by a Vec3 object.
+/// @details This method multiplies each component of the Vec3 object by the scalar value. 
+/// This overload ensures that multiplication is commutative.
+/// @param[in] lhs The scalar value by which to multiply the Vec3 object.
+/// @param[in] rhs The Vec3 object to be multiplied.
+/// @returns A new Vec3 object representing the product of the scalar value and the Vec3 object.
+inline Vec3 operator*(const float lhs, const Vec3 rhs)
+{
+    return rhs * lhs;
+}
 
 } // namespace velecs

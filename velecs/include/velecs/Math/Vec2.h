@@ -81,55 +81,31 @@ public:
     /// @brief Assigns the values of another Vec2 object to this Vec2 object.
     /// @param[in] other The other Vec2 object whose values will be assigned to this Vec2 object.
     /// @return A reference to this Vec2 object, after the assignment.
-    Vec2& operator=(const Vec2& other);
+    Vec2& operator=(const Vec2 other);
 
     /// @brief Checks if this Vec2 is equal to the specified Vec2.
     /// @param[in] other The Vec2 to compare with.
     /// @return True if the Vec2s are equal, false otherwise.
-    bool operator==(const Vec2& other) const;
+    bool operator==(const Vec2 other) const;
 
     /// @brief Checks if this Vec2 is not equal to the specified Vec2.
     /// @param[in] other The Vec2 to compare with.
     /// @return True if the Vec2s are not equal, false otherwise.
-    bool operator!=(const Vec2& other) const;
+    bool operator!=(const Vec2 other) const;
 
     /// @brief Negates this Vec2 object, producing a new Vec2 object with the negated values.
     /// @return A new Vec2 object with the negated values of this Vec2 object.
     Vec2 operator-() const;
 
-    /// @brief Adds another Vec2 to this Vec2.
-    /// @param[in] other The other Vec2.
-    /// @return A new Vec2 that is the sum of this Vec2 and the other Vec2.
-    Vec2 operator+(const Vec2& other) const;
-
-    /// @brief Subtracts another Vec2 from this Vec2.
-    /// @param[in] other The other Vec2.
-    /// @return A new Vec2 that is the difference of this Vec2 and the other Vec2.
-    Vec2 operator-(const Vec2& other) const;
-
-    /// @brief Multiplies this Vec2 by a scalar.
-    /// @param[in] scalar The scalar value.
-    /// @return A new Vec2 that is the product of this Vec2 and the scalar.
-    Vec2 operator*(const float scalar) const;
-
-    friend Vec2 operator*(float scalar, const Vec2& vec);
-
-    /// @brief Divides this Vec2 by a scalar.
-    /// @param[in] scalar The scalar value.
-    /// @return A new Vec2 that is the quotient of this Vec2 and the scalar.
-    Vec2 operator/(const float scalar) const;
-
-    friend Vec2 operator/(float scalar, const Vec2& vec);
-
     /// @brief Adds another Vec2 to this Vec2 and assigns the result to this Vec2.
     /// @param[in] other The other Vec2.
     /// @return A reference to this Vec2.
-    Vec2& operator+=(const Vec2& other);
+    Vec2& operator+=(const Vec2 other);
 
     /// @brief Subtracts another Vec2 from this Vec2 and assigns the result to this Vec2.
     /// @param[in] other The other Vec2.
     /// @return A reference to this Vec2.
-    Vec2& operator-=(const Vec2& other);
+    Vec2& operator-=(const Vec2 other);
 
     /// @brief Multiplies this Vec2 by a scalar and assigns the result to this Vec2.
     /// @param[in] scalar The scalar value.
@@ -177,58 +153,51 @@ public:
     /// @param a The first Vec2 object.
     /// @param b The second Vec2 object.
     /// @returns The dot product of a and b.
-    static float Dot(const Vec2& a, const Vec2& b);
+    static float Dot(const Vec2 a, const Vec2 b);
 
     /// @brief Computes the cross product of two Vec2 objects.
     /// @param a The first Vec2 object.
     /// @param b The second Vec2 object.
     /// @returns The cross product of a and b.
-    static float Cross(const Vec2& a, const Vec2& b);
+    static float Cross(const Vec2 a, const Vec2 b);
 
     /// @brief Computes the Hadamard product of two Vec2 objects.
     /// @param a The first Vec2 object.
     /// @param b The second Vec2 object.
     /// @returns The Hadamard product of a and b.
-    static Vec2 Hadamard(const Vec2& a, const Vec2& b);
+    static Vec2 Hadamard(const Vec2 a, const Vec2 b);
 
     /// @brief Alias for Hadamard, computes the element-wise multiplication of two Vec2s.
     /// @param a The first Vec2.
     /// @param b The second Vec2.
     /// @returns The element-wise multiplication of the two Vec2s.
-    inline static Vec2 ElementwiseMultiply(const Vec2& a, const Vec2& b) { return Hadamard(a, b); }
+    inline static Vec2 ElementwiseMultiply(const Vec2 a, const Vec2 b) { return Hadamard(a, b); }
 
     /// @brief Clamps the components of a Vec2 between the corresponding components of two other Vec2s.
     /// @param vec The Vec2 to clamp.
     /// @param min The Vec2 representing the minimum values.
     /// @param max The Vec2 representing the maximum values.
     /// @returns The clamped Vec2.
-    static Vec2 Clamp(const Vec2& vec, const Vec2& min, const Vec2& max);
+    static Vec2 Clamp(const Vec2 vec, const Vec2 min, const Vec2 max);
 
     /// @brief Computes a linear interpolation between two Vec2s.
-    /// @param vec1 The first Vec2.
-    /// @param vec2 The second Vec2.
-    /// @param t The interpolation factor. A value of 0 returns vec1, and a value of 1 returns vec2.
+    /// @param a The first Vec2.
+    /// @param b The second Vec2.
+    /// @param t The interpolation factor. A value of 0 returns a, and a value of 1 returns b.
     /// @returns The interpolated Vec2.
-    static Vec2 Lerp(const Vec2& vec1, const Vec2& vec2, float t);
+    static Vec2 Lerp(const Vec2 a, const Vec2 b, float t);
 
     /// @brief Computes the angle between two vectors in radians.
     /// @param a The first vector.
     /// @param b The second vector.
     /// @returns The angle between the vectors in radians.
-    static float Angle(const Vec2& a, const Vec2& b)
-    {
-        float dotProduct = Dot(a, b);
-        float magnitudes = a.L2Norm() * b.L2Norm();
-        if (magnitudes == 0) return 0;  // avoid division by zero
-        float cosineTheta = dotProduct / magnitudes;
-        return std::acos(cosineTheta);  // result is in radians
-    }
+    static float Angle(const Vec2 a, const Vec2 b);
 
     /// @brief Computes the angle between two vectors in degrees.
     /// @param a The first vector.
     /// @param b The second vector.
     /// @returns The angle between the vectors in degrees.
-    static float AngleDeg(const Vec2& a, const Vec2& b)
+    inline static float AngleDeg(const Vec2 a, const Vec2 b)
     {
         return Angle(a, b) * (180.0f / PI);  // convert radians to degrees
     }
@@ -237,21 +206,13 @@ public:
     /// @returns A string representation of the Vec2.
     std::string ToString() const;
 
-    /// @brief Gets the unit vector along the x-axis (right).
-    /// @return The unit vector [1, 0].
-    inline static Vec2 i() { return RIGHT; }
-
-    /// @brief Gets the unit vector along the y-axis (up).
-    /// @return The unit vector [0, 1].
-    inline static Vec2 j() { return UP; }
-
     /// @brief Outputs a Vec2 object to an output stream in a formatted manner.
     /// @param[in] os The output stream to write to.
     /// @param[in] vec The Vec2 object to output.
     /// @return The same output stream, for chaining.
-    friend std::ostream& operator<<(std::ostream& os, const Vec2& vec)
+    inline friend std::ostream& operator<<(std::ostream& os, const Vec2 vec)
     {
-        os << '(' << vec.x << ", " << vec.y << ')';
+        os << vec.ToString();
         return os;
     }
 
@@ -264,27 +225,39 @@ private:
     // Private Fields
 
     // Private Methods
-
-public:
-    
 };
 
-/// @brief Multiplies a scalar value by the specified Vec2.
-/// @param[in] scalar The scalar value.
-/// @param[in] vec The Vec2.
-/// @return The product of the scalar value and the Vec2.
-inline Vec2 operator*(float scalar, const Vec2& vec)
-{
-    return vec * scalar;
-}
+/// @brief Adds two Vec2 vectors.
+/// @param[in] lhs The first Vec2 operand.
+/// @param[in] rhs The second Vec2 operand.
+/// @return A new Vec2 that is the sum of the two Vec2 operands.
+Vec2 operator+(const Vec2 lhs, const Vec2 rhs);
 
-/// @brief Divides a scalar value by the specified Vec2.
-/// @param[in] scalar The scalar value.
-/// @param[in] vec The Vec2.
-/// @return The quotient of the scalar value and the Vec2, computed per-component.
-inline Vec2 operator/(float scalar, const Vec2& vec)
+/// @brief Subtracts one Vec2 from another.
+/// @param[in] lhs The Vec2 to subtract from.
+/// @param[in] rhs The Vec2 to be subtracted.
+/// @return A new Vec2 that is the difference of the two Vec2 operands.
+Vec2 operator-(const Vec2 lhs, const Vec2 rhs);
+
+/// @brief Multiplies a Vec2 vector by a scalar.
+/// @param[in] lhs The Vec2 operand.
+/// @param[in] rhs The scalar value to multiply with.
+/// @return A new Vec2 that is the product of the Vec2 and the scalar.
+Vec2 operator*(const Vec2 lhs, const float rhs);
+
+/// @brief Divides a Vec2 vector by a scalar.
+/// @param[in] lhs The Vec2 operand.
+/// @param[in] rhs The scalar value to divide by.
+/// @return A new Vec2 that is the quotient of the Vec2 divided by the scalar.
+Vec2 operator/(const Vec2 lhs, const float rhs);
+
+/// @brief Multiplies a scalar value by a Vec2 vector.
+/// @param[in] lhs The scalar value.
+/// @param[in] rhs The Vec2 operand.
+/// @return The product of the scalar value and the Vec2.
+inline Vec2 operator*(const float lhs, const Vec2 rhs)
 {
-    return vec / scalar;
+    return rhs * lhs;
 }
 
 } // namespace velecs
