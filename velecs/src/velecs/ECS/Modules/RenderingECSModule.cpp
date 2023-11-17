@@ -189,7 +189,7 @@ flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
     const float farPlaneOffset /*= 200.0f*/)
 {
     Transform transform{position, rotation};
-    Rect extent{Vec2::zero(), resolution};
+    Rect extent{Vec2::ZERO, resolution};
     PerspectiveCamera perspective{extent, verticalFOV, aspectRatio, nearPlaneOffset, farPlaneOffset};
     return ecs.entity("Camera")
         .set<Transform>(transform)
@@ -204,7 +204,7 @@ flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
     const float farPlaneOffset /*= 200.0f*/)
 {
     Transform transform{position, rotation};
-    Rect extent{Vec2::zero(), resolution};
+    Rect extent{Vec2::ZERO, resolution};
     OrthoCamera ortho{extent, nearPlaneOffset, farPlaneOffset};
     return ecs.entity("Camera")
         .set<Transform>(transform)

@@ -40,7 +40,7 @@ struct PerspectiveCamera {
     /// @param[in] aspectRatio The aspect ratio of the camera.
     /// @param[in] nearPlaneOffset The offset of the near clipping plane.
     /// @param[in] farPlaneOffset The offset of the far clipping plane.
-    PerspectiveCamera(const Rect extent = Rect{ Vec2::zero(), Vec2{1920.0f, 1080.0f} },
+    PerspectiveCamera(const Rect extent = Rect{ Vec2::ZERO, Vec2{1920.0f, 1080.0f} },
         const float verticalFov = 70.0f,
         const float aspectRatio = 16.0f / 9.0f,
         const float nearPlaneOffset = 0.1f,

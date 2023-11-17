@@ -37,7 +37,7 @@ struct OrthoCamera {
     /// @param[in] extent The visible area of the camera.
     /// @param[in] nearPlaneOffset The offset of the near clipping plane.
     /// @param[in] farPlaneOffset The offset of the far clipping plane.
-    OrthoCamera(const Rect& extent = {Vec2::zero(), Vec2{1920.0f, 1080.0f}},
+    OrthoCamera(const Rect& extent = {Vec2::ZERO, Vec2{1920.0f, 1080.0f}},
                 const float nearPlaneOffset = 0.1f,
                 const float farPlaneOffset = 200.0f)
         : extent(extent), nearPlaneOffset(nearPlaneOffset), farPlaneOffset(farPlaneOffset) {}

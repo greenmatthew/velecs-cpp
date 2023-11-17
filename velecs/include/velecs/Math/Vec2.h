@@ -11,14 +11,16 @@
 #pragma once
 
 #include "velecs/Math/Consts.h"
-#include "velecs/Math/Vec3.h"
 
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 #include <string>
 #include <ostream>
 
 namespace velecs {
+
+struct Vec3;
 
 /// @struct Vec2
 /// @brief A 2D vector structure for representing points or vectors in 2D space.
@@ -29,8 +31,22 @@ public:
 
     // Public Fields
 
-    float x;  /// @brief The x-coordinate.
-    float y;  /// @brief The y-coordinate.
+    static const Vec2 ZERO;         /// @brief A vector with all components set to zero (0, 0).
+    static const Vec2 ONE;          /// @brief A vector with all components set to one (1, 1).
+    static const Vec2 NEG_ONE;      /// @brief A vector with all components set to negative one (-1, -1).
+    static const Vec2 UP;           /// @brief A vector representing the up direction in the application's coordinate system (0, -1).
+    static const Vec2 DOWN;         /// @brief A vector representing the down direction in the application's coordinate system (0, 1).
+    static const Vec2 RIGHT;        /// @brief A vector representing the right direction along the x-axis (1, 0).
+    static const Vec2 LEFT;         /// @brief A vector representing the left direction along the x-axis (-1, 0).
+    static const Vec2 POS_INFINITY; /// @brief A vector with all components set to positive infinity.
+    static const Vec2 NEG_INFINITY; /// @brief A vector with all components set to negative infinity.
+    static const Vec2 UNIT;         /// @brief A normalized vector with magnitude equal to 1, derived from Vec2::ONE.
+    static const Vec2 I;            /// @brief A unit vector along the x-axis (1, 0).
+    static const Vec2 J;            /// @brief A unit vector along the y-axis (0, 1).
+
+
+    float x;  /// @brief The x-component of the vector.
+    float y;  /// @brief The y-component of the vector.
 
     // Constructors and Destructors
 
@@ -41,7 +57,7 @@ public:
 
     /// @brief Copy constructor. Constructs a new Vec2 with the same values as the specified Vec2.
     /// @param[in] other The Vec2 to copy.
-    Vec2(const Vec2& other);
+    Vec2(const Vec2 &other);
 
     /// @brief Default deconstructor.
     ~Vec2() = default;
@@ -221,69 +237,13 @@ public:
     /// @returns A string representation of the Vec2.
     std::string ToString() const;
 
-    /// @brief Gets a Vec2 object with both coordinates set to 1.
-    /// @returns A Vec2 object.
-    static Vec2 one()
-    {
-        static const Vec2 instance(1.0f, 1.0f);
-        return instance;
-    }
-
-    /// @brief Gets a Vec2 object with both coordinates set to 0.
-    /// @returns A Vec2 object.
-    static Vec2 zero()
-    {
-        static const Vec2 instance(0.0f, 0.0f);
-        return instance;
-    }
-
-    /// @brief Gets a Vec2 object representing the up direction (0, 1).
-    /// @returns A Vec2 object.
-    static Vec2 up()
-    {
-        static const Vec2 instance(0.0f, 1.0f);
-        return instance;
-    }
-
-    /// @brief Gets a Vec2 object representing the down direction (0, -1).
-    /// @returns A Vec2 object.
-    static Vec2 down()
-    {
-        static const Vec2 instance(0.0f, -1.0f);
-        return instance;
-    }
-
-    /// @brief Gets a Vec2 object representing the right direction (1, 0).
-    /// @returns A Vec2 object.
-    static Vec2 right()
-    {
-        static const Vec2 instance(1.0f, 0.0f);
-        return instance;
-    }
-
-    /// @brief Gets a Vec2 object representing the left direction (-1, 0).
-    /// @returns A Vec2 object.
-    static Vec2 left()
-    {
-        static const Vec2 instance(-1.0f, 0.0f);
-        return instance;
-    }
-
-    /// @brief Gets a unit Vec2 object (normalized version of Vec2::one()).
-    /// @return A Vec2 object.
-    static Vec2 unit()
-    {
-        static const Vec2 instance = Vec2::one().Normalize();
-        return instance;
-    }
-
     /// @brief Gets the unit vector along the x-axis (right).
     /// @return The unit vector [1, 0].
-    inline static Vec2 i() { return right(); }
+    inline static Vec2 i() { return RIGHT; }
 
     /// @brief Gets the unit vector along the y-axis (up).
     /// @return The unit vector [0, 1].
-    inline static Vec2 j() { return up(); }
+    inline static Vec2 j() { return UP; }
 
     /// @brief Outputs a Vec2 object to an output stream in a formatted manner.
     /// @param[in] os The output stream to write to.

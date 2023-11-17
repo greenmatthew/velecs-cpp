@@ -28,6 +28,10 @@ const Vec3 Vec3::FORWARD      {  0.0f,  0.0f, -1.0f };
 const Vec3 Vec3::BACKWARD     {  0.0f,  0.0f,  1.0f };
 const Vec3 Vec3::POS_INFINITY { FLOAT_POS_INFINITY, FLOAT_POS_INFINITY, FLOAT_POS_INFINITY };
 const Vec3 Vec3::NEG_INFINITY { FLOAT_NEG_INFINITY, FLOAT_NEG_INFINITY, FLOAT_NEG_INFINITY };
+const Vec3 Vec3::UNIT         = ONE.Normalize();
+const Vec3 Vec3::I            {  1.0f,  0.0f,  0.0f };
+const Vec3 Vec3::J            {  0.0f,  1.0f,  0.0f };
+const Vec3 Vec3::K            {  0.0f,  0.0f,  1.0f };
 
 // Constructors and Destructors
 

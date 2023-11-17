@@ -36,7 +36,7 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
 {
     input.prevKeyFlags = input.currKeyFlags;
     SDL_Event event;
-    Vec2 mouseWheel = Vec2::zero();
+    Vec2 mouseWheel = Vec2::ZERO;
     while (SDL_PollEvent(&event) != 0)
     {
         switch (event.type)

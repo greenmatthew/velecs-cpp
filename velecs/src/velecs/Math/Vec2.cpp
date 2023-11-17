@@ -10,6 +10,7 @@
 
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Vec3.h"
+#include "velecs/Math/Consts.h"
 
 #include <sstream>
 #include <algorithm>
@@ -18,6 +19,19 @@
 namespace velecs {
 
 // Public Fields
+
+const Vec2 Vec2::ZERO         {  0.0f,  0.0f };
+const Vec2 Vec2::ONE          {  1.0f,  1.0f };
+const Vec2 Vec2::NEG_ONE      { -1.0f, -1.0f };
+const Vec2 Vec2::UP           {  0.0f, -1.0f };
+const Vec2 Vec2::DOWN         {  0.0f,  1.0f };
+const Vec2 Vec2::RIGHT        {  1.0f,  0.0f };
+const Vec2 Vec2::LEFT         { -1.0f,  0.0f };
+const Vec2 Vec2::POS_INFINITY { FLOAT_POS_INFINITY, FLOAT_POS_INFINITY };
+const Vec2 Vec2::NEG_INFINITY { FLOAT_NEG_INFINITY, FLOAT_NEG_INFINITY };
+const Vec2 Vec2::UNIT         = ONE.Normalize();
+const Vec2 Vec2::I            {  1.0f,  0.0f };
+const Vec2 Vec2::J            {  0.0f,  1.0f };
 
 // Constructors and Destructors
 
@@ -138,7 +152,7 @@ float Vec2::L2Norm() const
 Vec2 Vec2::Normalize() const
 {
     float magnitude = L2Norm();
-    return (magnitude != 0) ? (*this)/magnitude : Vec2::zero();
+    return (magnitude != 0) ? (*this)/magnitude : Vec2::ZERO;
 }
 
 Vec2 Vec2::ProjOntoI() const
