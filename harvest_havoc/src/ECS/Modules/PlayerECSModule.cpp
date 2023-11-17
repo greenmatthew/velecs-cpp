@@ -138,8 +138,8 @@ void PlayerECSModule::HandleInput
 
 
     player.targetCamPos = player.targetCamPos + (input->mouseWheel.y * Vec3::K);
-    // Max and min are flipped bc they are negative values
-    player.targetCamPos.z = std::clamp(player.targetCamPos.z, player.camMaxZoom, player.camMinZoom);
+    // Max and min are flipped and negative bc of the coordinate system
+    player.targetCamPos.z = std::clamp(player.targetCamPos.z, -player.camMaxZoom, -player.camMinZoom);
     cameraTransform->position = Vec3::Lerp(cameraTransform->position, player.targetCamPos, player.camZoomSpeed * deltaTime);
 }
 
