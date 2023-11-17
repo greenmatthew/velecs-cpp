@@ -92,8 +92,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
         .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout});
     
-    std::cout << "triangleRenderPrefab.path(): " << triangleRenderPrefab.path() << std::endl;
-
     ecs.system()
         .kind(stages->PreDraw)
         .iter([this](flecs::iter& it)
@@ -122,8 +120,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             const auto cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
             const auto cameraTransform = cameraEntity.get<Transform>();
 
-            std::cout << "Camera Abs Pos 1: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
-
             for (auto i : it)
             {
                 Transform transform = transforms[i];
@@ -138,7 +134,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
                 if (cameraEntity.has<PerspectiveCamera>())
                 {
-                    std::cout << "Camera Abs Pos 2: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
                     const auto perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
                     Draw(deltaTime, cameraEntity, perspectiveCamera, cameraTransform, entity, transform, mesh, material);
                 }
@@ -875,7 +870,6 @@ void RenderingECSModule::Draw
 
     MeshPushConstants constants = {};
     
-    std::cout << "Camera Abs Pos 3: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
     constants.renderMatrix = GetRenderMatrix(cameraEntity, perspectiveCamera, cameraTransform, entity, transform);
 
     //upload the matrix to the GPU via push constants
@@ -982,8 +976,6 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     const Transform& transform
 )
 {
-    std::cout << "Camera Abs Pos 4: " << cameraTransform->GetAbsPosition(cameraEntity.parent()) << std::endl;
-
     // Start with the identity matrix
     glm::mat4 model = glm::mat4(1.0f); 
 
@@ -998,7 +990,6 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     // Compute the view matrix
     Vec3 cameraAbsPos = cameraTransform->GetAbsPosition(cameraEntity.parent());
     glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
-    std::cout << cameraAbsPos << std::endl;
 
     // Compute the projection matrix
     glm::mat4 projection = glm::perspective

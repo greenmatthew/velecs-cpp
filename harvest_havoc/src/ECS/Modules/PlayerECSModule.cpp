@@ -41,12 +41,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     
     cameraEntity.child_of(player);
 
-    std::cout << player.parent().name() << std::endl;
-    std::cout << "player.parent() == flecs::entity::null(): " << (player.parent() == flecs::entity::null()) << std::endl;
-    std::cout << "player.parent().is_entity(): " << player.parent().is_entity() << std::endl;
-    std::cout << "player.parent().has(flecs::Module): " << player.parent().has(flecs::Module) << std::endl;
-    
-
     ecs.entity()
         .is_a(trianglePrefab)
         .set_name("Entity1")
@@ -117,7 +111,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 void PlayerECSModule::HandleInput(const float deltaTime, Player& player, Transform& transform, LinearKinematics& linear)
 {
     flecs::world& world = ecs();
-
     const Input* input = world.singleton<Input>().get<Input>();
 
     Vec3 velDir = (((input->IsHeld(SDLK_d)) ? Vec3::RIGHT : Vec3::ZERO) +
