@@ -167,6 +167,10 @@ RenderingECSModule::~RenderingECSModule()
     // make sure the GPU has stopped doing its things
     vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
 
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
     _mainDeletionQueue.Flush();
 
     vmaDestroyAllocator(_allocator);
@@ -675,34 +679,70 @@ void RenderingECSModule::InitPipelines()
     );
 }
 
+static void check_vk_result(VkResult err)
+{
+    if (err == 0)
+        return;
+    fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+    if (err < 0)
+        abort();
+}
+
 void RenderingECSModule::InitImGUI()
 {
-    // //1: create descriptor pool for IMGUI
-    // // the size of the pool is very oversize, but it's copied from imgui demo itself.
-    // VkDescriptorPoolSize pool_sizes[] =
-    // {
-    //     { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-    //     { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-    // };
+    //1: create descriptor pool for IMGUI
+    // the size of the pool is very oversize, but it's copied from imgui demo itself.
+    VkDescriptorPoolSize pool_sizes[] =
+    {
+        { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+        { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+        { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+    };
 
-    // VkDescriptorPoolCreateInfo pool_info = {};
-    // pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    // pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-    // pool_info.maxSets = 1000;
-    // pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
-    // pool_info.pPoolSizes = pool_sizes;
+    VkDescriptorPoolCreateInfo pool_info = {};
+    pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    pool_info.maxSets = 1000;
+    pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
+    pool_info.pPoolSizes = pool_sizes;
 
-    // VkDescriptorPool imguiPool;
-    // VK_CHECK(vkCreateDescriptorPool(_device, &pool_info, nullptr, &imguiPool));
+    VkDescriptorPool imguiPool;
+    VK_CHECK(vkCreateDescriptorPool(_device, &pool_info, nullptr, &imguiPool));
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL2_InitForVulkan(_window);
+    ImGui_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance = _instance;
+    init_info.PhysicalDevice = _chosenGPU;
+    init_info.Device = _device;
+    init_info.QueueFamily = _graphicsQueueFamily;
+    init_info.Queue = _graphicsQueue;
+    // init_info.PipelineCache = YOUR_PIPELINE_CACHE;
+    init_info.DescriptorPool = imguiPool;
+    init_info.Subpass = 0;
+    init_info.MinImageCount = 2;
+    init_info.ImageCount = 2;
+    init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    // init_info.Allocator = YOUR_ALLOCATOR;
+    init_info.CheckVkResultFn = check_vk_result;
+    ImGui_ImplVulkan_Init(&init_info, _renderPass);
+    // (this gets a bit more complicated, see example app for full reference)
 
 
     // // 2: initialize imgui library
@@ -739,18 +779,23 @@ void RenderingECSModule::InitImGUI()
     // ImGui_ImplVulkan_DestroyFontUploadObjects();
 
     // //add the destroy the imgui created structures
-    // _mainDeletionQueue.PushDeletor
-    // (
-    //     [=]()
-    //     {
-    //         vkDestroyDescriptorPool(_device, imguiPool, nullptr);
-    //         ImGui_ImplVulkan_Shutdown();
-    //     }
-    // );
+     _mainDeletionQueue.PushDeletor
+     (
+         [=]()
+         {
+             vkDestroyDescriptorPool(_device, imguiPool, nullptr);
+         }
+     );
 }
 
 void RenderingECSModule::PreDrawStep(float deltaTime)
 {
+    // Start the Dear ImGui frame
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+    ImGui::ShowDemoWindow(); // Show demo window! :)
+
     //wait until the GPU has finished rendering the last frame. Timeout of 1 second
     VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
     VK_CHECK(vkResetFences(_device, 1, &_renderFence));
@@ -797,6 +842,10 @@ void RenderingECSModule::PreDrawStep(float deltaTime)
 
 void RenderingECSModule::PostDrawStep(float deltaTime)
 {
+    // Rendering imgui
+    ImGui::Render();
+    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), _mainCommandBuffer);
+
     //finalize the render pass
     vkCmdEndRenderPass(_mainCommandBuffer);
     //finalize the command buffer (we can no longer add commands, but it can now be executed)

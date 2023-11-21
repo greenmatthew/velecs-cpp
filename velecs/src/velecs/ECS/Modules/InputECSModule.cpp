@@ -12,6 +12,8 @@
 
 #include "velecs/Math/Vec2.h"
 
+#include <backends/imgui_impl_sdl2.h>
+
 namespace velecs {
 
 // Public Fields
@@ -40,6 +42,9 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
     Vec2 mouseWheel = Vec2::ZERO;
     while (SDL_PollEvent(&event) != 0)
     {
+        // Handle imgui input
+        ImGui_ImplSDL2_ProcessEvent(&event); // Forward your event to backend
+
         switch (event.type)
         {
         case SDL_QUIT:
