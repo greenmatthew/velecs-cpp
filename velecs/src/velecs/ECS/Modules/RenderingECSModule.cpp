@@ -110,6 +110,32 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         }
     );
 
+    ecs.system()
+        .kind(stages->Draw)
+        .iter([this](flecs::iter& it)
+            {
+                ImGui::ShowDemoWindow(); // Show demo window! :)
+
+                static float f = 0.0f;
+                static int counter = 0;
+                static ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+                ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+                ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+
+                ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+
+                if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+                    counter++;
+                ImGui::SameLine();
+                ImGui::Text("counter = %d", counter);
+
+                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+                ImGui::End();
+            }
+        );
+
     ecs.system<Transform, Mesh, Material>()
         .kind(stages->Draw)
         .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
@@ -722,7 +748,7 @@ void RenderingECSModule::InitImGUI()
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // IF using Docking Branch
 
     // Setup Platform/Renderer backends
@@ -742,43 +768,8 @@ void RenderingECSModule::InitImGUI()
     // init_info.Allocator = YOUR_ALLOCATOR;
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info, _renderPass);
-    // (this gets a bit more complicated, see example app for full reference)
 
-
-    // // 2: initialize imgui library
-
-    // //this initializes the core structures of imgui
-    // ImGui::CreateContext();
-
-    // //this initializes imgui for SDL
-    // ImGui_ImplSDL2_InitForVulkan(_window);
-
-    // //this initializes imgui for Vulkan
-    // ImGui_ImplVulkan_InitInfo init_info = {};
-    // init_info.Instance = _instance;
-    // init_info.PhysicalDevice = _chosenGPU;
-    // init_info.Device = _device;
-    // init_info.Queue = _graphicsQueue;
-    // init_info.DescriptorPool = imguiPool;
-    // init_info.MinImageCount = 3;
-    // init_info.ImageCount = 3;
-    // init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-
-    // ImGui_ImplVulkan_Init(&init_info, _renderPass);
-
-    // //execute a gpu command to upload imgui font textures
-    // immediate_submit
-    // (
-    //     [&](VkCommandBuffer cmd)
-    //     {
-    //         ImGui_ImplVulkan_CreateFontsTexture(cmd);
-    //     }
-    // );
-
-    // //clear font textures from cpu data
-    // ImGui_ImplVulkan_DestroyFontUploadObjects();
-
-    // //add the destroy the imgui created structures
+    // add the destroy the imgui created structures
      _mainDeletionQueue.PushDeletor
      (
          [=]()
@@ -794,7 +785,6 @@ void RenderingECSModule::PreDrawStep(float deltaTime)
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow(); // Show demo window! :)
 
     //wait until the GPU has finished rendering the last frame. Timeout of 1 second
     VK_CHECK(vkWaitForFences(_device, 1, &_renderFence, true, 1000000000));
