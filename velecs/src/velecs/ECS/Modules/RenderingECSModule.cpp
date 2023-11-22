@@ -121,6 +121,30 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                 static int counter = 0;
                 static ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+                // Set window flags
+                ImGuiWindowFlags window_flags =
+                    ImGuiWindowFlags_NoDecoration |
+                    ImGuiWindowFlags_AlwaysAutoResize |
+                    ImGuiWindowFlags_NoSavedSettings |
+                    ImGuiWindowFlags_NoFocusOnAppearing |
+                    ImGuiWindowFlags_NoNav
+                    ;
+                
+                // Calculate the top-right position for the FPS counter
+                ImVec2 window_pos = ImVec2(io.DisplaySize.x - 10.0f, 10.0f); // 10 pixels from the top-right corner
+                ImVec2 window_pos_pivot = ImVec2(1.0f, 0.0f); // Pivot at the top-right corner of the window
+                ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+
+                // Begin the window with the specified flags
+                ImGui::Begin("FPS Counter", nullptr, window_flags);
+
+                // Display FPS
+                ImGui::Text("FPS: %.1f", io.Framerate);
+                ImGui::Text("Frame Time: %.3f ms", 1000.0f / io.Framerate);
+
+                // End the window
+                ImGui::End();
+
                 ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
 
                 ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
