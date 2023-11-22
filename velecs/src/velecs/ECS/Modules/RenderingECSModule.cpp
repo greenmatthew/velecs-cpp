@@ -217,17 +217,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             }
         }
     );
-
-    // ecs.set<MainCamera>({CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
-    // ecs.set<GlobalData>({CreateOrthoCamera(Vec3{0.0f, 0.0f,-100.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f}, 0.0f, 200.0f)});
-
-    // flecs::entity triangle = ecs.entity()
-    //     .is_a(renderPrefab)
-    //     .set<Transform>({Vec3::ZERO, Vec3{-180.0f, 0.0f, 0.0f}, Vec3::ONE * 1.0f})
-    //     .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-    //     .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout})
-    //     .set<LinearKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3{0.5f, 0.0f, 0.0f}})
-    //     .set<AngularKinematics>({Vec3{0.0f, 0.0f, 0.0f}, Vec3::ZERO});
 }
 
 RenderingECSModule::~RenderingECSModule()
@@ -270,6 +259,14 @@ void RenderingECSModule::OnWindowResize()
     {
         vkDeviceWaitIdle(_device);
 
+        windowExtent.width = width;
+        windowExtent.height = height;
+        
+
+        flecs::world& world = ecs();
+        Camera& cam = GetMainCamera(world);
+        cam.SetResolution(Vec2{(float)width, (float)height});
+
         for (auto imageView : _swapchainImageViews)
         {
             vkDestroyImageView(_device, imageView, nullptr);
@@ -300,13 +297,11 @@ flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
     const Vec3 rotation /*= Vec3::ZERO*/,
     const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
     const float verticalFOV /*= 70.0f*/,
-    const float aspectRatio /*= 16.0f/9.0f*/,
     const float nearPlaneOffset /*= 0.1f*/,
     const float farPlaneOffset /*= 200.0f*/)
 {
     Transform transform{position, rotation};
-    Rect extent{Vec2::ZERO, resolution};
-    PerspectiveCamera perspective{extent, verticalFOV, aspectRatio, nearPlaneOffset, farPlaneOffset};
+    PerspectiveCamera perspective{resolution, verticalFOV, nearPlaneOffset, farPlaneOffset};
     return ecs.entity("Camera")
         .set<Transform>(transform)
         .set<PerspectiveCamera>(perspective);
@@ -320,11 +315,33 @@ flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
     const float farPlaneOffset /*= 200.0f*/)
 {
     Transform transform{position, rotation};
-    Rect extent{Vec2::ZERO, resolution};
-    OrthoCamera ortho{extent, nearPlaneOffset, farPlaneOffset};
+    OrthoCamera ortho{resolution, nearPlaneOffset, farPlaneOffset};
     return ecs.entity("Camera")
         .set<Transform>(transform)
         .set<OrthoCamera>(ortho);
+}
+
+Camera& RenderingECSModule::GetMainCamera(flecs::world& ecs)
+{
+    const MainCamera* const mainCamera = ecs.get<MainCamera>();
+    if (mainCamera == nullptr)
+    {
+        throw std::runtime_error("MainCamera singleton not found.");
+    }
+
+    flecs::entity cameraEntity = mainCamera->camera;
+    if (cameraEntity == flecs::entity::null())
+    {
+        throw std::runtime_error("MainCamera's camera entity is null.");
+    }
+
+    Camera* cameraPtr = cameraEntity.get_mut<Camera>();
+    if (cameraPtr == nullptr)
+    {
+        throw std::runtime_error("Camera component not found in MainCamera's camera entity.");
+    }
+
+    return *cameraPtr;
 }
 
 // Protected Fields
@@ -977,6 +994,21 @@ void RenderingECSModule::Draw
 {
     vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
 
+    VkViewport viewport = {};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = static_cast<float>(windowExtent.width);
+    viewport.height = static_cast<float>(windowExtent.height);
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+
+    VkRect2D scissor = {};
+    scissor.offset = {0, 0};
+    scissor.extent = {static_cast<uint32_t>(windowExtent.width), static_cast<uint32_t>(windowExtent.height)};
+
+    vkCmdSetViewport(_mainCommandBuffer, 0, 1, &viewport);
+    vkCmdSetScissor(_mainCommandBuffer, 0, 1, &scissor);
+
     //bind the mesh vertex buffer with offset 0
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
@@ -1107,8 +1139,8 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     // Compute the projection matrix
     glm::mat4 projection = glm::perspective
     (
-        glm::radians(perspectiveCamera->verticalFov),
-        perspectiveCamera->aspectRatio,
+        glm::radians(perspectiveCamera->GetVerticalFov()),
+        perspectiveCamera->GetAspectRatio(),
         perspectiveCamera->nearPlaneOffset,
         perspectiveCamera->farPlaneOffset
     );
@@ -1147,7 +1179,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
 
     // Compute the projection matrix
-    Rect extent = orthoCamera->extent;
+    Rect extent = orthoCamera->GetExtent();
     float halfWidth = extent.GetHalfWidth()*0.001f;
     float halfLength = extent.GetHalfLength()*0.001f;
     glm::mat4 projection = glm::ortho

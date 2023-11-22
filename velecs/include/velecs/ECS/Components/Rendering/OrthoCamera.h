@@ -10,9 +10,7 @@
 
 #pragma once
 
-#include "velecs/Graphics/Rect.h"
-
-#include "velecs/Math/Vec2.h"
+#include "velecs/ECS/Components/Rendering/Camera.h"
 
 namespace velecs {
 
@@ -23,13 +21,10 @@ namespace velecs {
 /// including its extent and clipping planes. The extent defines the visible area
 /// of the camera in the scene, while the near and far plane offsets define the 
 /// range along the Z-axis where objects are rendered.
-struct OrthoCamera {
-    // Public Fields
+struct OrthoCamera : public Camera {
+    // Enums
 
-    Rect extent; /// @brief The visible area of the camera in the scene.
-    
-    float nearPlaneOffset; /// @brief The offset of the near clipping plane along the Z-axis.
-    float farPlaneOffset; /// @brief The offset of the far clipping plane along the Z-axis.
+    // Public Fields
 
     // Constructors and Destructors
 
@@ -37,13 +32,25 @@ struct OrthoCamera {
     /// @param[in] extent The visible area of the camera.
     /// @param[in] nearPlaneOffset The offset of the near clipping plane.
     /// @param[in] farPlaneOffset The offset of the far clipping plane.
-    OrthoCamera(const Rect& extent = {Vec2::ZERO, Vec2{1920.0f, 1080.0f}},
+    OrthoCamera(const Vec2 resolution = Vec2{1920.0f, 1080.0f},
                 const float nearPlaneOffset = 0.1f,
                 const float farPlaneOffset = 200.0f)
-        : extent(extent), nearPlaneOffset(nearPlaneOffset), farPlaneOffset(farPlaneOffset) {}
+        : Camera(resolution, nearPlaneOffset, farPlaneOffset) {}
 
     /// @brief Default deconstructor.
     ~OrthoCamera() = default;
+
+    // Public Methods
+
+protected:
+    // Protected Fields
+
+    // Protected Methods
+
+private:
+    // Private Fields
+
+    // Private Methods
 };
 
 } // namespace velecs

@@ -64,7 +64,6 @@ public:
         const Vec3 rotation = Vec3::ZERO,
         const Vec2 resolution = Vec2{1920.0f, 1080.0f},
         const float verticalFOV = 70.0f,
-        const float aspectRatio = 16.0f/9.0f,
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f
     );
@@ -78,6 +77,8 @@ public:
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f
     );
+
+    static Camera& GetMainCamera(flecs::world& ecs);
 
 protected:
     // Protected Fields

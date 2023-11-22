@@ -27,11 +27,19 @@ VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
     VkPipelineViewportStateCreateInfo viewportState = {};
     viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportState.pNext = nullptr;
-
     viewportState.viewportCount = 1;
-    viewportState.pViewports = &_viewport;
     viewportState.scissorCount = 1;
-    viewportState.pScissors = &_scissor;
+
+    // Include dynamic state info in pipeline creation
+    VkDynamicState dynamicStates[] = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR
+    };
+
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo = {};
+    dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamicStateInfo.dynamicStateCount = 2; // Number of dynamic states
+    dynamicStateInfo.pDynamicStates = dynamicStates;
 
     //setup dummy color blending. We aren't using transparent objects yet
     //the blending is just "no blend", but we do write to the color attachment
@@ -56,6 +64,7 @@ VkPipeline PipelineBuilder::BuildPipeline(VkDevice device, VkRenderPass pass)
     pipelineInfo.pVertexInputState = &_vertexInputInfo;
     pipelineInfo.pInputAssemblyState = &_inputAssembly;
     pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pDynamicState = &dynamicStateInfo;
     pipelineInfo.pRasterizationState = &_rasterizer;
     pipelineInfo.pMultisampleState = &_multisampling;
     pipelineInfo.pColorBlendState = &colorBlending;
