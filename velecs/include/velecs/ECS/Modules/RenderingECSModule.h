@@ -55,6 +55,8 @@ public:
 
     // Public Methods
 
+    void OnWindowMinimize() const;
+
     void OnWindowResize();
 
     static flecs::entity CreatePerspectiveCamera
@@ -89,6 +91,8 @@ private:
     // Private Fields
 
     int _frameNumber{0}; /// @brief Keeps track of the current frame number.
+
+    bool shouldRender{true};
 
     SDL_Window* _window{nullptr}; /// @brief Pointer to the SDL window structure.
 

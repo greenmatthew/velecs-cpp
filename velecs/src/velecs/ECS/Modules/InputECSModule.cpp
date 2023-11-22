@@ -62,7 +62,11 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
             input.isQuitting = true; // Set the flag to quit
             break;
         case SDL_WINDOWEVENT:
-            if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+        {
+            auto windowEvent = event.window.event;
+            if (windowEvent == SDL_WINDOWEVENT_RESIZED ||
+                windowEvent == SDL_WINDOWEVENT_MINIMIZED ||
+                windowEvent == SDL_WINDOWEVENT_MAXIMIZED)
             {
                 flecs::world ecs = it.world();
                 flecs::entity moduleEntity = ecs.lookup("velecs::RenderingECSModule");
@@ -74,10 +78,22 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
                 {
                     RenderingECSModule* module = moduleEntity.get_mut<RenderingECSModule>();
 
-                    module->OnWindowResize();
+                    switch(windowEvent)
+                    {
+                        case SDL_WINDOWEVENT_RESIZED:
+                        case SDL_WINDOWEVENT_MAXIMIZED:
+                            module->OnWindowResize();
+                            break;
+                        case SDL_WINDOWEVENT_MINIMIZED:
+                            module->OnWindowMinimize();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             break;
+        }
         case SDL_KEYDOWN:
         {
             SDL_Keycode keycode = event.key.keysym.sym;

@@ -251,43 +251,84 @@ RenderingECSModule::~RenderingECSModule()
     SDL_DestroyWindow(_window);
 }
 
+void RenderingECSModule::OnWindowMinimize() const
+{
+    while (true)
+    {
+        // Poll for events to keep the application responsive
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                    exit(0);
+                case SDL_WINDOWEVENT:
+                    if (event.window.event == SDL_WINDOWEVENT_RESTORED)
+                    {
+                        return;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
 void RenderingECSModule::OnWindowResize()
 {
     int width, height;
     SDL_GetWindowSize(_window, &width, &height);
-    if (width > 0 && height > 0)
+    while (width == 0 || height == 0)
     {
-        vkDeviceWaitIdle(_device);
-
-        windowExtent.width = width;
-        windowExtent.height = height;
-        
-
-        flecs::world& world = ecs();
-        Camera& cam = GetMainCamera(world);
-        cam.SetResolution(Vec2{(float)width, (float)height});
-
-        for (auto imageView : _swapchainImageViews)
-        {
-            vkDestroyImageView(_device, imageView, nullptr);
-        }
-        _swapchainImageViews.clear(); // Clear the list after destroying the image views
-
-        if (_swapchain != VK_NULL_HANDLE)
-        {
-            vkDestroySwapchainKHR(_device, _swapchain, nullptr);
-            _swapchain = VK_NULL_HANDLE; // Reset the swapchain handle
+        // Poll for events to keep the application responsive
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                exit(0); // Or handle the quit event appropriately
+            }
+            // Handle other necessary events
         }
 
-        for (auto framebuffer : _framebuffers)
-        {
-            vkDestroyFramebuffer(_device, framebuffer, nullptr);
-        }
-        _framebuffers.clear();
-
-        InitSwapchain();
-        InitFrameBuffers();
+        // Recheck the window size
+        SDL_GetWindowSize(_window, &width, &height);
+        std::cout << "window: " << "(" << width << ", " << height << ")" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
+    vkDeviceWaitIdle(_device);
+
+    windowExtent.width = width;
+    windowExtent.height = height;
+    
+
+    flecs::world& world = ecs();
+    Camera& cam = GetMainCamera(world);
+    cam.SetResolution(Vec2{(float)width, (float)height});
+
+    for (auto imageView : _swapchainImageViews)
+    {
+        vkDestroyImageView(_device, imageView, nullptr);
+    }
+    _swapchainImageViews.clear(); // Clear the list after destroying the image views
+
+    if (_swapchain != VK_NULL_HANDLE)
+    {
+        vkDestroySwapchainKHR(_device, _swapchain, nullptr);
+        _swapchain = VK_NULL_HANDLE; // Reset the swapchain handle
+    }
+
+    for (auto framebuffer : _framebuffers)
+    {
+        vkDestroyFramebuffer(_device, framebuffer, nullptr);
+    }
+    _framebuffers.clear();
+
+    InitSwapchain();
+    InitFrameBuffers();
 }
 
 // Public Methods
@@ -357,7 +398,7 @@ void RenderingECSModule::InitWindow()
     // We initialize SDL and create a window with it. 
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN);
+    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
     _window = SDL_CreateWindow(
         "Harvest Havoc",
@@ -962,14 +1003,6 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
     VkResult result = vkQueuePresentKHR(_graphicsQueue, &presentInfo);
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
     {
-        int width, height;
-        SDL_GetWindowSize(_window, &width, &height);
-        if (width > 0 && height > 0)
-        {
-            windowExtent.width = width;
-            windowExtent.height = height;
-            // InitSwapchain();
-        }
     }
     else
     {
