@@ -8,10 +8,10 @@
 /// Unauthorized copying of this file, via any medium is strictly prohibited
 /// Proprietary and confidential
 
-
-
 #include "velecs/ECS/Modules/RenderingECSModule.h"
+
 #include "velecs/ECS/Modules/PhysicsECSModule.h"
+#include "velecs/ECS/Modules/InputECSModule.h"
 
 #include "velecs/VelECSEngine.h"
 
@@ -62,6 +62,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     : IECSModule(ecs)
 {
     ecs.import<PhysicsECSModule>();
+    ecs.import<InputECSModule>();
 
     InitWindow();
 
@@ -176,6 +177,23 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         }
     );
 
+    ecs.system()
+        .kind(stages->Update)
+        .iter([this](flecs::iter& it)
+        {
+            flecs::world ecs = it.world();
+
+            flecs::entity inputEntity = ecs.singleton<Input>();
+            const Input* const input = inputEntity.get<Input>();
+
+            if (input->IsPressed(SDLK_F11))
+            {
+                Uint32 toggle = SDL_GetWindowFlags(_window) & SDL_WINDOW_FULLSCREEN;
+                SDL_SetWindowFullscreen(_window, toggle ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP);
+            }
+        }
+    );
+
     // ecs.set<MainCamera>({CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f})});
     // ecs.set<GlobalData>({CreateOrthoCamera(Vec3{0.0f, 0.0f,-100.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f}, 0.0f, 200.0f)});
 
@@ -199,12 +217,56 @@ RenderingECSModule::~RenderingECSModule()
 
     _mainDeletionQueue.Flush();
 
+    const size_t swapchain_imagecount = _swapchainImages.size();
+    for (int i = 0; i < swapchain_imagecount; i++)
+    {
+        vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
+        vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
+    }
+    _swapchainImageViews.clear();
+    _framebuffers.clear();
+
+    vkDestroyRenderPass(_device, _renderPass, nullptr);
+    vkDestroyCommandPool(_device, _commandPool, nullptr);
+    vkDestroySwapchainKHR(_device, _swapchain, nullptr);
+
     vmaDestroyAllocator(_allocator);
     vkDestroyDevice(_device, nullptr);
     vkDestroySurfaceKHR(_instance, _surface, nullptr);
     vkb::destroy_debug_utils_messenger(_instance, _debug_messenger);
     vkDestroyInstance(_instance, nullptr);
     SDL_DestroyWindow(_window);
+}
+
+void RenderingECSModule::OnWindowResize()
+{
+    int width, height;
+    SDL_GetWindowSize(_window, &width, &height);
+    if (width > 0 && height > 0)
+    {
+        vkDeviceWaitIdle(_device);
+
+        for (auto imageView : _swapchainImageViews)
+        {
+            vkDestroyImageView(_device, imageView, nullptr);
+        }
+        _swapchainImageViews.clear(); // Clear the list after destroying the image views
+
+        if (_swapchain != VK_NULL_HANDLE)
+        {
+            vkDestroySwapchainKHR(_device, _swapchain, nullptr);
+            _swapchain = VK_NULL_HANDLE; // Reset the swapchain handle
+        }
+
+        for (auto framebuffer : _framebuffers)
+        {
+            vkDestroyFramebuffer(_device, framebuffer, nullptr);
+        }
+        _framebuffers.clear();
+
+        InitSwapchain();
+        InitFrameBuffers();
+    }
 }
 
 // Public Methods
@@ -388,17 +450,23 @@ void RenderingECSModule::InitVulkan()
 
 void RenderingECSModule::InitSwapchain()
 {
-    vkb::SwapchainBuilder swapchainBuilder{ _chosenGPU,_device,_surface };
+    vkb::SwapchainBuilder swapchainBuilder = vkb::SwapchainBuilder{_chosenGPU, _device, _surface};
 
-    vkb::Swapchain vkbSwapchain = swapchainBuilder
+    vkb::Result<vkb::Swapchain> vkbSwapchainRet = swapchainBuilder
         .use_default_format_selection()
-        //use vsync present mode
-        // .set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR)
-        // .set_desired_extent(_windowExtent.width, _windowExtent.height)
-        .build()
-        .value();
+        .build();
     
+    if (!vkbSwapchainRet.has_value())
+    {
+        std::cout << vkbSwapchainRet.vk_result() << std::endl;
+        std::cout << "Cancelled building swapchain" << std::endl;
+        return;
+    }
+    
+    vkb::Swapchain vkbSwapchain = vkbSwapchainRet.value();
+
     vkbSwapchain.extent = windowExtent;
+    //use vsync present mode
     vkbSwapchain.present_mode = VK_PRESENT_MODE_FIFO_KHR;
 
     //store swapchain and its related images
@@ -407,14 +475,6 @@ void RenderingECSModule::InitSwapchain()
     _swapchainImageViews = vkbSwapchain.get_image_views().value();
 
     _swapchainImageFormat = vkbSwapchain.image_format;
-
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            vkDestroySwapchainKHR(_device, _swapchain, nullptr);
-        }
-    );
 }
 
 void RenderingECSModule::InitCommands()
@@ -429,14 +489,6 @@ void RenderingECSModule::InitCommands()
     VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_commandPool, 1);
 
     VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_mainCommandBuffer));
-
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            vkDestroyCommandPool(_device, _commandPool, nullptr);
-        }
-    );
 }
 
 void RenderingECSModule::InitDefaultRenderPass()
@@ -485,14 +537,6 @@ void RenderingECSModule::InitDefaultRenderPass()
     render_pass_info.pSubpasses = &subpass;
 
     VK_CHECK(vkCreateRenderPass(_device, &render_pass_info, nullptr, &_renderPass));
-
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            vkDestroyRenderPass(_device, _renderPass, nullptr);
-        }
-    );
 }
 
 void RenderingECSModule::InitFrameBuffers()
@@ -517,15 +561,6 @@ void RenderingECSModule::InitFrameBuffers()
     {
         fb_info.pAttachments = &_swapchainImageViews[i];
         VK_CHECK(vkCreateFramebuffer(_device, &fb_info, nullptr, &_framebuffers[i]));
-
-        _mainDeletionQueue.PushDeletor
-        (
-            [=]()
-            {
-                vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
-                vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
-            }
-        );
     }
 }
 
@@ -883,7 +918,22 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
 
     presentInfo.pImageIndices = &swapchainImageIndex;
 
-    VK_CHECK(vkQueuePresentKHR(_graphicsQueue, &presentInfo));
+    VkResult result = vkQueuePresentKHR(_graphicsQueue, &presentInfo);
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+    {
+        int width, height;
+        SDL_GetWindowSize(_window, &width, &height);
+        if (width > 0 && height > 0)
+        {
+            windowExtent.width = width;
+            windowExtent.height = height;
+            // InitSwapchain();
+        }
+    }
+    else
+    {
+        VK_CHECK(result);
+    }
 
     //increase the number of frames drawn
     _frameNumber++;

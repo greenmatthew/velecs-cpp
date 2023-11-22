@@ -75,6 +75,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
             float deltaTime = it.delta_time();
 
             flecs::world ecs = it.world();
+            
             flecs::entity mainCameraEntity = ecs.singleton<MainCamera>();
             flecs::entity cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
             Transform * const cameraTransform = cameraEntity.get_mut<Transform>();

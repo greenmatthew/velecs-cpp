@@ -27,6 +27,8 @@
 
 #include <vma/vk_mem_alloc.h>
 
+#include <VkBootstrap.h>
+
 #include <vector>
 
 struct SDL_Window;
@@ -52,6 +54,8 @@ public:
     ~RenderingECSModule();
 
     // Public Methods
+
+    void OnWindowResize();
 
     static flecs::entity CreatePerspectiveCamera
     (
@@ -89,34 +93,34 @@ private:
 
     VkExtent2D windowExtent{1700, 900}; /// @brief Desired dimensions of the rendering window.
 
-    VkInstance _instance{nullptr}; /// @brief Handle to the Vulkan library.
-    VkDebugUtilsMessengerEXT _debug_messenger{nullptr}; /// @brief Handle for Vulkan debug messaging.
-    VkPhysicalDevice _chosenGPU{nullptr}; /// @brief The chosen GPU for rendering operations.
-    VkDevice _device{nullptr}; /// @brief Handle to the Vulkan device.
-    VkSurfaceKHR _surface{nullptr}; /// @brief Handle to the Vulkan window surface.
+    VkInstance _instance{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan library.
+    VkDebugUtilsMessengerEXT _debug_messenger{VK_NULL_HANDLE}; /// @brief Handle for Vulkan debug messaging.
+    VkPhysicalDevice _chosenGPU{VK_NULL_HANDLE}; /// @brief The chosen GPU for rendering operations.
+    VkDevice _device{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan device.
+    VkSurfaceKHR _surface{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan window surface.
 
-    VkSwapchainKHR _swapchain{nullptr}; /// @brief Handle to the Vulkan swapchain.
+    VkSwapchainKHR _swapchain{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan swapchain.
     VkFormat _swapchainImageFormat{VK_FORMAT_UNDEFINED}; /// @brief The format used for swapchain images.
     std::vector<VkImage> _swapchainImages; /// @brief List of images within the swapchain.
     std::vector<VkImageView> _swapchainImageViews; /// @brief List of image views for accessing swapchain images.
     uint32_t swapchainImageIndex{0};
 
-    VkQueue _graphicsQueue{nullptr}; /// @brief Queue used for submitting graphics commands.
+    VkQueue _graphicsQueue{VK_NULL_HANDLE}; /// @brief Queue used for submitting graphics commands.
     uint32_t _graphicsQueueFamily{0}; /// @brief Index of the queue family for graphics operations.
-    VkCommandPool _commandPool{nullptr}; /// @brief Pool for allocating command buffers.
-    VkCommandBuffer _mainCommandBuffer{nullptr}; /// @brief Main command buffer for recording rendering commands.
+    VkCommandPool _commandPool{VK_NULL_HANDLE}; /// @brief Pool for allocating command buffers.
+    VkCommandBuffer _mainCommandBuffer{VK_NULL_HANDLE}; /// @brief Main command buffer for recording rendering commands.
 
-    VkRenderPass _renderPass{nullptr}; /// @brief Handle to the Vulkan render pass.
+    VkRenderPass _renderPass{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan render pass.
     std::vector<VkFramebuffer> _framebuffers; /// @brief List of framebuffers for rendering.
 
-    VkSemaphore _presentSemaphore{nullptr}, _renderSemaphore{nullptr}; /// @brief Semaphore for synchronizing image presentation.
-    VkFence _renderFence{nullptr}; /// @brief Fence for synchronizing rendering operations.
+    VkSemaphore _presentSemaphore{VK_NULL_HANDLE}, _renderSemaphore{VK_NULL_HANDLE}; /// @brief Semaphore for synchronizing image presentation.
+    VkFence _renderFence{VK_NULL_HANDLE}; /// @brief Fence for synchronizing rendering operations.
 
-    VkPipelineLayout _trianglePipelineLayout{nullptr}; /// @brief Handle to the pipeline layout.
-    VkPipeline _trianglePipeline{nullptr}; /// @brief Handle to the pipeline.
-    VkPipeline _redTrianglePipeline{nullptr}; /// @brief Handle to the pipeline.
-    VkPipeline _triangleWireFramePipeline{nullptr}; /// @brief Handle to the pipeline.
-    VkPipeline _rainbowTrianglePipeline{nullptr}; /// @brief Handle to the pipeline.
+    VkPipelineLayout _trianglePipelineLayout{VK_NULL_HANDLE}; /// @brief Handle to the pipeline layout.
+    VkPipeline _trianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
+    VkPipeline _redTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
+    VkPipeline _triangleWireFramePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
+    VkPipeline _rainbowTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
 
     size_t renderPipelineIndex{4};
 
@@ -124,8 +128,8 @@ private:
 
     VmaAllocator _allocator{nullptr};
 
-    VkPipelineLayout _meshPipelineLayout{nullptr};
-    VkPipeline _meshPipeline{nullptr};
+    VkPipelineLayout _meshPipelineLayout{VK_NULL_HANDLE};
+    VkPipeline _meshPipeline{VK_NULL_HANDLE};
     Mesh _triangleMesh;
 
     Mesh _monkeyMesh;
@@ -145,6 +149,8 @@ private:
     /// This method sets up the swapchain which is critical for rendering frames to the screen.
     /// It is called by the Init method during engine initialization.
     void InitSwapchain();
+
+    void RebuildSwapchain();
 
     /// @brief Initializes command buffers and pools for rendering.
     ///

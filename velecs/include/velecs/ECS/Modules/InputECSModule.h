@@ -39,7 +39,7 @@ struct InputECSModule : public IECSModule<InputECSModule> {
     ///
     /// This function handles SDL events, updating the state of the Input component accordingly.
     /// It processes events like SDL_QUIT, SDL_KEYDOWN, and SDL_KEYUP to update the input state.
-    static void UpdateInput(flecs::entity e, Input& input);
+    static void UpdateInput(flecs::iter& it, Input& input);
 };
 
 } // namespace velecs

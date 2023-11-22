@@ -10,6 +10,8 @@
 
 #include "velecs/ECS/Modules/InputECSModule.h"
 
+#include "velecs/ECS/Modules/RenderingECSModule.h"
+
 #include "velecs/Math/Vec2.h"
 
 #include <backends/imgui_impl_sdl2.h>
@@ -29,12 +31,21 @@ InputECSModule::InputECSModule(flecs::world& ecs)
 
     ecs.system<Input>()
         .kind(stages->InputUpdate)
-        .each(&InputECSModule::UpdateInput);
+        .iter([this](flecs::iter& it, Input* inputs)
+        {
+            for (auto i : it)
+            {
+                Input& input = inputs[i];
+
+                UpdateInput(it, input);
+            }
+        }
+    );
 }
 
 // Public Methods
 
-void InputECSModule::UpdateInput(flecs::entity e, Input& input)
+void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
 {
     input.prevKeyFlags = input.currKeyFlags;
     SDL_Event event;
@@ -49,6 +60,23 @@ void InputECSModule::UpdateInput(flecs::entity e, Input& input)
         {
         case SDL_QUIT:
             input.isQuitting = true; // Set the flag to quit
+            break;
+        case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+            {
+                flecs::world ecs = it.world();
+                flecs::entity moduleEntity = ecs.lookup("velecs::RenderingECSModule");
+                if (moduleEntity == flecs::entity::null())
+                {
+                    std::cout << "Failure" << std::endl;
+                }
+                else
+                {
+                    RenderingECSModule* module = moduleEntity.get_mut<RenderingECSModule>();
+
+                    module->OnWindowResize();
+                }
+            }
             break;
         case SDL_KEYDOWN:
         {
