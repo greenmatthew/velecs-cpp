@@ -29,6 +29,13 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     ecs.import<RenderingECSModule>();
     ecs.import<PhysicsECSModule>();
 
+    ecs.component<Nametag>();
+
+    ecs.prefab("PR_Nametag")
+        .override<Transform>()
+        .override<Nametag>()
+        ;
+
     // CreatePlayerEntity("Player");
 
     flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f});
@@ -42,31 +49,56 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
         .add<LinearKinematics>()
         ;
     
+    player.get_mut<Transform>()->entity = player;
+    
     cameraEntity.child_of(player);
 
-    ecs.entity()
+    Transform& cameraTransform = *cameraEntity.get_ref<Transform>().get();
+    flecs::entity parent = flecs::entity::null();
+    if (cameraTransform.TryGetParent(parent))
+    {
+        std::cout << parent.name() << std::endl;
+    }
+    const Transform* parentTransform;
+    if (cameraTransform.TryGetParentTransform(parentTransform))
+    {
+        std::cout << parentTransform->position << std::endl;
+    }
+
+    std::cout << cameraTransform.GetAbsPosition() << std::endl;
+
+    // flecs::entity nametagEntity = ecs.entity()
+    //     .is_a(nametagEntity)
+    //     .set<Nametag>({"Test"})
+    //     ;
+    
+    // nametagEntity.child_of(player);
+
+    flecs::entity entity1 = ecs.entity()
         .is_a(trianglePrefab)
         .set_name("Entity1")
-        .set<Transform>({Vec3::UP + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f})
         ;
+    entity1.get_mut<Transform>()->entity = entity1;
+    entity1.get_mut<Transform>()->position = Vec3::UP + Vec3::RIGHT;
+    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
 
-    ecs.entity()
-        .is_a(trianglePrefab)
-        .set_name("Entity2")
-        .set<Transform>({Vec3::UP + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
-        ;
+    // ecs.entity()
+    //     .is_a(trianglePrefab)
+    //     .set_name("Entity2")
+    //     .set<Transform>({Vec3::UP + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
+    //     ;
     
-    ecs.entity()
-        .is_a(trianglePrefab)
-        .set_name("Entity3")
-        .set<Transform>({Vec3::DOWN + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f})
-        ;
+    // ecs.entity()
+    //     .is_a(trianglePrefab)
+    //     .set_name("Entity3")
+    //     .set<Transform>({Vec3::DOWN + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f})
+    //     ;
     
-    ecs.entity()
-        .is_a(trianglePrefab)
-        .set_name("Entity4")
-        .set<Transform>({Vec3::DOWN + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
-        ;
+    // ecs.entity()
+    //     .is_a(trianglePrefab)
+    //     .set_name("Entity4")
+    //     .set<Transform>({Vec3::DOWN + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
+    //     ;
     
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)
@@ -92,6 +124,28 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
                 HandleInput(deltaTime, input, cameraTransform, player, transform, linear);
             }
         });
+    
+    ecs.system<Transform, Nametag>()
+        .kind(stages->Draw)
+        .iter([this](flecs::iter& it, Transform* transforms, Nametag* nametags)
+        {
+            float deltaTime = it.delta_time();
+
+            flecs::world ecs = it.world();
+
+            flecs::entity mainCameraEntity = ecs.singleton<MainCamera>();
+            flecs::entity cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
+            const Transform * const cameraTransform = cameraEntity.get<Transform>();
+
+            for (auto i : it)
+            {
+                Transform& transform = transforms[i];
+                Nametag& linear = nametags[i];
+
+                
+            }
+        }
+    );
 }
 
 // Public Methods

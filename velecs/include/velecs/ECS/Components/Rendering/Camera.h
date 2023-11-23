@@ -44,7 +44,7 @@ public:
             aspectRatio(resolution.x / resolution.y) {}
 
     /// @brief Default deconstructor.
-    ~Camera() = default;
+    virtual ~Camera() = default;
 
     // Public Methods
 

@@ -90,8 +90,8 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
     flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
         .is_a(entityPrefab)
-        .set<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-        .set<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout});
+        .set_override<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
+        .set_override<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout});
     
     ecs.system()
         .kind(stages->PreDraw)
@@ -140,7 +140,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
                 // Display FPS
                 ImGui::Text("FPS: %.1f", io.Framerate);
-                ImGui::Text("Frame Time: %.3f ms", 1000.0f / io.Framerate);
+                ImGui::Text("ms/frame: %.3f", 1000.0f / io.Framerate);
 
                 // End the window
                 ImGui::End();
@@ -341,11 +341,13 @@ flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
     const float nearPlaneOffset /*= 0.1f*/,
     const float farPlaneOffset /*= 200.0f*/)
 {
-    Transform transform{position, rotation};
-    PerspectiveCamera perspective{resolution, verticalFOV, nearPlaneOffset, farPlaneOffset};
-    return ecs.entity("Camera")
-        .set<Transform>(transform)
-        .set<PerspectiveCamera>(perspective);
+    flecs::entity camEntity = ecs.entity("Camera")
+        .override<Transform>()
+        .set_override<PerspectiveCamera>({resolution, verticalFOV, nearPlaneOffset, farPlaneOffset});
+    
+    camEntity.set<Transform>({camEntity, position, rotation});
+
+    return camEntity;
 }
 
 flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
@@ -355,11 +357,13 @@ flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
     const float nearPlaneOffset /*= 0.1f*/,
     const float farPlaneOffset /*= 200.0f*/)
 {
-    Transform transform{position, rotation};
-    OrthoCamera ortho{resolution, nearPlaneOffset, farPlaneOffset};
-    return ecs.entity("Camera")
-        .set<Transform>(transform)
-        .set<OrthoCamera>(ortho);
+    flecs::entity camEntity = ecs.entity("Camera")
+        .override<Transform>()
+        .set_override<OrthoCamera>({resolution, nearPlaneOffset, farPlaneOffset});
+
+    camEntity.set<Transform>({camEntity, position, rotation});
+
+    return camEntity;
 }
 
 Camera& RenderingECSModule::GetMainCamera(flecs::world& ecs)
@@ -1166,7 +1170,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
 
     // Compute the view matrix
-    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition(cameraEntity.parent());
+    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition();
     glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
 
     // Compute the projection matrix
@@ -1179,7 +1183,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     );
 
     // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition(entity.parent()));
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition());
 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;
@@ -1208,7 +1212,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
 
     // Compute the view matrix
-    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition(cameraEntity.parent());
+    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition();
     glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
 
     // Compute the projection matrix
@@ -1224,7 +1228,7 @@ glm::mat4 RenderingECSModule::GetRenderMatrix
     );
 
     // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition(entity.parent()));
+    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition());
 
     // Calculate the final mesh matrix
     glm::mat4 meshMatrix = projection * view * worldTranslation * model;

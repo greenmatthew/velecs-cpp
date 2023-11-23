@@ -86,7 +86,9 @@ flecs::entity CommonECSModule::CreateEntity
 {
     flecs::entity entity = ecs.prefab("Entity")
         .set_name(name.c_str())
-        .set<Transform>({position, rotation});
+        .override<Transform>();
+    
+    entity.set<Transform>({entity, position, rotation});
 
     if (parent != flecs::entity::null())
     {
