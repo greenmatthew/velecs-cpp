@@ -18,6 +18,7 @@
 
 #include "velecs/ECS/Components/Rendering/Transform.h"
 #include "velecs/ECS/Components/Rendering/Mesh.h"
+#include "velecs/ECS/Components/Rendering/SimpleMesh.h"
 #include "velecs/ECS/Components/Rendering/Material.h"
 #include "velecs/ECS/Components/Rendering/PerspectiveCamera.h"
 #include "velecs/ECS/Components/Rendering/OrthoCamera.h"
@@ -139,6 +140,10 @@ private:
 
     Mesh _monkeyMesh;
 
+    SimpleMesh simpleTriangleMesh;
+    VkPipelineLayout simpleMeshPipelineLayout{VK_NULL_HANDLE};
+    VkPipeline simpleMeshPipeline{VK_NULL_HANDLE};
+
     // Private Methods
 
     void InitWindow();
@@ -221,9 +226,24 @@ private:
         const Material& material
     );
 
+    void Draw
+    (
+        const float deltaTime,
+        const flecs::entity cameraEntity,
+        const PerspectiveCamera * const perspectiveCamera,
+        const Transform* const cameraTransform,
+        const flecs::entity entity,
+        const Transform& transform,
+        const SimpleMesh& mesh,
+        const Material& material
+    );
+
     void LoadMeshes();
 
     void UploadMesh(Mesh& mesh);
+
+    template<typename TMesh>
+    void UploadMesh(TMesh& mesh);
 
     glm::mat4 GetRenderMatrix
     (

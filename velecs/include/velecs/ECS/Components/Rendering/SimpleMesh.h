@@ -1,6 +1,6 @@
-/// @file    MeshPushConstants.h
+/// @file    SimpleMesh.h
 /// @author  Matthew Green
-/// @date    10/29/2023 18:14:22
+/// @date    2023-11-26 14:08:22
 /// 
 /// @section LICENSE
 /// 
@@ -10,31 +10,33 @@
 
 #pragma once
 
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include "velecs/Rendering/SimpleVertex.h"
+#include "velecs/Memory/AllocatedBuffer.h"
+
+#include <vector>
 
 namespace velecs {
 
-/// @class MeshPushConstants
+/// @struct SimpleMesh
 /// @brief Brief description.
 ///
 /// Rest of description.
-class MeshPushConstants {
+struct SimpleMesh {
 public:
     // Enums
 
     // Public Fields
 
-    glm::vec4 color;
-    glm::mat4 renderMatrix;
+    std::vector<SimpleVertex> _vertices;
+    AllocatedBuffer _vertexBuffer;
 
     // Constructors and Destructors
-    
+
     /// @brief Default constructor.
-    MeshPushConstants() = default;
-    
+    SimpleMesh() = default;
+
     /// @brief Default deconstructor.
-    ~MeshPushConstants() = default;
+    ~SimpleMesh() = default;
 
     // Public Methods
 
@@ -49,4 +51,4 @@ private:
     // Private Methods
 };
 
-} // namespace velecs
+} // namespace namespace::

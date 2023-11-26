@@ -80,18 +80,19 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
     ecs.component<Transform>();
     ecs.component<Mesh>();
+    ecs.component<SimpleMesh>();
     ecs.component<Material>();
 
     flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "CommonECSModule::PR_Entity");
     flecs::entity renderPrefab = ecs.prefab("PR_Render")
         .is_a(entityPrefab)
-        .override<Mesh>()
-        .override<Material>();
+        .override<SimpleMesh>()
+        .set_override<Material>({Color32::MAGENTA, simpleMeshPipeline, simpleMeshPipelineLayout});
 
     flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
         .is_a(entityPrefab)
-        .set_override<Mesh>({ _triangleMesh._vertices, _triangleMesh._vertexBuffer })
-        .set_override<Material>({Color32::MAGENTA, _meshPipeline, _meshPipelineLayout});
+        .set_override<SimpleMesh>({ simpleTriangleMesh._vertices, simpleTriangleMesh._vertexBuffer })
+        .set_override<Material>({Color32::MAGENTA, simpleMeshPipeline, simpleMeshPipelineLayout});
     
     ecs.system()
         .kind(stages->PreDraw)
@@ -161,9 +162,49 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             }
         );
 
-    ecs.system<Transform, Mesh, Material>()
+    // ecs.system<Transform, Mesh, Material>()
+    //     .kind(stages->Draw)
+    //     .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
+    //     {
+    //         float deltaTime = it.delta_time();
+
+    //         const auto mainCameraEntity = it.world().singleton<MainCamera>();
+    //         const auto cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
+    //         const auto cameraTransform = cameraEntity.get<Transform>();
+
+    //         for (auto i : it)
+    //         {
+    //             Transform transform = transforms[i];
+    //             Mesh mesh = meshes[i];
+    //             Material material = materials[i];
+    //             flecs::entity entity = it.entity(i);
+
+    //             if (mesh._vertices.empty() || material.pipeline == VK_NULL_HANDLE || material.pipelineLayout == VK_NULL_HANDLE)
+    //             {
+    //                 continue; // Not enough data to render? Skip entity
+    //             }
+
+    //             if (cameraEntity.has<PerspectiveCamera>())
+    //             {
+    //                 const auto perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
+    //                 Draw(deltaTime, cameraEntity, perspectiveCamera, cameraTransform, entity, transform, mesh, material);
+    //             }
+    //             else if (cameraEntity.has<OrthoCamera>())
+    //             {
+    //                 const auto orthoCamera = cameraEntity.get<OrthoCamera>();
+    //                 Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
+    //             }
+    //             else
+    //             {
+    //                 std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
+    //             }
+    //         }
+    //     }
+    // );
+
+    ecs.system<Transform, SimpleMesh, Material>()
         .kind(stages->Draw)
-        .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
+        .iter([this](flecs::iter& it, Transform* transforms, SimpleMesh* meshes, Material* materials)
         {
             float deltaTime = it.delta_time();
 
@@ -173,10 +214,10 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
             for (auto i : it)
             {
-                Transform transform = transforms[i];
-                Mesh mesh = meshes[i];
-                Material material = materials[i];
-                flecs::entity entity = it.entity(i);
+                const Transform& transform = transforms[i];
+                const SimpleMesh& mesh = meshes[i];
+                const Material& material = materials[i];
+                const flecs::entity entity = it.entity(i);
 
                 if (mesh._vertices.empty() || material.pipeline == VK_NULL_HANDLE || material.pipelineLayout == VK_NULL_HANDLE)
                 {
@@ -191,7 +232,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                 else if (cameraEntity.has<OrthoCamera>())
                 {
                     const auto orthoCamera = cameraEntity.get<OrthoCamera>();
-                    Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
+                    // Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
                 }
                 else
                 {
@@ -693,12 +734,6 @@ void RenderingECSModule::InitPipelines()
     //build the stage-create-info for both vertex and fragment stages. This lets the pipeline know the shader modules per stage
     PipelineBuilder pipelineBuilder;
 
-    auto triangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "ColoredTriangle.vert.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *triangleVertShader));
-    auto triangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "ColoredTriangle.frag.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *triangleFragShader));
-
-
     //vertex input controls how to read vertices from vertex buffers. We aren't using it yet
     pipelineBuilder._vertexInputInfo = vkinit::vertex_input_state_create_info();
 
@@ -729,31 +764,6 @@ void RenderingECSModule::InitPipelines()
     //use the triangle layout we created
     pipelineBuilder._pipelineLayout = _trianglePipelineLayout;
 
-    //finally build the pipeline
-    _trianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
-
-    //clear the shader stages for the builder
-    pipelineBuilder._shaderStages.clear();
-
-    //add the other shaders
-    auto redTriangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "triangle.vert.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *redTriangleVertShader));
-    auto redTriangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "triangle.frag.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *redTriangleFragShader));
-
-    //build the red triangle pipeline
-    _redTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
-
-    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_LINE);
-
-    // Build the wireframe pipeline
-    _triangleWireFramePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
-
-    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL);
-
-    //clear the shader stages for the builder
-    pipelineBuilder._shaderStages.clear();
-
     //add the other shaders
     auto rainbowTriangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "RainbowTriangle.vert.spv");
     pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *rainbowTriangleVertShader));
@@ -762,66 +772,119 @@ void RenderingECSModule::InitPipelines()
 
     _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
-    //we start from just the default empty pipeline layout info
-	VkPipelineLayoutCreateInfo mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
-
-	//setup push constants
-    VkPushConstantRange push_constant = {};
-	//this push constant range starts at the beginning
-	push_constant.offset = 0;
-	//this push constant range takes up the size of a MeshPushConstants struct
-	push_constant.size = sizeof(MeshPushConstants);
-	//this push constant range is accessible only in the vertex shader
-	push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-	mesh_pipeline_layout_info.pPushConstantRanges = &push_constant;
-	mesh_pipeline_layout_info.pushConstantRangeCount = 1;
-
-	VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &_meshPipelineLayout));
-
-    //build the mesh pipeline
-
-    VertexInputAttributeDescriptor vertexDescription = Vertex::GetVertexDescription();
-
-    //connect the pipeline builder vertex input info to the one we get from Vertex
-    pipelineBuilder._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
-    pipelineBuilder._vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)vertexDescription.attributes.size();
-
-    pipelineBuilder._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
-    pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)vertexDescription.bindings.size();
-
     //clear the shader stages for the builder
     pipelineBuilder._shaderStages.clear();
 
+
+
+
+
+
+
+
+
+
+     //we start from just the default empty pipeline layout info
+     VkPipelineLayoutCreateInfo mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
+
+     //setup push constants
+     VkPushConstantRange push_constant = {};
+     //this push constant range starts at the beginning
+     push_constant.offset = 0;
+     //this push constant range takes up the size of a MeshPushConstants struct
+     push_constant.size = sizeof(MeshPushConstants);
+     //this push constant range is accessible only in the vertex shader
+     push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+     mesh_pipeline_layout_info.pPushConstantRanges = &push_constant;
+     mesh_pipeline_layout_info.pushConstantRangeCount = 1;
+
+     VK_CHECK(vkCreatePipelineLayout(_device, &mesh_pipeline_layout_info, nullptr, &_meshPipelineLayout));
+
+     VertexInputAttributeDescriptor vertexDescription = Vertex::GetVertexDescription();
+
+     //connect the pipeline builder vertex input info to the one we get from Vertex
+     pipelineBuilder._vertexInputInfo.pVertexAttributeDescriptions = vertexDescription.attributes.data();
+     pipelineBuilder._vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)vertexDescription.attributes.size();
+
+     pipelineBuilder._vertexInputInfo.pVertexBindingDescriptions = vertexDescription.bindings.data();
+     pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)vertexDescription.bindings.size();
+
+     //add the other shaders
+     const auto meshVertShader = ShaderModule::CreateVertexShaderModule(_device, "TriangleMesh.vert.spv");
+     pipelineBuilder._shaderStages.push_back(
+         vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *meshVertShader));
+
+     //make sure that triangleFragShader is holding the compiled colored_triangle.frag
+     const auto meshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "TriangleMesh.frag.spv");
+     pipelineBuilder._shaderStages.push_back(
+         vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *meshFragShader));
+
+     pipelineBuilder._pipelineLayout = _meshPipelineLayout;
+
+     //clear the shader stages for the builder
+     pipelineBuilder._shaderStages.clear();
+
+
+
+
+
+
+
+    //we start from just the default empty pipeline layout info
+    VkPipelineLayoutCreateInfo simple_mesh_pipeline_layout_info = vkinit::pipeline_layout_create_info();
+
+    //setup push constants
+    VkPushConstantRange simple_mesh_push_constant = {};
+    //this push constant range starts at the beginning
+    simple_mesh_push_constant.offset = 0;
+    //this push constant range takes up the size of a MeshPushConstants struct
+    simple_mesh_push_constant.size = sizeof(MeshPushConstants);
+    //this push constant range is accessible only in the vertex shader
+    simple_mesh_push_constant.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;  // Accessible from both stages
+
+    simple_mesh_pipeline_layout_info.pPushConstantRanges = &simple_mesh_push_constant;
+    simple_mesh_pipeline_layout_info.pushConstantRangeCount = 1;
+
+    VK_CHECK(vkCreatePipelineLayout(_device, &simple_mesh_pipeline_layout_info, nullptr, &simpleMeshPipelineLayout));
+
+    VertexInputAttributeDescriptor simpleMeshVertexDescription = SimpleVertex::GetVertexDescription();
+
+    //connect the pipeline builder vertex input info to the one we get from Vertex
+    pipelineBuilder._vertexInputInfo.pVertexAttributeDescriptions = simpleMeshVertexDescription.attributes.data();
+    pipelineBuilder._vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)simpleMeshVertexDescription.attributes.size();
+
+    pipelineBuilder._vertexInputInfo.pVertexBindingDescriptions = simpleMeshVertexDescription.bindings.data();
+    pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)simpleMeshVertexDescription.bindings.size();
+
     //add the other shaders
-    const auto meshVertShader = ShaderModule::CreateVertexShaderModule(_device, "TriangleMesh.vert.spv");
+    const auto simpleMeshVertShader = ShaderModule::CreateVertexShaderModule(_device, "Simple2DMesh.vert.spv");
     pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *meshVertShader));
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *simpleMeshVertShader));
 
     //make sure that triangleFragShader is holding the compiled colored_triangle.frag
-    const auto meshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "TriangleMesh.frag.spv");
+    const auto simpleMeshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "Simple2DMesh.frag.spv");
     pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *meshFragShader));
+        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *simpleMeshFragShader));
 
-    pipelineBuilder._pipelineLayout = _meshPipelineLayout;
+    pipelineBuilder._pipelineLayout = simpleMeshPipelineLayout;
 
     //build the mesh triangle pipeline
-    _meshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+    simpleMeshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
     _mainDeletionQueue.PushDeletor
     (
         [=]()
         {
             //destroy the pipelines we have created
-            vkDestroyPipeline(_device, _redTrianglePipeline, nullptr);
-            vkDestroyPipeline(_device, _trianglePipeline, nullptr);
-            vkDestroyPipeline(_device, _triangleWireFramePipeline, nullptr);
             vkDestroyPipeline(_device, _rainbowTrianglePipeline, nullptr);
             vkDestroyPipeline(_device, _meshPipeline, nullptr);
+            vkDestroyPipeline(_device, simpleMeshPipeline, nullptr);
 
             //destroy the pipeline layout that they use
             vkDestroyPipelineLayout(_device, _trianglePipelineLayout, nullptr);
             vkDestroyPipelineLayout(_device, _meshPipelineLayout, nullptr);
+            vkDestroyPipelineLayout(_device, simpleMeshPipelineLayout, nullptr);
         }
     );
 }
@@ -1090,24 +1153,71 @@ void RenderingECSModule::Draw
     vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
 }
 
+void RenderingECSModule::Draw
+(
+    const float deltaTime,
+    const flecs::entity cameraEntity,
+    const PerspectiveCamera * const perspectiveCamera,
+    const Transform* const cameraTransform,
+    const flecs::entity entity,
+    const Transform& transform,
+    const SimpleMesh& mesh,
+    const Material& material
+)
+{
+    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
+
+    VkViewport viewport = {};
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = static_cast<float>(windowExtent.width);
+    viewport.height = static_cast<float>(windowExtent.height);
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+
+    VkRect2D scissor = {};
+    scissor.offset = {0, 0};
+    scissor.extent = {static_cast<uint32_t>(windowExtent.width), static_cast<uint32_t>(windowExtent.height)};
+
+    vkCmdSetViewport(_mainCommandBuffer, 0, 1, &viewport);
+    vkCmdSetScissor(_mainCommandBuffer, 0, 1, &scissor);
+
+    //bind the mesh vertex buffer with offset 0
+    VkDeviceSize offset = 0;
+    vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
+
+    MeshPushConstants constants = {};
+    
+    constants.color = material.color;
+    constants.renderMatrix = GetRenderMatrix(cameraEntity, perspectiveCamera, cameraTransform, entity, transform);
+
+    //upload the matrix to the GPU via push constants
+    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MeshPushConstants), &constants);
+
+    //we can now draw the mesh
+    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+}
+
 void RenderingECSModule::LoadMeshes()
 {
     //make the array 3 vertices long
     _triangleMesh._vertices.resize(3);
 
     //vertex positions
-    _triangleMesh._vertices[0].position = {  1.0f,  1.0f,  0.0f };
-    _triangleMesh._vertices[1].position = { -1.0f,  1.0f,  0.0f };
-    _triangleMesh._vertices[2].position = {  0.0f, -1.0f,  0.0f };
+    _triangleMesh._vertices[0].position = {  0.5f,  0.5f,  0.0f };
+    _triangleMesh._vertices[1].position = { -0.5f,  0.5f,  0.0f };
+    _triangleMesh._vertices[2].position = {  0.0f, -0.5f,  0.0f };
 
-    //vertex colors, all green
-    _triangleMesh._vertices[0].color = Color32::GREEN;
-    _triangleMesh._vertices[1].color = Color32::GREEN;
-    _triangleMesh._vertices[2].color = Color32::GREEN;
+    simpleTriangleMesh._vertices.resize(3);
+
+    simpleTriangleMesh._vertices[0].position = {  0.5f,  0.5f,  0.0f };
+    simpleTriangleMesh._vertices[1].position = { -0.5f,  0.5f,  0.0f };
+    simpleTriangleMesh._vertices[2].position = {  0.0f, -0.5f,  0.0f };
 
     //we don't care about the vertex normals
 
     UploadMesh(_triangleMesh);
+    UploadMesh(simpleTriangleMesh);
 }
 
 void RenderingECSModule::UploadMesh(Mesh& mesh)
@@ -1145,6 +1255,46 @@ void RenderingECSModule::UploadMesh(Mesh& mesh)
     vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &data);
 
     memcpy(data, mesh._vertices.data(), mesh._vertices.size() * sizeof(Vertex));
+
+    vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
+}
+
+template<typename TMesh>
+void RenderingECSModule::UploadMesh(TMesh& mesh)
+{
+    //allocate vertex buffer
+    VkBufferCreateInfo bufferInfo = {};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    //this is the total size, in bytes, of the buffer we are allocating
+    bufferInfo.size = mesh._vertices.size() * sizeof(TMesh);
+    //this buffer is going to be used as a Vertex Buffer
+    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+
+
+    //let the VMA library know that this data should be writeable by CPU, but also readable by GPU
+    VmaAllocationCreateInfo vmaallocInfo = {};
+    vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+    //allocate the buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &bufferInfo, &vmaallocInfo,
+        &mesh._vertexBuffer._buffer,
+        &mesh._vertexBuffer._allocation,
+        nullptr));
+
+    //add the destruction of triangle mesh buffer to the deletion queue
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vmaDestroyBuffer(_allocator, mesh._vertexBuffer._buffer, mesh._vertexBuffer._allocation);
+        }
+    );
+
+    //copy vertex data
+    void* data;
+    vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &data);
+
+    memcpy(data, mesh._vertices.data(), mesh._vertices.size() * sizeof(TMesh));
 
     vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
 }

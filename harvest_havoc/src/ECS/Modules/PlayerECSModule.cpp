@@ -49,6 +49,8 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
         .add<LinearKinematics>()
         ;
     
+    player.get_mut<Material>()->color = Color32::GREEN;
+    
     player.get_mut<Transform>()->entity = player;
     
     cameraEntity.child_of(player);

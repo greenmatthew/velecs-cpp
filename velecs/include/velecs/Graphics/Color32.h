@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include <glm/vec4.hpp>
+
 namespace velecs {
 
 /// @struct Color32
@@ -57,6 +59,8 @@ public:
     // Constructors and Destructors
 
     Color32();
+
+    Color32(const Color32& color);
     
     /// @brief Default deconstructor.
     ~Color32() = default;
@@ -79,6 +83,8 @@ public:
 
     static Color32 FromHSV(const float h, const float s, const float v, const float a = 1.0f);
 
+    operator glm::vec4() const;
+
     /// @brief Overloaded subscript operator for array-like access to color components.
     /// @param[in] index Index of the color component (0 for red, 1 for green, 2 for blue, 3 for alpha).
     /// @return Reference to the specified color component.
@@ -91,6 +97,8 @@ public:
 
     bool operator==(const Color32 other) const;
     bool operator!=(const Color32 other) const;
+
+    Color32& operator=(const Color32 other);
 
     Color32& operator+=(const Color32 other);
     Color32 operator+(const Color32 other) const;

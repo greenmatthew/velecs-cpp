@@ -53,6 +53,8 @@ const Color32 Color32::VIOLET{238U, 130U, 238U};
 Color32::Color32()
     : r(255U), g(0u), b(255u), a(255U) {}
 
+Color32::Color32(const Color32& color)
+    : r(color.r), g(color.g), b(color.b), a(color.a) {}
 
 // Public Methods
 
@@ -72,6 +74,17 @@ Color32 Color32::FromFloat(const float r, const float g, const float b, const fl
     );
 }
 
+Color32::operator glm::vec4() const
+{
+    return glm::vec4
+    {
+        (float)r,
+        (float)g,
+        (float)b,
+        (float)a,
+    };
+}
+
 uint8_t& Color32::operator[](const std::size_t index)
 {
     assert(index < 4);  // Ensure index is within bounds
@@ -82,6 +95,15 @@ const uint8_t& Color32::operator[](const std::size_t index) const
 {
     assert(index < 4);  // Ensure index is within bounds
     return (&r)[index];
+}
+
+Color32& Color32::operator=(const Color32 other)
+{
+    this->r = other.r;
+    this->g = other.g;
+    this->b = other.b;
+    this->a = other.a;
+    return *this;
 }
 
 std::string Color32::ToString() const

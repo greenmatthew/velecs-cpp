@@ -1,6 +1,6 @@
-/// @file    MeshPushConstants.h
+/// @file    SimpleVertex.h
 /// @author  Matthew Green
-/// @date    10/29/2023 18:14:22
+/// @date    2023-11-26 14:04:01
 /// 
 /// @section LICENSE
 /// 
@@ -10,33 +10,36 @@
 
 #pragma once
 
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include "velecs/Graphics/Color32.h"
+#include "velecs/Rendering/VertexInputAttributeDescriptor.h"
+
+#include <glm/vec3.hpp>
 
 namespace velecs {
 
-/// @class MeshPushConstants
+/// @struct Vertex
 /// @brief Brief description.
 ///
 /// Rest of description.
-class MeshPushConstants {
+struct SimpleVertex {
 public:
     // Enums
 
     // Public Fields
 
-    glm::vec4 color;
-    glm::mat4 renderMatrix;
+    glm::vec3 position;
 
     // Constructors and Destructors
     
     /// @brief Default constructor.
-    MeshPushConstants() = default;
+    SimpleVertex() = default;
     
     /// @brief Default deconstructor.
-    ~MeshPushConstants() = default;
+    ~SimpleVertex() = default;
 
     // Public Methods
+
+    static VertexInputAttributeDescriptor GetVertexDescription();
 
 protected:
     // Protected Fields
