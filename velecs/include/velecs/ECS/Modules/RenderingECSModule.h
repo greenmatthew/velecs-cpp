@@ -240,8 +240,6 @@ private:
 
     void LoadMeshes();
 
-    void UploadMesh(Mesh& mesh);
-
     template<typename TMesh>
     void UploadMesh(TMesh& mesh);
 

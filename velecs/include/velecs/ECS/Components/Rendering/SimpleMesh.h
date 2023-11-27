@@ -27,6 +27,9 @@ public:
 
     // Public Fields
 
+    static const SimpleMesh EQUILATERAL_TRIANGLE;
+    static const SimpleMesh SQUARE;
+
     std::vector<SimpleVertex> _vertices;
     AllocatedBuffer _vertexBuffer;
 

@@ -42,6 +42,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     ecs.set<MainCamera>({cameraEntity});
 
     flecs::entity trianglePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_TriangleRender");
+    flecs::entity squarePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_SquareRender");
     flecs::entity player = ecs.entity()
         .is_a(trianglePrefab)
         .set_name("Player")
@@ -76,31 +77,41 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     
     // nametagEntity.child_of(player);
 
-    flecs::entity entity1 = ecs.entity()
+    /*flecs::entity entity1 = ecs.entity()
         .is_a(trianglePrefab)
         .set_name("Entity1")
         ;
     entity1.get_mut<Transform>()->entity = entity1;
     entity1.get_mut<Transform>()->position = Vec3::UP + Vec3::RIGHT;
-    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
+    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;*/
 
-    // ecs.entity()
-    //     .is_a(trianglePrefab)
-    //     .set_name("Entity2")
-    //     .set<Transform>({Vec3::UP + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
-    //     ;
+    flecs::entity entity2 = ecs.entity()
+        .is_a(squarePrefab)
+        .set_name("Entity2")
+        ;
+    entity2.get_mut<Transform>()->entity = entity2;
+    entity2.get_mut<Transform>()->position = Vec3::UP + Vec3::LEFT;
+    entity2.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
+    entity2.get_mut<Material>()->color = Color32::ORANGE;
+    std::cout << entity2.get<Material>()->color << std::endl;
+
+    /*flecs::entity entity3 = ecs.entity()
+        .is_a(squarePrefab)
+        .set_name("Entity3")
+        ;
+    entity3.get_mut<Transform>()->entity = entity3;
+    entity3.get_mut<Transform>()->position = Vec3::DOWN + Vec3::RIGHT;
+    entity3.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
+    entity3.get_mut<Material>()->color = Color32::ORANGE;
     
-    // ecs.entity()
-    //     .is_a(trianglePrefab)
-    //     .set_name("Entity3")
-    //     .set<Transform>({Vec3::DOWN + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f})
-    //     ;
-    
-    // ecs.entity()
-    //     .is_a(trianglePrefab)
-    //     .set_name("Entity4")
-    //     .set<Transform>({Vec3::DOWN + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f})
-    //     ;
+    flecs::entity entity4 = ecs.entity()
+        .is_a(squarePrefab)
+        .set_name("Entity4")
+        ;
+    entity4.get_mut<Transform>()->entity = entity4;
+    entity4.get_mut<Transform>()->position = Vec3::DOWN + Vec3::LEFT;
+    entity4.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
+    entity4.get_mut<Material>()->color = Color32::WHITE;*/
     
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)
@@ -194,7 +205,7 @@ void PlayerECSModule::HandleInput
     linear.velocity = 1.0f * (velDir);
 
 
-    player.targetCamPos = player.targetCamPos + (input->mouseWheel.y * Vec3::K);
+    player.targetCamPos = player.targetCamPos + (input->mouseWheel.y * Vec3::BACKWARD);
     // Max and min are flipped and negative bc of the coordinate system
     player.targetCamPos.z = std::clamp(player.targetCamPos.z, -player.camMaxZoom, -player.camMinZoom);
     cameraTransform->position = Vec3::Lerp(cameraTransform->position, player.targetCamPos, player.camZoomSpeed * deltaTime);
