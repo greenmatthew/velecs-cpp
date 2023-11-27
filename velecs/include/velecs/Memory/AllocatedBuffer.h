@@ -39,6 +39,8 @@ public:
 
     // Public Methods
 
+    bool IsInitialized() const;
+
 protected:
     // Protected Fields
 
