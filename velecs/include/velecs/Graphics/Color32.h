@@ -58,8 +58,11 @@ public:
 
     // Constructors and Destructors
 
+    /// @brief Default constructor initializing color to magenta with full alpha.
     Color32();
 
+    /// @brief Copy constructor.
+    /// @param[in] color Color32 object to copy.
     Color32(const Color32& color);
     
     /// @brief Default deconstructor.
@@ -67,22 +70,43 @@ public:
 
     // Public Methods
 
-    /// @brief Constructs a Color32 with specified channel values.
-    /// @param[in] r Red channel value.
-    /// @param[in] g Green channel value.
-    /// @param[in] b Blue channel value.
-    /// @param[in] a Alpha channel value (default is 255).
+    /// @brief Constructs a Color32 object from individual RGB(A) components.
+    /// @param[in] r Red channel value (0-255).
+    /// @param[in] g Green channel value (0-255).
+    /// @param[in] b Blue channel value (0-255).
+    /// @param[in] a Alpha channel value (0-255, default is 255 for full opacity).
+    /// @return Color32 object with specified RGBA values.
     static Color32 FromUInt8(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a = 255U);
 
-    /// @brief Constructs a Color32 with specified channel values.
-    /// @param[in] r Red channel value.
-    /// @param[in] g Green channel value.
-    /// @param[in] b Blue channel value.
-    /// @param[in] a Alpha channel value (default is 1.0).
+    /// @brief Constructs a Color32 object from a 32-bit unsigned integer.
+    /// @details Assumes RGBA order in the 32-bit integer.
+    /// @param[in] value 32-bit unsigned integer representing a color.
+    /// @return Color32 object with unpacked RGBA values.
+    static Color32 FromUInt32(const uint32_t value);
+
+    /// @brief Constructs a Color32 object from a hexadecimal color code.
+    /// @details Supports the following formats: "#RRGGBBAA", "#RRGGBB", "RRGGBBAA", "RRGGBB".
+    ///          If alpha is not specified, it defaults to 255 (fully opaque).
+    /// @param[in] hexCode Hexadecimal string representing a color.
+    /// @return Color32 object with unpacked RGBA values.
+    /// @throws std::invalid_argument if hexCode has an invalid length.
+    static Color32 FromHex(const std::string& value);
+
+    /// @brief Constructs a Color32 object from individual RGB(A) components in float.
+    /// @details Float values should be in the range [0.0, 1.0].
+    /// @param[in] r Red channel value (0.0-1.0).
+    /// @param[in] g Green channel value (0.0-1.0).
+    /// @param[in] b Blue channel value (0.0-1.0).
+    /// @param[in] a Alpha channel value (0.0-1.0, default is 1.0 for full opacity).
+    /// @return Color32 object with specified RGBA values.
     static Color32 FromFloat(const float r, const float g, const float b, const float a = 1.0f);
 
+    static Color32 FromHSV(const uint8_t h, const uint8_t s, const uint8_t v, const uint8_t a = 1.0f);
     static Color32 FromHSV(const float h, const float s, const float v, const float a = 1.0f);
 
+    /// @brief Converts the Color32 object to a glm::vec4.
+    /// @details Each color channel is normalized to the range [0, 1].
+    /// @return glm::vec4 object with RGBA components normalized.
     operator glm::vec4() const;
 
     /// @brief Overloaded subscript operator for array-like access to color components.

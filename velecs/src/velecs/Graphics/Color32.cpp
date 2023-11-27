@@ -51,7 +51,7 @@ const Color32 Color32::VIOLET{238U, 130U, 238U};
 // Constructors and Destructors
 
 Color32::Color32()
-    : r(255U), g(0u), b(255u), a(255U) {}
+    : r(255U), g(0U), b(255U), a(255U) {}
 
 Color32::Color32(const Color32& color)
     : r(color.r), g(color.g), b(color.b), a(color.a) {}
@@ -61,6 +61,37 @@ Color32::Color32(const Color32& color)
 Color32 Color32::FromUInt8(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a /*= 255U*/)
 {
     return Color32{r, g, b, a};
+}
+
+Color32 Color32::FromUInt32(const uint32_t value)
+{
+    uint8_t r = (value >> 24) & 0xFF; // Shift by 24 bits and mask out the other components
+    uint8_t g = (value >> 16) & 0xFF; // Shift by 16 bits and mask out the other components
+    uint8_t b = (value >> 8) & 0xFF;  // Shift by 8 bits and mask out the other components
+    uint8_t a = value & 0xFF;         // Mask out all but the last byte
+
+    return Color32(r, g, b, a);
+}
+
+Color32 Color32::FromHex(const std::string& hexCode)
+{
+    size_t length = hexCode.length();
+    bool hasHash = hexCode[0] == '#';
+    
+    // Check if the length is valid (6 or 8 hex digits, +1 if there's a '#')
+    if (!((length == 7 && hasHash) || (length == 9 && hasHash) ||
+            (length == 6 && !hasHash) || (length == 8 && !hasHash))) {
+        throw std::invalid_argument("Invalid hex code length");
+    }
+
+    unsigned int hexValue = std::stoul(hexCode.substr(hasHash ? 1 : 0), nullptr, 16);
+
+    uint8_t r = (hexValue >> 24) & 0xFF;
+    uint8_t g = (hexValue >> 16) & 0xFF;
+    uint8_t b = (hexValue >> 8) & 0xFF;
+    uint8_t a = (length == 8 || length == 9) ? (hexValue & 0xFF) : 0xFF;
+
+    return Color32(r, g, b, a);
 }
 
 Color32 Color32::FromFloat(const float r, const float g, const float b, const float a /*= 1.0f*/)
@@ -78,10 +109,10 @@ Color32::operator glm::vec4() const
 {
     return glm::vec4
     {
-        (float)r,
-        (float)g,
-        (float)b,
-        (float)a,
+        r/255.0f,
+        g/255.0f,
+        b/255.0f,
+        a/255.0f,
     };
 }
 
