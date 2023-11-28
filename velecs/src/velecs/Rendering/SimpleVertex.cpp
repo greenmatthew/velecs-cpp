@@ -17,6 +17,12 @@ namespace velecs {
 
 // Constructors and Destructors
 
+SimpleVertex::SimpleVertex(const glm::vec3 position)
+    : position(position) {}
+
+SimpleVertex::SimpleVertex(const float x, const float y, const float z)
+    : position(glm::vec3(x, y, z)) {}
+
 // Public Methods
 
 VertexInputAttributeDescriptor SimpleVertex::GetVertexDescription()

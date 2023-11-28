@@ -140,7 +140,7 @@ bool ShaderModule::LoadShader(const VkDevice device, const std::string& filePath
 
 bool ShaderModule::LoadVertexShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
 {
-    const std::string newPath{ Path::Combine(Path::VERT_SHADERS_DIR, std::string{filePath}) };
+    const std::string newPath{ Path::Combine(Path::VERT_SHADERS_DIR(), std::string{filePath})};
     if (File::Exists(newPath))
     {
         return LoadShader(device, newPath, outShaderModule);
@@ -161,7 +161,7 @@ bool ShaderModule::LoadVertexShader(const VkDevice device, const std::string& fi
 
 bool ShaderModule::LoadFragmentShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
 {
-    const std::string newPath{ Path::Combine(Path::FRAG_SHADERS_DIR, filePath) };
+    const std::string newPath{ Path::Combine(Path::FRAG_SHADERS_DIR(), filePath)};
     if (File::Exists(newPath))
     {
         return LoadShader(device, newPath, outShaderModule);

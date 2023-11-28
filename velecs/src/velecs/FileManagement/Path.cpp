@@ -44,15 +44,43 @@ namespace velecs {
 
 // Public Fields
 
-const std::string Path::GAME_DIR{Path::GetParentDirPath(get_executable_path())};
-
-const std::string Path::ASSETS_DIR{Path::Combine(GAME_DIR, "assets")};
-
-const std::string Path::SHADERS_DIR{Path::Combine(ASSETS_DIR, "shaders")};
-const std::string Path::VERT_SHADERS_DIR{Path::Combine(SHADERS_DIR, "vert")};
-const std::string Path::FRAG_SHADERS_DIR{Path::Combine(SHADERS_DIR, "frag")};
-
 // Public Methods
+
+const std::string& Path::GAME_DIR()
+{
+    static const std::string GAME_DIR{Path::GetParentDirPath(get_executable_path())};
+    return GAME_DIR;
+}
+
+const std::string& Path::ASSETS_DIR()
+{
+    static const std::string ASSETS_DIR{Combine(GAME_DIR(), "assets")};
+    return ASSETS_DIR;
+}
+
+const std::string& Path::SHADERS_DIR()
+{
+    static const std::string SHADERS_DIR{Combine(ASSETS_DIR(), "shaders")};
+    return SHADERS_DIR;
+}
+
+const std::string& Path::VERT_SHADERS_DIR()
+{
+    static const std::string VERT_SHADERS_DIR{Combine(SHADERS_DIR(), "vert")};
+    return VERT_SHADERS_DIR;
+}
+
+const std::string& Path::FRAG_SHADERS_DIR()
+{
+    static const std::string FRAG_SHADERS_DIR{Combine(SHADERS_DIR(), "frag")};
+    return FRAG_SHADERS_DIR;
+}
+
+const std::string& Path::MESHES_DIR()
+{
+    static const std::string MESHES_DIR{Combine(ASSETS_DIR(), "meshes")};
+    return MESHES_DIR;
+}
 
 bool Path::Exists(const std::string& path)
 {
@@ -145,8 +173,8 @@ std::string Path::ResolvePath(std::string path)
     {
         std::vector<std::string> paths
         {
-            Path::Combine(Path::GAME_DIR, path),
-            Path::Combine(Path::ASSETS_DIR, path),
+            Combine(Path::GAME_DIR(), path),
+            Combine(Path::ASSETS_DIR(), path),
         };
 
         for (const auto& it : paths)

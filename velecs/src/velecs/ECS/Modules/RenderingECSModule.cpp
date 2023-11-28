@@ -92,12 +92,12 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
     flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
         .is_a(renderPrefab)
-        .set<SimpleMesh>({ SimpleMesh::EQUILATERAL_TRIANGLE })
+        .set<SimpleMesh>({ SimpleMesh::EQUILATERAL_TRIANGLE() })
         ;
     
     flecs::entity squareRenderPrefab = ecs.prefab("PR_SquareRender")
         .is_a(renderPrefab)
-        .set<SimpleMesh>({ SimpleMesh::SQUARE })
+        .set<SimpleMesh>({ SimpleMesh::SQUARE() })
         ;
     
     ecs.system()
@@ -230,7 +230,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                     continue; // Not enough data to render? Skip entity
                 }
 
-                if (mesh._vertexBuffer.IsInitialized())
+                if (!mesh._vertexBuffer.IsInitialized())
                 {
                     UploadMesh(mesh);
                 }
@@ -1204,6 +1204,8 @@ void RenderingECSModule::Draw
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
 
+    vkCmdBindIndexBuffer(_mainCommandBuffer, mesh._indexBuffer._buffer, 0, VK_INDEX_TYPE_UINT32);
+
     MeshPushConstants constants = {};
     
     constants.color = material.color;
@@ -1213,22 +1215,22 @@ void RenderingECSModule::Draw
     vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MeshPushConstants), &constants);
 
     //we can now draw the mesh
-    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
+    vkCmdDrawIndexed(_mainCommandBuffer, (uint32_t)mesh._indices.size(), 1, 0, 0, 0);
 }
 
 void RenderingECSModule::LoadMeshes()
 {
     //make the array 3 vertices long
-    _triangleMesh._vertices.resize(3);
+    // _triangleMesh._vertices.resize(3);
 
-    //vertex positions
-    _triangleMesh._vertices[0].position = {  0.5f,  0.5f,  0.0f };
-    _triangleMesh._vertices[1].position = { -0.5f,  0.5f,  0.0f };
-    _triangleMesh._vertices[2].position = {  0.0f, -0.5f,  0.0f };
+    // //vertex positions
+    // _triangleMesh._vertices[0].position = {  0.5f,  0.5f,  0.0f };
+    // _triangleMesh._vertices[1].position = { -0.5f,  0.5f,  0.0f };
+    // _triangleMesh._vertices[2].position = {  0.0f, -0.5f,  0.0f };
 
-    //we don't care about the vertex normals
+    // //we don't care about the vertex normals
 
-    UploadMesh(_triangleMesh);
+    // UploadMesh(_triangleMesh);
 }
 
 template<typename TMesh>
@@ -1238,7 +1240,7 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     //this is the total size, in bytes, of the buffer we are allocating
-    bufferInfo.size = mesh._vertices.size() * sizeof(TMesh);
+    bufferInfo.size = mesh._vertices.size() * sizeof(SimpleVertex);
     //this buffer is going to be used as a Vertex Buffer
     bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 
@@ -1247,10 +1249,25 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
     VmaAllocationCreateInfo vmaallocInfo = {};
     vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
 
-    //allocate the buffer
+    // Allocate vertex buffer
     VK_CHECK(vmaCreateBuffer(_allocator, &bufferInfo, &vmaallocInfo,
         &mesh._vertexBuffer._buffer,
         &mesh._vertexBuffer._allocation,
+        nullptr));
+    
+    // Allocate index buffer
+    VkBufferCreateInfo indexBufferInfo = {};
+    indexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    indexBufferInfo.size = mesh._indices.size() * sizeof(uint32_t); // Size of index buffer in bytes
+    indexBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+
+    VmaAllocationCreateInfo indexAllocInfo = {};
+    indexAllocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+    // Allocate the index buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &indexBufferInfo, &indexAllocInfo,
+        &mesh._indexBuffer._buffer,
+        &mesh._indexBuffer._allocation,
         nullptr));
 
     //add the destruction of triangle mesh buffer to the deletion queue
@@ -1259,16 +1276,21 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
         [=]()
         {
             vmaDestroyBuffer(_allocator, mesh._vertexBuffer._buffer, mesh._vertexBuffer._allocation);
+            vmaDestroyBuffer(_allocator, mesh._indexBuffer._buffer, mesh._indexBuffer._allocation);
         }
     );
 
     //copy vertex data
-    void* data;
-    vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &data);
-
-    memcpy(data, mesh._vertices.data(), mesh._vertices.size() * sizeof(TMesh));
-
+    void* vertexData;
+    vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &vertexData);
+    memcpy(vertexData, mesh._vertices.data(), mesh._vertices.size() * sizeof(SimpleVertex));
     vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
+
+    // Copy index data
+    void* indexData;
+    vmaMapMemory(_allocator, mesh._indexBuffer._allocation, &indexData);
+    memcpy(indexData, mesh._indices.data(), mesh._indices.size() * sizeof(uint32_t));
+    vmaUnmapMemory(_allocator, mesh._indexBuffer._allocation);
 }
 
 glm::mat4 RenderingECSModule::GetRenderMatrix

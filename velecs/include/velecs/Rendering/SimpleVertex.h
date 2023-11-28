@@ -33,6 +33,10 @@ public:
     
     /// @brief Default constructor.
     SimpleVertex() = default;
+
+    SimpleVertex(const glm::vec3 position);
+
+    SimpleVertex(const float x, const float y, const float z);
     
     /// @brief Default deconstructor.
     ~SimpleVertex() = default;

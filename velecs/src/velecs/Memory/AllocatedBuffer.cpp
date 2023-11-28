@@ -18,7 +18,7 @@ namespace velecs {
 
 bool AllocatedBuffer::IsInitialized() const
 {
-    return _buffer == nullptr || _allocation == nullptr;
+    return _buffer != nullptr && _allocation != nullptr;
 }
 
 // Public Methods

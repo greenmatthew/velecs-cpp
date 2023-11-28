@@ -49,6 +49,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
         .add<Player>()
         .add<LinearKinematics>()
         ;
+    player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
     
     player.get_mut<Material>()->color = Color32::GREEN;
     
@@ -77,13 +78,13 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     
     // nametagEntity.child_of(player);
 
-    /*flecs::entity entity1 = ecs.entity()
+    flecs::entity entity1 = ecs.entity()
         .is_a(trianglePrefab)
         .set_name("Entity1")
         ;
     entity1.get_mut<Transform>()->entity = entity1;
     entity1.get_mut<Transform>()->position = Vec3::UP + Vec3::RIGHT;
-    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;*/
+    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
 
     flecs::entity entity2 = ecs.entity()
         .is_a(squarePrefab)
@@ -92,10 +93,10 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity2.get_mut<Transform>()->entity = entity2;
     entity2.get_mut<Transform>()->position = Vec3::UP + Vec3::LEFT;
     entity2.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    entity2.get_mut<Material>()->color = Color32::ORANGE;
+    entity2.get_mut<Material>()->color = Color32::YELLOW;
     std::cout << entity2.get<Material>()->color << std::endl;
 
-    /*flecs::entity entity3 = ecs.entity()
+    flecs::entity entity3 = ecs.entity()
         .is_a(squarePrefab)
         .set_name("Entity3")
         ;
@@ -111,7 +112,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity4.get_mut<Transform>()->entity = entity4;
     entity4.get_mut<Transform>()->position = Vec3::DOWN + Vec3::LEFT;
     entity4.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    entity4.get_mut<Material>()->color = Color32::WHITE;*/
+    entity4.get_mut<Material>()->color = Color32::WHITE;
     
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)

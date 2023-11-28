@@ -26,29 +26,38 @@ public:
 
     // Public Fields
 
-    /// @brief The directory where the game executable resides.
-    /// This is determined by retrieving the executable path and then obtaining its parent directory.
-    static const std::string GAME_DIR;
-
-
-    /// @brief The directory where all game assets are stored.
-    /// This is located within the game directory and is named "assets".
-    static const std::string ASSETS_DIR;
-
-
-    /// @brief The directory where shader files are stored.
-    /// This is located within the assets directory and is named "shaders".
-    static const std::string SHADERS_DIR;
-
-    /// @brief The directory where vertex shader files are stored.
-    /// This is located within the shaders directory and is named "vert".
-    static const std::string VERT_SHADERS_DIR;
-
-    /// @brief The directory where fragment shader files are stored.
-    /// This is located within the shaders directory and is named "frag".
-    static const std::string FRAG_SHADERS_DIR;
-
     // Public Methods
+
+    /// @brief Retrieves the directory where the game executable resides.
+    /// @return The game directory path.
+    /// This directory is determined by retrieving the executable path and then obtaining its parent directory.
+    /// Example return value: "/path/to/game"
+    static const std::string& GAME_DIR();
+
+    /// @brief Retrieves the directory where all game assets are stored.
+    /// @return The assets directory path, typically inside the game directory.
+    /// Example return value: "${GAME_DIR}/assets"
+    static const std::string& ASSETS_DIR();
+
+    /// @brief Retrieves the directory where shader files are stored.
+    /// @return The shaders directory path, typically inside the assets directory.
+    /// Example return value: "${GAME_DIR}/assets/shaders"
+    static const std::string& SHADERS_DIR();
+
+    /// @brief Retrieves the directory where vertex shader files are stored.
+    /// @return The vertex shaders directory path, typically inside the shaders directory.
+    /// Example return value: "${GAME_DIR}/assets/shaders/vert"
+    static const std::string& VERT_SHADERS_DIR();
+
+    /// @brief Retrieves the directory where fragment shader files are stored.
+    /// @return The fragment shaders directory path, typically inside the shaders directory.
+    /// Example return value: "${GAME_DIR}/assets/shaders/frag"
+    static const std::string& FRAG_SHADERS_DIR();
+
+    /// @brief Retrieves the directory where mesh files are stored.
+    /// @return The meshes directory path, typically inside the assets directory.
+    /// Example return value: "${GAME_DIR}/assets/meshes"
+    static const std::string& MESHES_DIR();
 
     /// @brief Checks whether a given path exists.
     /// @param[in] path The path to check.
