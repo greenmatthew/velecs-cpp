@@ -76,8 +76,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
     InitImGUI();
 
-    LoadMeshes();
-
     ecs.component<Transform>();
     ecs.component<Mesh>();
     ecs.component<SimpleMesh>();
@@ -218,6 +216,25 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             const auto cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
             const auto cameraTransform = cameraEntity.get<Transform>();
 
+            const PerspectiveCamera* perspectiveCamera;
+            const OrthoCamera* orthoCamera;
+            bool usingPerspective = true;
+
+            if (cameraEntity.has<PerspectiveCamera>())
+            {
+                perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
+                usingPerspective = true;
+            }
+            else if (cameraEntity.has<OrthoCamera>())
+            {
+                orthoCamera = cameraEntity.get<OrthoCamera>();
+                usingPerspective = false;
+            }
+            else
+            {
+                std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
+            }
+
             for (auto i : it)
             {
                 const Transform& transform = transforms[i];
@@ -235,19 +252,15 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                     UploadMesh(mesh);
                 }
 
-                if (cameraEntity.has<PerspectiveCamera>())
+                if (usingPerspective)
                 {
-                    const auto perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
-                    Draw(deltaTime, cameraEntity, perspectiveCamera, cameraTransform, entity, transform, mesh, material);
-                }
-                else if (cameraEntity.has<OrthoCamera>())
-                {
-                    const auto orthoCamera = cameraEntity.get<OrthoCamera>();
-                    // Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
+                    const glm::mat4 renderMatrix = transform.GetRenderMatrix(cameraTransform, perspectiveCamera);
+                    Draw(deltaTime, renderMatrix, mesh, material);
                 }
                 else
                 {
-                    std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
+                    const auto orthoCamera = cameraEntity.get<OrthoCamera>();
+                    // Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
                 }
             }
         }
@@ -1101,84 +1114,7 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
 void RenderingECSModule::Draw
 (
     const float deltaTime,
-    const flecs::entity cameraEntity,
-    const PerspectiveCamera* const perspectiveCamera,
-    const Transform* const cameraTransform,
-    const flecs::entity entity,
-    const Transform& transform,
-    const Mesh& mesh,
-    const Material& material
-)
-{
-    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
-
-    VkViewport viewport = {};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = static_cast<float>(windowExtent.width);
-    viewport.height = static_cast<float>(windowExtent.height);
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
-
-    VkRect2D scissor = {};
-    scissor.offset = {0, 0};
-    scissor.extent = {static_cast<uint32_t>(windowExtent.width), static_cast<uint32_t>(windowExtent.height)};
-
-    vkCmdSetViewport(_mainCommandBuffer, 0, 1, &viewport);
-    vkCmdSetScissor(_mainCommandBuffer, 0, 1, &scissor);
-
-    //bind the mesh vertex buffer with offset 0
-    VkDeviceSize offset = 0;
-    vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
-
-    MeshPushConstants constants = {};
-    
-    constants.renderMatrix = GetRenderMatrix(cameraEntity, perspectiveCamera, cameraTransform, entity, transform);
-
-    //upload the matrix to the GPU via push constants
-    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
-
-    //we can now draw the mesh
-    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
-}
-
-void RenderingECSModule::Draw
-(
-    const float deltaTime,
-    const flecs::entity cameraEntity,
-    const OrthoCamera* const orthoCamera,
-    const Transform* const cameraTransform,
-    const flecs::entity entity,
-    const Transform& transform,
-    const Mesh& mesh,
-    const Material& material
-)
-{
-    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
-
-    //bind the mesh vertex buffer with offset 0
-    VkDeviceSize offset = 0;
-    vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
-
-    MeshPushConstants constants = {};
-    
-    constants.renderMatrix = GetRenderMatrix(cameraEntity, orthoCamera, cameraTransform, entity, transform);
-
-    //upload the matrix to the GPU via push constants
-    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(MeshPushConstants), &constants);
-
-    //we can now draw the mesh
-    vkCmdDraw(_mainCommandBuffer, (uint32_t)mesh._vertices.size(), 1, 0, 0);
-}
-
-void RenderingECSModule::Draw
-(
-    const float deltaTime,
-    const flecs::entity cameraEntity,
-    const PerspectiveCamera * const perspectiveCamera,
-    const Transform* const cameraTransform,
-    const flecs::entity entity,
-    const Transform& transform,
+    const glm::mat4 renderMatrix,
     const SimpleMesh& mesh,
     const Material& material
 )
@@ -1209,28 +1145,13 @@ void RenderingECSModule::Draw
     MeshPushConstants constants = {};
     
     constants.color = material.color;
-    constants.renderMatrix = GetRenderMatrix(cameraEntity, perspectiveCamera, cameraTransform, entity, transform);
+    constants.renderMatrix = renderMatrix;
 
     //upload the matrix to the GPU via push constants
     vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MeshPushConstants), &constants);
 
     //we can now draw the mesh
     vkCmdDrawIndexed(_mainCommandBuffer, (uint32_t)mesh._indices.size(), 1, 0, 0, 0);
-}
-
-void RenderingECSModule::LoadMeshes()
-{
-    //make the array 3 vertices long
-    // _triangleMesh._vertices.resize(3);
-
-    // //vertex positions
-    // _triangleMesh._vertices[0].position = {  0.5f,  0.5f,  0.0f };
-    // _triangleMesh._vertices[1].position = { -0.5f,  0.5f,  0.0f };
-    // _triangleMesh._vertices[2].position = {  0.0f, -0.5f,  0.0f };
-
-    // //we don't care about the vertex normals
-
-    // UploadMesh(_triangleMesh);
 }
 
 template<typename TMesh>
@@ -1291,93 +1212,6 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
     vmaMapMemory(_allocator, mesh._indexBuffer._allocation, &indexData);
     memcpy(indexData, mesh._indices.data(), mesh._indices.size() * sizeof(uint32_t));
     vmaUnmapMemory(_allocator, mesh._indexBuffer._allocation);
-}
-
-glm::mat4 RenderingECSModule::GetRenderMatrix
-(
-    const flecs::entity cameraEntity,
-    const PerspectiveCamera* const perspectiveCamera,
-    const Transform* const cameraTransform,
-    const flecs::entity entity,
-    const Transform& transform
-)
-{
-    // Start with the identity matrix
-    glm::mat4 model = glm::mat4(1.0f); 
-
-    // Apply scaling
-    model = glm::scale(model, (glm::vec3)transform.scale);
-
-    // Apply rotation around the x, y, and z axes
-    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0, 1, 0));
-    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
-
-    // Compute the view matrix
-    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition();
-    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
-
-    // Compute the projection matrix
-    glm::mat4 projection = glm::perspective
-    (
-        glm::radians(perspectiveCamera->GetVerticalFov()),
-        perspectiveCamera->GetAspectRatio(),
-        perspectiveCamera->nearPlaneOffset,
-        perspectiveCamera->farPlaneOffset
-    );
-
-    // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition());
-
-    // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * worldTranslation * model;
-
-    return meshMatrix;
-}
-    
-glm::mat4 RenderingECSModule::GetRenderMatrix
-(
-    const flecs::entity cameraEntity,
-    const OrthoCamera* const orthoCamera,
-    const Transform* const cameraTransform,
-    const flecs::entity entity,
-    const Transform& transform
-)
-{
-    // Start with the identity matrix
-    glm::mat4 model = glm::mat4(1.0f); 
-
-    // Apply scaling
-    model = glm::scale(model, (glm::vec3)transform.scale);
-
-    // Apply rotation around the x, y, and z axes
-    model = glm::rotate(model, glm::radians(transform.rotation.x), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(transform.rotation.y), glm::vec3(0, 1, 0));
-    model = glm::rotate(model, glm::radians(transform.rotation.z), glm::vec3(0, 0, 1));
-
-    // Compute the view matrix
-    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition();
-    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
-
-    // Compute the projection matrix
-    Rect extent = orthoCamera->GetExtent();
-    float halfWidth = extent.GetHalfWidth()*0.001f;
-    float halfLength = extent.GetHalfLength()*0.001f;
-    glm::mat4 projection = glm::ortho
-    (
-        -halfWidth, halfWidth,
-        -halfLength, halfLength,
-        orthoCamera->nearPlaneOffset,
-        orthoCamera->farPlaneOffset
-    );
-
-    // Apply translation in world space
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)transform.GetAbsPosition());
-
-    // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * worldTranslation * model;
-
-    return meshMatrix;
 }
 
 } // namespace velecs

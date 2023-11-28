@@ -49,11 +49,15 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
         .add<Player>()
         .add<LinearKinematics>()
         ;
-    player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
+    // player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
     
     player.get_mut<Material>()->color = Color32::GREEN;
     
     player.get_mut<Transform>()->entity = player;
+    // player.get_mut<Transform>()->position = Vec3::BACKWARD * 2.0f;
+    // player.get_mut<Transform>()->rotation.x = 90.0f;
+    // player.get_mut<Transform>()->rotation.y = 180.0f;
+    // player.set<AngularKinematics>({Vec3(45.0f, 0.0f, 0.0f), Vec3::ZERO});
     
     cameraEntity.child_of(player);
 
@@ -70,6 +74,12 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     }
 
     std::cout << cameraTransform.GetAbsPosition() << std::endl;
+
+    cameraTransform.scale = Vec3::ONE * 2.5f;
+
+    std::cout << player.get<Transform>()->GetCameraEntity().name() << std::endl;
+
+    // exit(0);
 
     // flecs::entity nametagEntity = ecs.entity()
     //     .is_a(nametagEntity)
@@ -94,7 +104,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity2.get_mut<Transform>()->position = Vec3::UP + Vec3::LEFT;
     entity2.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
     entity2.get_mut<Material>()->color = Color32::YELLOW;
-    std::cout << entity2.get<Material>()->color << std::endl;
 
     flecs::entity entity3 = ecs.entity()
         .is_a(squarePrefab)
@@ -210,6 +219,18 @@ void PlayerECSModule::HandleInput
     // Max and min are flipped and negative bc of the coordinate system
     player.targetCamPos.z = std::clamp(player.targetCamPos.z, -player.camMaxZoom, -player.camMinZoom);
     cameraTransform->position = Vec3::Lerp(cameraTransform->position, player.targetCamPos, player.camZoomSpeed * deltaTime);
+
+    if (input->IsPressed(SDLK_KP_PLUS))
+    {
+        cameraTransform->rotation.x += -5.0f;
+        std::cout << cameraTransform->rotation << std::endl;
+    }
+
+    if (input->IsPressed(SDLK_KP_MINUS))
+    {
+        cameraTransform->rotation.x += 5.0f;
+        std::cout << cameraTransform->rotation << std::endl;
+    }
 }
 
 } // namespace hh

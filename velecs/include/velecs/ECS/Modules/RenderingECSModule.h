@@ -205,61 +205,13 @@ private:
     void Draw
     (
         const float deltaTime,
-        const flecs::entity cameraEntity,
-        const PerspectiveCamera* const perspectiveCamera,
-        const Transform* const cameraTransform,
-        const flecs::entity entity,
-        const Transform& transform,
-        const Mesh& mesh,
-        const Material& material
-    );
-
-    void Draw
-    (
-        const float deltaTime,
-        const flecs::entity cameraEntity,
-        const OrthoCamera * const orthoCamera,
-        const Transform* const cameraTransform,
-        const flecs::entity entity,
-        const Transform& transform,
-        const Mesh& mesh,
-        const Material& material
-    );
-
-    void Draw
-    (
-        const float deltaTime,
-        const flecs::entity cameraEntity,
-        const PerspectiveCamera * const perspectiveCamera,
-        const Transform* const cameraTransform,
-        const flecs::entity entity,
-        const Transform& transform,
+        const glm::mat4 renderMatrix,
         const SimpleMesh& mesh,
         const Material& material
     );
 
-    void LoadMeshes();
-
     template<typename TMesh>
     void UploadMesh(TMesh& mesh);
-
-    glm::mat4 GetRenderMatrix
-    (
-        const flecs::entity cameraEntity,
-        const PerspectiveCamera* const perspectiveCamera,
-        const Transform* const cameraTransform,
-        const flecs::entity entity,
-        const Transform& transform
-    );
-
-    glm::mat4 GetRenderMatrix
-    (
-        const flecs::entity cameraEntity,
-        const OrthoCamera* const orthoCamera,
-        const Transform* const cameraTransform,
-        const flecs::entity entity,
-        const Transform& transform
-    );
 };
 
 } // namespace velecs

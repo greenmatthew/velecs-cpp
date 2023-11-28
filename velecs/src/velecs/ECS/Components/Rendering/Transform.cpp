@@ -144,41 +144,65 @@ Transform* const Transform::GetCameraTransform()
     return transform;
 }
 
-glm::mat4 Transform::GetRenderMatrix() const
+glm::mat4 Transform::GetModelMatrix(const bool useScale /* = true*/) const
 {
-    const Transform* const cameraTransform = GetCameraTransform();
-
-    // Start with the identity matrix
     glm::mat4 model = glm::mat4(1.0f); 
 
     // Apply scaling
-    model = glm::scale(model, (glm::vec3)scale);
+    if (useScale)
+    {
+        model = glm::scale(model, (glm::vec3)scale);
+    }
 
     // Apply rotation around the x, y, and z axes
     model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
     model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
     model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
 
-    // Compute the view matrix
-    Vec3 cameraAbsPos = cameraTransform->GetAbsPosition();
-    glm::mat4 view = glm::translate(glm::mat4(1.f), (glm::vec3)cameraAbsPos);
-
-    // Compute the projection matrix
-    // glm::mat4 projection = glm::perspective
-    // (
-    //     glm::radians(perspectiveCamera->GetVerticalFov()),
-    //     perspectiveCamera->GetAspectRatio(),
-    //     perspectiveCamera->nearPlaneOffset,
-    //     perspectiveCamera->farPlaneOffset
-    // );
-
-    glm::mat4 projection = glm::mat4(1.0f);
-
-    // Apply translation in world space
     glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)GetAbsPosition());
 
+    return worldTranslation * model;
+}
+
+glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
+{
+    // Compute the view matrix
+    glm::mat4 view = cameraTransform->GetModelMatrix(false);
+
+    // Compute the projection matrix
+    glm::mat4 projection = glm::perspective
+    (
+        glm::radians(perspectiveCamera->GetVerticalFov()),
+        perspectiveCamera->GetAspectRatio(),
+        perspectiveCamera->nearPlaneOffset,
+        perspectiveCamera->farPlaneOffset
+    );
+
     // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * worldTranslation * model;
+    glm::mat4 meshMatrix = projection * view * GetModelMatrix();
+
+    return meshMatrix;
+}
+
+glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const OrthoCamera* const orthoCamera) const
+{
+// Compute the view matrix
+    glm::mat4 view = cameraTransform->GetModelMatrix(false);
+
+    // Compute the projection matrix
+    Rect extent = orthoCamera->GetExtent();
+    float halfWidth = extent.GetHalfWidth()*0.001f;
+    float halfLength = extent.GetHalfLength()*0.001f;
+    glm::mat4 projection = glm::ortho
+    (
+        -halfWidth, halfWidth,
+        -halfLength, halfLength,
+        orthoCamera->nearPlaneOffset,
+        orthoCamera->farPlaneOffset
+    );
+
+    // Calculate the final mesh matrix
+    glm::mat4 meshMatrix = projection * view * GetModelMatrix();
 
     return meshMatrix;
 }
@@ -196,23 +220,5 @@ const Vec2 Transform::GetScreenPosition(const Vec3 cameraAbsPos) const
 // Private Fields
 
 // Private Methods
-
-glm::mat4 Transform::GetProjectionMatrix(const Camera* const camera)
-{
-    const PerspectiveCamera* perCam = dynamic_cast<const PerspectiveCamera*>(camera);
-    if (perCam)
-    {
-        // It's a PerspectiveCamera, handle accordingly
-    }
-
-    const OrthoCamera* orthoCam = dynamic_cast<const OrthoCamera*>(camera);
-    if (orthoCam)
-    {
-        // It's an OrthoCamera, handle accordingly
-    }
-
-    throw std::runtime_error("Camera cannot be casted to a PerspectiveCamera or OrthoCamera.");
-}
-
 
 } // namespace velecs
