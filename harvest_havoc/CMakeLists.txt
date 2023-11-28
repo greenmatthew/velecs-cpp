@@ -11,7 +11,7 @@ set_target_properties(HarvestHavoc PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${FINAL_OUTPUT_BASE_DIR}/$<CONFIG>"
 )
 
-add_dependencies(HarvestHavoc velecs shaders)
+add_dependencies(HarvestHavoc velecs shaders meshes)
 
 target_include_directories(HarvestHavoc PUBLIC include)
 
