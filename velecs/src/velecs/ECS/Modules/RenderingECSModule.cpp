@@ -232,7 +232,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             }
             else
             {
-                std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
+                throw std::runtime_error("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
             }
 
             for (auto i : it)

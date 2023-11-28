@@ -110,11 +110,11 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
             break;
         }
         case SDL_MOUSEMOTION:
-            input.mousePos = Vec2(event.motion.x, event.motion.y);
-            mouseDelta += Vec2(event.motion.xrel, event.motion.yrel);
+            input.mousePos = Vec2(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+            mouseDelta += Vec2(static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel));
             break;
         case SDL_MOUSEWHEEL:
-            mouseWheel += Vec2(event.wheel.x, event.wheel.y);
+            mouseWheel += Vec2(static_cast<float>(event.wheel.x), static_cast<float>(event.wheel.y));
             break;
         default:
             break;
