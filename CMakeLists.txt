@@ -26,6 +26,7 @@ target_link_libraries(velecs
     vk-bootstrap
     imgui
     tinyobjloader
+    assimp
 )
 
 target_link_libraries(HarvestHavoc PRIVATE
@@ -37,4 +38,5 @@ target_link_libraries(HarvestHavoc PRIVATE
     vk-bootstrap
     imgui
     tinyobjloader
+    assimp
 )

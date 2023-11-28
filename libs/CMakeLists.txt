@@ -24,12 +24,16 @@ set_target_properties(SDL2main PROPERTIES
   IMPORTED_LOCATION "${VULKAN_SDK}/Lib/SDL2main.lib"
 )
 
+
+
 # flecs
 set(FLECS_STATIC ON CACHE BOOL "Build static flecs lib")
 set(FLECS_SHARED OFF CACHE BOOL "Build shared flecs lib")
 set(FLECS_PIC ON CACHE BOOL "Compile static flecs lib with position independent code (PIC)")
 set(FLECS_TESTS OFF CACHE BOOL "Build flecs tests")
 add_subdirectory(flecs)
+
+
 
 # imgui
 add_library(imgui STATIC)
@@ -48,11 +52,23 @@ target_sources(imgui PRIVATE
 )
 target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2 SDL2main)
 
+
+
 # vkbootstrap
 set(VK_BOOTSTRAP_DISABLE_WARNINGS OFF CACHE BOOL "Disable warnings during compilation")
 set(VK_BOOTSTRAP_WERROR OFF CACHE BOOL "Enable warnings as errors during compilation")
 add_subdirectory(vkbootstrap)
 
+
+
 # tiny_obj_loader (header only)
 add_library(tinyobjloader STATIC tinyobjloader/tiny_obj_loader.h tinyobjloader/tiny_obj_loader.cc)
 target_include_directories(tinyobjloader PUBLIC tinyobjloader)
+
+
+
+# ASSIMP
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build package with shared libraries.")
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library.")
+set(ASSIMP_INSTALL OFF CACHE BOOL "Disable Assimp install.")
+add_subdirectory(assimp)
