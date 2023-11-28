@@ -14,6 +14,8 @@
 
 #include "velecs/Math/Vec2.h"
 
+#include <glm/mat4x4.hpp>
+
 namespace velecs {
 
 /// @struct Camera
@@ -69,6 +71,11 @@ public:
     const Rect& GetExtent() const
     {
         return extent;
+    }
+
+    virtual const glm::mat4 GetProjectionMatrix() const
+    {
+        throw std::logic_error("GetProjectionMatrix() should not be called on Camera base class.");
     }
 
 protected:

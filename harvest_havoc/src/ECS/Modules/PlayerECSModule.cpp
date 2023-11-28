@@ -14,6 +14,8 @@
 
 #include <algorithm>
 
+#include <imgui.h>
+
 using namespace velecs;
 
 namespace hh {
@@ -31,16 +33,12 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     ecs.component<Nametag>();
 
-    ecs.prefab("PR_Nametag")
-        .override<Transform>()
-        .override<Nametag>()
-        ;
-
     // CreatePlayerEntity("Player");
 
     flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f});
     ecs.set<MainCamera>({cameraEntity});
 
+    flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "velecs::CommonECSModule::PR_Entity");
     flecs::entity trianglePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_TriangleRender");
     flecs::entity squarePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_SquareRender");
     flecs::entity player = ecs.entity()
@@ -52,6 +50,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     // player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
     
     player.get_mut<Material>()->color = Color32::GREEN;
+    // player.get_mut<Transform>()->scale = Vec3::ZERO;
     
     player.get_mut<Transform>()->entity = player;
     // player.get_mut<Transform>()->position = Vec3::BACKWARD * 2.0f;
@@ -81,12 +80,17 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     // exit(0);
 
-    // flecs::entity nametagEntity = ecs.entity()
-    //     .is_a(nametagEntity)
-    //     .set<Nametag>({"Test"})
-    //     ;
+    flecs::entity nametagPrefab = ecs.prefab("PR_Nametag")
+        .is_a(entityPrefab)
+        .add<Nametag>()
+        ;
+
+    flecs::entity nametagEntity = ecs.entity()
+        .is_a(nametagPrefab)
+        ;
+    nametagEntity.get_mut<Transform>()->entity = nametagEntity;
     
-    // nametagEntity.child_of(player);
+    nametagEntity.child_of(player);
 
     flecs::entity entity1 = ecs.entity()
         .is_a(trianglePrefab)
@@ -123,6 +127,30 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity4.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
     entity4.get_mut<Material>()->color = Color32::WHITE;
     
+    ecs.system()
+        .kind(stages->Update)
+        .iter([this](flecs::iter& it)
+        {
+            flecs::world ecs = it.world();
+
+            flecs::entity cameraEntity = ecs.singleton<MainCamera>().get<MainCamera>()->camera;
+            const Transform* const cameraTransform = cameraEntity.get<Transform>();
+            const PerspectiveCamera* const perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
+
+            flecs::entity player = ecs.lookup("hh::PlayerECSModule::Player");
+            flecs::entity entity1 = ecs.lookup("hh::PlayerECSModule::Entity1");
+            flecs::entity entity2 = ecs.lookup("hh::PlayerECSModule::Entity2");
+            flecs::entity entity3 = ecs.lookup("hh::PlayerECSModule::Entity3");
+            flecs::entity entity4 = ecs.lookup("hh::PlayerECSModule::Entity4");
+
+            std::cout << "player screen pos: " << player.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;
+            std::cout << "entity1 screen pos: " << entity1.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;
+            std::cout << "entity2 screen pos: " << entity2.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
+            std::cout << "entity3 screen pos: " << entity3.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
+            std::cout << "entity4 screen pos: " << entity4.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
+        }
+    );
+
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)
         .iter([this](flecs::iter& it, Player* players, Transform* transforms, LinearKinematics* linearKinematics)
@@ -158,14 +186,15 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
             flecs::entity mainCameraEntity = ecs.singleton<MainCamera>();
             flecs::entity cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
-            const Transform * const cameraTransform = cameraEntity.get<Transform>();
+            const Transform* const cameraTransform = cameraEntity.get<Transform>();
+            const PerspectiveCamera* const perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
 
             for (auto i : it)
             {
                 Transform& transform = transforms[i];
-                Nametag& linear = nametags[i];
+                Nametag& nametag = nametags[i];
 
-                
+                nametag.Display(transform, cameraTransform, perspectiveCamera);
             }
         }
     );

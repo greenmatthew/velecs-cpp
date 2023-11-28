@@ -50,6 +50,8 @@ public:
 
     // Constructors and Destructors
 
+    Vec2();
+
     /// @brief Constructs a Vec2 with the specified coordinates.
     /// @param[in] x The x-coordinate.
     /// @param[in] y The y-coordinate.

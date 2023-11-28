@@ -12,6 +12,9 @@
 
 #include "velecs/ECS/Components/Rendering/Camera.h"
 
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 namespace velecs {
 
 /// @struct PerspectiveCamera
@@ -40,12 +43,15 @@ struct PerspectiveCamera : public Camera {
         const float farPlaneOffset = 200.0f)
         : Camera(resolution, nearPlaneOffset, farPlaneOffset),
             verticalFov(verticalFov) {}
+    
+    PerspectiveCamera(PerspectiveCamera&&) = default;
 
     /// @brief Default deconstructor.
-    ~PerspectiveCamera() = default;
+    ~PerspectiveCamera() override = default;
 
     // Public Methods
 
+    PerspectiveCamera& operator=(PerspectiveCamera&&) = default;
     
     const float& SetVerticalFov(const float verticalFov)
     {
@@ -55,6 +61,19 @@ struct PerspectiveCamera : public Camera {
     const float& GetVerticalFov() const
     {
         return verticalFov;
+    }
+
+    const glm::mat4 GetProjectionMatrix() const override
+    {
+        glm::mat4 projection = glm::perspective
+        (
+            glm::radians(GetVerticalFov()),
+            GetAspectRatio(),
+            nearPlaneOffset,
+            farPlaneOffset
+        );
+
+        return projection;
     }
 
 protected:

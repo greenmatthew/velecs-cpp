@@ -120,10 +120,7 @@ public:
     /// @return The render matrix combining the model, view, and projection matrices.
     glm::mat4 GetRenderMatrix(const Transform* const cameraTransform, const OrthoCamera* const orthoCamera) const;
 
-    /// @brief Calculates the screen position of the entity relative to the camera.
-    /// @param[in] cameraAbsPos The absolute position of the camera.
-    /// @return The screen position as a Vec2.
-    const Vec2 GetScreenPosition(const Vec3 cameraAbsPos) const;
+    const Vec2 GetScreenPosition(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const;
 
 protected:
     // Protected Fields

@@ -170,46 +170,53 @@ glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, con
     glm::mat4 view = cameraTransform->GetModelMatrix(false);
 
     // Compute the projection matrix
-    glm::mat4 projection = glm::perspective
-    (
-        glm::radians(perspectiveCamera->GetVerticalFov()),
-        perspectiveCamera->GetAspectRatio(),
-        perspectiveCamera->nearPlaneOffset,
-        perspectiveCamera->farPlaneOffset
-    );
+    glm::mat4 projection = perspectiveCamera->GetProjectionMatrix();
 
-    // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * GetModelMatrix();
+    // Compute the model matrix
+    glm::mat4 model = GetModelMatrix();
 
-    return meshMatrix;
+    return projection * view * model;
 }
 
 glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const OrthoCamera* const orthoCamera) const
 {
-// Compute the view matrix
+    // Compute the view matrix
     glm::mat4 view = cameraTransform->GetModelMatrix(false);
 
     // Compute the projection matrix
-    Rect extent = orthoCamera->GetExtent();
-    float halfWidth = extent.GetHalfWidth()*0.001f;
-    float halfLength = extent.GetHalfLength()*0.001f;
-    glm::mat4 projection = glm::ortho
-    (
-        -halfWidth, halfWidth,
-        -halfLength, halfLength,
-        orthoCamera->nearPlaneOffset,
-        orthoCamera->farPlaneOffset
-    );
+    glm::mat4 projection = orthoCamera->GetProjectionMatrix();
+
+    // Compute the model matrix
+    glm::mat4 model = GetModelMatrix();
 
     // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * GetModelMatrix();
+    glm::mat4 meshMatrix = projection * view * model;
 
     return meshMatrix;
 }
 
-const Vec2 Transform::GetScreenPosition(const Vec3 cameraAbsPos) const
+const Vec2 Transform::GetScreenPosition(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
 {
-    Vec2 screenPos = Vec2::ZERO;
+    // Get the view matrix from the camera
+    glm::mat4 viewMatrix = cameraTransform->GetModelMatrix(false);
+
+    // Get the projection matrix from the camera
+    glm::mat4 projectionMatrix = perspectiveCamera->GetProjectionMatrix();
+
+    // Transform the world position to camera space
+    glm::vec4 cameraSpacePos = glm::inverse(viewMatrix) * glm::vec4((glm::vec3)this->GetAbsPosition(), 1.0f);
+
+    // Transform the camera space position to clip space
+    glm::vec4 clipSpacePos = projectionMatrix * cameraSpacePos;
+
+    // Perform perspective division to get Normalized Device Coordinates (NDC)
+    glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
+
+    // Map from NDC space [-1, 1] to screen space [0, resolution]
+    Vec2 screenPos;
+    screenPos.x = (ndcSpacePos.x + 1) * 0.5f * perspectiveCamera->GetResolution().x;
+    screenPos.y = (1 - ndcSpacePos.y) * 0.5f * perspectiveCamera->GetResolution().y; // Y is inverted
+
     return screenPos;
 }
 

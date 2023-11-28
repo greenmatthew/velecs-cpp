@@ -38,9 +38,14 @@ struct OrthoCamera : public Camera {
         : Camera(resolution, nearPlaneOffset, farPlaneOffset) {}
 
     /// @brief Default deconstructor.
-    ~OrthoCamera() = default;
+    ~OrthoCamera() override = default;
 
     // Public Methods
+
+    const glm::mat4 GetProjectionMatrix() const override
+    {
+        return glm::mat4(1.0f);
+    }
 
 protected:
     // Protected Fields
