@@ -97,24 +97,6 @@ flecs::entity Transform::GetCameraEntity() const
     return cameraEntity;
 }
 
-const Camera* const Transform::GetCamera() const
-{
-    flecs::entity cameraEntity = GetCameraEntity();
-
-    const Camera* const camera = cameraEntity.get<Camera>();
-
-    return camera;
-}
-
-Camera* const Transform::GetCamera()
-{
-    flecs::entity cameraEntity = GetCameraEntity();
-
-    Camera* const camera = cameraEntity.get_mut<Camera>();
-
-    return camera;
-}
-
 const Transform* const Transform::GetCameraTransform() const
 {
     flecs::entity cameraEntity = GetCameraEntity();
@@ -264,10 +246,13 @@ const Vec2 Transform::GetScreenPosition(const Transform* const cameraTransform, 
     // Perspective division to get NDC
     glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
 
+    
+    Vec2 resolution = entity.world().get<MainCamera>()->extent.max;
+
     // NDC to screen space
     Vec2 screenPos;
-    screenPos.x = (ndcSpacePos.x + 1) * 0.5f * perspectiveCamera->GetResolution().x;
-    screenPos.y = (ndcSpacePos.y + 1) * 0.5f * perspectiveCamera->GetResolution().y;  // Corrected for Vulkan's NDC
+    screenPos.x = (ndcSpacePos.x + 1) * 0.5f * resolution.x;
+    screenPos.y = (ndcSpacePos.y + 1) * 0.5f * resolution.y;  // Corrected for Vulkan's NDC
 
     return screenPos;
 }

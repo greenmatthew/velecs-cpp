@@ -65,7 +65,7 @@ public:
         flecs::world& ecs,
         const Vec3 position = Vec3::ZERO,
         const Vec3 rotation = Vec3::ZERO,
-        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
+        const float aspectRatio = 16.0f/9.0f,
         const float verticalFOV = 70.0f,
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f
@@ -74,14 +74,16 @@ public:
     static flecs::entity CreateOrthoCamera
     (
         flecs::world& ecs,
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec2 resolution = Vec2{1920.0f, 1080.0f},
+        const Vec3 position,
+        const Vec3 rotation,
+        const Rect extent,
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f
     );
 
-    static Camera& GetMainCamera(flecs::world& ecs);
+    static flecs::entity GetMainCameraEntity(flecs::world& ecs);
+
+    const Rect RenderingECSModule::GetWindowExtent() const;
 
 protected:
     // Protected Fields

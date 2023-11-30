@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "velecs/Graphics/Rect.h"
+
 #include <flecs.h>
 
 namespace velecs {
@@ -20,6 +22,13 @@ namespace velecs {
 /// Rest of description.
 struct MainCamera {
     flecs::entity camera;
+    Rect extent;
+
+    MainCamera()
+        : camera(flecs::entity::null()), extent(Rect{Vec2::ZERO, Vec2::ZERO}) {}
+
+    MainCamera(flecs::entity cameraEntity, const Rect extent)
+        : camera(cameraEntity), extent(extent) {}
 };
 
 } // namespace velecs

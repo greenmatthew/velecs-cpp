@@ -166,46 +166,6 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             }
         );
 
-    // ecs.system<Transform, Mesh, Material>()
-    //     .kind(stages->Draw)
-    //     .iter([this](flecs::iter& it, Transform* transforms, Mesh* meshes, Material* materials)
-    //     {
-    //         float deltaTime = it.delta_time();
-
-    //         const auto mainCameraEntity = it.world().singleton<MainCamera>();
-    //         const auto cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
-    //         const auto cameraTransform = cameraEntity.get<Transform>();
-
-    //         for (auto i : it)
-    //         {
-    //             Transform transform = transforms[i];
-    //             Mesh mesh = meshes[i];
-    //             Material material = materials[i];
-    //             flecs::entity entity = it.entity(i);
-
-    //             if (mesh._vertices.empty() || material.pipeline == VK_NULL_HANDLE || material.pipelineLayout == VK_NULL_HANDLE)
-    //             {
-    //                 continue; // Not enough data to render? Skip entity
-    //             }
-
-    //             if (cameraEntity.has<PerspectiveCamera>())
-    //             {
-    //                 const auto perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
-    //                 Draw(deltaTime, cameraEntity, perspectiveCamera, cameraTransform, entity, transform, mesh, material);
-    //             }
-    //             else if (cameraEntity.has<OrthoCamera>())
-    //             {
-    //                 const auto orthoCamera = cameraEntity.get<OrthoCamera>();
-    //                 Draw(deltaTime, cameraEntity, orthoCamera, cameraTransform, entity, transform, mesh, material);
-    //             }
-    //             else
-    //             {
-    //                 std::exception("MainCamera singleton is missing a PerspectiveCamera or OrthoCamera component.");
-    //             }
-    //         }
-    //     }
-    // );
-
     ecs.system<Transform, SimpleMesh, Material>()
         .kind(stages->Draw)
         .iter([this](flecs::iter& it, Transform* transforms, SimpleMesh* meshes, Material* materials)
@@ -316,6 +276,8 @@ RenderingECSModule::~RenderingECSModule()
     SDL_DestroyWindow(_window);
 }
 
+// Public Methods
+
 void RenderingECSModule::OnWindowMinimize() const
 {
     while (true)
@@ -369,10 +331,7 @@ void RenderingECSModule::OnWindowResize()
     windowExtent.width = width;
     windowExtent.height = height;
     
-
-    flecs::world& world = ecs();
-    Camera& cam = GetMainCamera(world);
-    cam.SetResolution(Vec2{(float)width, (float)height});
+    ecs().get_mut<MainCamera>()->extent = GetWindowExtent();
 
     for (auto imageView : _swapchainImageViews)
     {
@@ -396,42 +355,46 @@ void RenderingECSModule::OnWindowResize()
     InitFrameBuffers();
 }
 
-// Public Methods
-
-flecs::entity RenderingECSModule::CreatePerspectiveCamera(flecs::world& ecs,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
-    const float verticalFOV /*= 70.0f*/,
-    const float nearPlaneOffset /*= 0.1f*/,
-    const float farPlaneOffset /*= 200.0f*/)
+flecs::entity RenderingECSModule::CreatePerspectiveCamera
+(
+    flecs::world& ecs,
+    const Vec3 position /* = Vec3::ZERO*/,
+    const Vec3 rotation /* = Vec3::ZERO*/,
+    const float aspectRatio /* = 16.0f/9.0f*/,
+    const float verticalFOV /* = 70.0f*/,
+    const float nearPlaneOffset /* = 0.1f*/,
+    const float farPlaneOffset /* = 200.0f*/
+)
 {
     flecs::entity camEntity = ecs.entity("Camera")
         .override<Transform>()
-        .set_override<PerspectiveCamera>({resolution, verticalFOV, nearPlaneOffset, farPlaneOffset});
+        .set_override<PerspectiveCamera>({aspectRatio, verticalFOV, nearPlaneOffset, farPlaneOffset});
     
     camEntity.set<Transform>({camEntity, position, rotation});
 
     return camEntity;
 }
 
-flecs::entity RenderingECSModule::CreateOrthoCamera(flecs::world& ecs,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec2 resolution /*= Vec2{1920.0f, 1080.0f}*/,
+flecs::entity RenderingECSModule::CreateOrthoCamera
+(
+    flecs::world& ecs,
+    const Vec3 position,
+    const Vec3 rotation,
+    const Rect extent,
     const float nearPlaneOffset /*= 0.1f*/,
-    const float farPlaneOffset /*= 200.0f*/)
+    const float farPlaneOffset /*= 200.0f*/
+)
 {
     flecs::entity camEntity = ecs.entity("Camera")
         .override<Transform>()
-        .set_override<OrthoCamera>({resolution, nearPlaneOffset, farPlaneOffset});
+        .set_override<OrthoCamera>({extent, nearPlaneOffset, farPlaneOffset});
 
     camEntity.set<Transform>({camEntity, position, rotation});
 
     return camEntity;
 }
 
-Camera& RenderingECSModule::GetMainCamera(flecs::world& ecs)
+flecs::entity RenderingECSModule::GetMainCameraEntity(flecs::world& ecs)
 {
     const MainCamera* const mainCamera = ecs.get<MainCamera>();
     if (mainCamera == nullptr)
@@ -445,13 +408,12 @@ Camera& RenderingECSModule::GetMainCamera(flecs::world& ecs)
         throw std::runtime_error("MainCamera's camera entity is null.");
     }
 
-    Camera* cameraPtr = cameraEntity.get_mut<Camera>();
-    if (cameraPtr == nullptr)
-    {
-        throw std::runtime_error("Camera component not found in MainCamera's camera entity.");
-    }
+    return cameraEntity;
+}
 
-    return *cameraPtr;
+const Rect RenderingECSModule::GetWindowExtent() const
+{
+    return Rect{Vec2::ZERO, Vec2{float(windowExtent.width), float(windowExtent.height)}};
 }
 
 // Protected Fields

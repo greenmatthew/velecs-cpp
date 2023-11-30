@@ -13,7 +13,6 @@
 #include "velecs/Math/Vec3.h"
 
 #include "velecs/ECS/Components/Rendering/MainCamera.h"
-#include "velecs/ECS/Components/Rendering/Camera.h"
 #include "velecs/ECS/Components/Rendering/OrthoCamera.h"
 #include "velecs/ECS/Components/Rendering/PerspectiveCamera.h"
 
@@ -82,14 +81,6 @@ public:
     /// @throws std::runtime_error if the MainCamera component is missing or uninitialized.
     /// @return The main camera entity.
     flecs::entity GetCameraEntity() const;
-
-    /// @brief Retrieves the Camera component of the main camera entity.
-    /// @return A pointer to the Camera component of the main camera entity.
-    const Camera* const GetCamera() const;
-
-    /// @brief Retrieves a mutable reference to the Camera component of the main camera entity.
-    /// @return A mutable pointer to the Camera component of the main camera entity.
-    Camera* const GetCamera();
 
     /// @brief Retrieves the Transform component of the main camera entity.
     /// @return A pointer to the Transform component of the main camera entity.

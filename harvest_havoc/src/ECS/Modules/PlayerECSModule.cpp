@@ -35,8 +35,12 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     // CreatePlayerEntity("Player");
 
-    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f, -2.0f}, Vec3{0.0f, 0.0f, 0.0f}, Vec2{1700.0f, 900.0f});
-    ecs.set<MainCamera>({cameraEntity});
+    flecs::entity renderingECSModule = ecs.lookup("velecs::RenderingECSModule");
+    const Rect extent = renderingECSModule.get<RenderingECSModule>()->GetWindowExtent();
+    
+    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f, -2.0f}, Vec3{0.0f, 0.0f, 0.0f}, extent.max.x / extent.max.y);
+
+    ecs.set<MainCamera>({cameraEntity, extent});
 
     flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "velecs::CommonECSModule::PR_Entity");
     flecs::entity trianglePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_TriangleRender");
