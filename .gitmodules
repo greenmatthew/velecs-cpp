@@ -7,9 +7,6 @@
 [submodule "libs/vkbootstrap"]
 	path = libs/vkbootstrap
 	url = https://github.com/charles-lunarg/vk-bootstrap.git
-[submodule "libs/tinyobjloader"]
-	path = libs/tinyobjloader
-	url = https://github.com/tinyobjloader/tinyobjloader.git
 [submodule "libs/ImGuizmo"]
 	path = libs/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
