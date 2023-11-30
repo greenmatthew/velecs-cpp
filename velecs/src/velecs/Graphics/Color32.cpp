@@ -86,10 +86,18 @@ Color32 Color32::FromHex(const std::string& hexCode)
 
     unsigned int hexValue = std::stoul(hexCode.substr(hasHash ? 1 : 0), nullptr, 16);
 
-    uint8_t r = (hexValue >> 24) & 0xFF;
-    uint8_t g = (hexValue >> 16) & 0xFF;
-    uint8_t b = (hexValue >> 8) & 0xFF;
-    uint8_t a = (length == 8 || length == 9) ? (hexValue & 0xFF) : 0xFF;
+    uint8_t r, g, b, a;
+    if (length == 6 || length == 7) { // #RRGGBB format
+        r = (hexValue >> 16) & 0xFF;
+        g = (hexValue >> 8) & 0xFF;
+        b = hexValue & 0xFF;
+        a = 0xFF; // Default alpha value
+    } else { // #RRGGBBAA format
+        r = (hexValue >> 24) & 0xFF;
+        g = (hexValue >> 16) & 0xFF;
+        b = (hexValue >> 8) & 0xFF;
+        a = hexValue & 0xFF;
+    }
 
     return Color32(r, g, b, a);
 }

@@ -26,23 +26,26 @@ Nametag::Nametag(const std::string& name)
 
 // Public Methods
 
-void Nametag::AddTo(flecs::world& ecs, flecs::entity entity)
+flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity, const std::string& name, const Vec3 offset)
+{
+    flecs::entity nametagEntity = Entity::Create(ecs, "", offset, Vec3::ZERO, Vec3::ONE, entity);
+    if (!name.empty())
+    {
+        nametagEntity.set_override<Nametag>({name});
+    }
+    else
+    {
+        nametagEntity.set_override<Nametag>({entity.name()});
+    }
+
+    return entity;
+}
+
+flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity)
 {
     Vec3 offset = ((entity.get<Transform>()->scale.y * 0.5f) + 0.1f) * Vec3::UP;
 
-    AddTo(ecs, entity, offset);
-}
-
-void Nametag::AddTo(flecs::world& ecs, flecs::entity entity, const Vec3 offset)
-{
-    flecs::entity nametagPrefab = CommonECSModule::GetPrefab(ecs, "hh::NametagECSModule::PR_Nametag");
-
-    flecs::entity nametagEntity = ecs.entity()
-        .is_a(nametagPrefab)
-        .set<Nametag>({entity.name()})
-        ;
-    nametagEntity.set<Transform>({nametagEntity, offset});
-    nametagEntity.child_of(entity);
+    return AddTo(ecs, entity, "", offset);
 }
 
 void Nametag::Display

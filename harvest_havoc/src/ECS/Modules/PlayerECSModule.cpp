@@ -57,44 +57,25 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     Nametag::AddTo(ecs, player);
 
-    flecs::entity entity1 = ecs.entity()
-        .is_a(trianglePrefab)
-        .set_name("Entity1")
-        ;
-    entity1.get_mut<Transform>()->entity = entity1;
-    entity1.get_mut<Transform>()->position = Vec3::UP + Vec3::RIGHT;
-    entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    Nametag::AddTo(ecs, entity1);
+    flecs::entity entity = Nametag::AddTo(ecs, Entity::Create(ecs, "Entity1", Vec3::UP + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f)
+            .is_a(trianglePrefab)
+        );
+    entity.get_mut<Material>()->color = Color32::MAGENTA;
 
-    flecs::entity entity2 = ecs.entity()
-        .is_a(squarePrefab)
-        .set_name("Entity2")
-        ;
-    entity2.get_mut<Transform>()->entity = entity2;
-    entity2.get_mut<Transform>()->position = Vec3::UP + Vec3::LEFT;
-    entity2.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    entity2.get_mut<Material>()->color = Color32::YELLOW;
-    Nametag::AddTo(ecs, entity2);
+    entity = Nametag::AddTo(ecs, Entity::Create(ecs, "Entity2", Vec3::UP + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f)
+            .is_a(squarePrefab)
+        );
+    entity.get_mut<Material>()->color = Color32::MAROON;
 
-    flecs::entity entity3 = ecs.entity()
-        .is_a(squarePrefab)
-        .set_name("Entity3")
-        ;
-    entity3.get_mut<Transform>()->entity = entity3;
-    entity3.get_mut<Transform>()->position = Vec3::DOWN + Vec3::RIGHT;
-    entity3.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    entity3.get_mut<Material>()->color = Color32::ORANGE;
-    Nametag::AddTo(ecs, entity3);
+    entity = Nametag::AddTo(ecs, Entity::Create(ecs, "Entity3", Vec3::DOWN + Vec3::LEFT, Vec3::ZERO, Vec3::ONE * 0.1f)
+            .is_a(trianglePrefab)
+        );
+    entity.get_mut<Material>()->color = Color32::BLACK;
     
-    flecs::entity entity4 = ecs.entity()
-        .is_a(squarePrefab)
-        .set_name("Entity4")
-        ;
-    entity4.get_mut<Transform>()->entity = entity4;
-    entity4.get_mut<Transform>()->position = Vec3::DOWN + Vec3::LEFT;
-    entity4.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
-    entity4.get_mut<Material>()->color = Color32::WHITE;
-    Nametag::AddTo(ecs, entity4);
+    entity = Nametag::AddTo(ecs, Entity::Create(ecs, "Entity4", Vec3::DOWN + Vec3::RIGHT, Vec3::ZERO, Vec3::ONE * 0.1f)
+            .is_a(squarePrefab)
+        );
+    entity.get_mut<Material>()->color = Color32::CYAN;
 
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)

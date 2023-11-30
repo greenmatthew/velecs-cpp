@@ -571,13 +571,13 @@ void RenderingECSModule::InitSwapchain()
     vkb::SwapchainBuilder swapchainBuilder = vkb::SwapchainBuilder{_chosenGPU, _device, _surface};
 
     // use this if u need to test the Color32 struct, otherwise the displayed color will be slightly different, probably brighter.
-    // VkSurfaceFormatKHR surfaceFormat = {};
-    // surfaceFormat.colorSpace = VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
-    // surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
+    VkSurfaceFormatKHR surfaceFormat = {};
+    surfaceFormat.colorSpace = VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT;
+    surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
 
     vkb::Result<vkb::Swapchain> vkbSwapchainRet = swapchainBuilder
-        // .set_desired_format(surfaceFormat)
-        .use_default_format_selection()
+        .set_desired_format(surfaceFormat)
+        // .use_default_format_selection()
         .build()
         ;
     
@@ -988,10 +988,11 @@ void RenderingECSModule::PreDrawStep(float deltaTime)
 
     VK_CHECK(vkBeginCommandBuffer(_mainCommandBuffer, &cmdBeginInfo));
 
-    //make a clear-color from frame number. This will flash with a 120*pi frame period.
     VkClearValue clearValue = {};
-    float flash = abs(sin(_frameNumber / 3840.f));
-    clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
+    // float flash = abs(sin(_frameNumber / 3840.f));
+    // clearValue.color = { { 0.0f, 0.0f, flash, 1.0f } };
+    Color32 color = Color32::FromHex("#181818");
+    clearValue.color = { { color.r/255.0f, color.g/255.0f, color.b/255.0f, color.a/255.0f } };
 
     //start the main renderpass.
     //We will use the clear color from above, and the framebuffer of the index the swapchain gave us

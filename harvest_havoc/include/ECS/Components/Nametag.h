@@ -46,9 +46,8 @@ public:
 
     // Public Methods
 
-    static void AddTo(flecs::world& ecs, flecs::entity entity);
-
-    static void AddTo(flecs::world& ecs, flecs::entity entity, const velecs::Vec3 offset);
+    static flecs::entity& AddTo(flecs::world& ecs, flecs::entity entity, const std::string& name, const velecs::Vec3 offset);
+    static flecs::entity& AddTo(flecs::world& ecs, flecs::entity entity);
 
     void Display
     (

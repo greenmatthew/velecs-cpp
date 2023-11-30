@@ -13,6 +13,8 @@
 #include "velecs/ECS/Modules/PipelineECSModule.h"
 #include "velecs/ECS/Modules/CommonECSModule.h"
 
+#include "velecs/ECS/Entity.h"
+
 #include <flecs.h>
 
 namespace velecs {
