@@ -12,10 +12,9 @@
 
 #include <velecs/ECS/Modules/PipelineECSModule.h>
 
-#include <velecs/ECS/Modules/RenderingECSModule.h>
 #include <velecs/ECS/Modules/InputECSModule.h>
-#include <velecs/ECS/Modules/PhysicsECSModule.h>
 
+#include "ECS/Modules/EnvironmentECSModule.h"
 #include "ECS/Modules/PlayerECSModule.h"
 
 using namespace velecs;
@@ -31,6 +30,8 @@ ECSManager::ECSManager(velecs::VelECSEngine& engine)
 {
     // Required for ability to shutdown the application
     ecs.import<InputECSModule>();
+
+    ecs.import<EnvironmentECSModule>();
     
     ecs.import<PlayerECSModule>();
 }

@@ -16,8 +16,9 @@
 #include <velecs/ECS/Modules/RenderingECSModule.h>
 #include <velecs/ECS/Modules/PhysicsECSModule.h>
 
+#include "ECS/Modules/NametagECSModule.h"
+
 #include "ECS/Components/Player.h"
-#include "ECS/Components/Nametag.h"
 
 #include <velecs/Math/Vec3.h>
 

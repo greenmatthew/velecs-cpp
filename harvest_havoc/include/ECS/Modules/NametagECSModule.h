@@ -1,6 +1,6 @@
-/// @file    Player.h
+/// @file    NametagECSModule.h
 /// @author  Matthew Green
-/// @date    2023-11-14 16:40:25
+/// @date    2023-11-30 14:28:09
 /// 
 /// @section LICENSE
 /// 
@@ -10,36 +10,31 @@
 
 #pragma once
 
-#include <velecs/Math/Vec3.h>
+#include <velecs/ECS/Modules/IECSModule.h>
 
-#include <string>
+#include <velecs/ECS/Modules/RenderingECSModule.h>
+
+#include "ECS/Components/Nametag.h"
 
 namespace hh {
 
-/// @struct Player
+/// @struct NametagECSModule
 /// @brief Brief description.
 ///
 /// Rest of description.
-struct Player {
+struct NametagECSModule : public velecs::IECSModule<NametagECSModule> {
 public:
     // Enums
 
     // Public Fields
 
-    float baseMovementSpeed{ 2.0f };
-
-    velecs::Vec3 targetCamPos{ 0.0f, 0.0f, -2.0f };
-    float camZoomSpeed{ 10.0f }; // m/s
-    float camMinZoom{ 2.0f }; // m
-    float camMaxZoom{ 20.0f }; // m
-
     // Constructors and Destructors
 
-    /// @brief Default constructor.
-    Player() = default;
+    /// @brief Constructor.
+    NametagECSModule(flecs::world& ecs);
 
     /// @brief Default deconstructor.
-    ~Player() = default;
+    ~NametagECSModule() = default;
 
     // Public Methods
 

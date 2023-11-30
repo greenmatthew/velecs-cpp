@@ -10,11 +10,15 @@
 
 #pragma once
 
-#include <string>
+#include <velecs/ECS/Modules/RenderingECSModule.h>
 
 #include <imgui.h>
 
-namespace velecs {
+#include <flecs.h>
+
+#include <string>
+
+namespace hh {
 
 /// @struct Nametag
 /// @brief Brief description.
@@ -26,71 +30,32 @@ public:
 
     // Public Fields
 
-    std::string name;
+    std::string name{"Default Nametag Value"};
 
     // Constructors and Destructors
 
     /// @brief Default constructor.
     Nametag() = default;
 
+    Nametag(const flecs::string_view& name);
+
+    Nametag(const std::string& name);
+
     /// @brief Default deconstructor.
     ~Nametag() = default;
 
     // Public Methods
 
-    static void AddTo(flecs::world& ecs, flecs::entity entity)
-    {
-        flecs::entity nametagPrefab = CommonECSModule::GetPrefab(ecs, "hh::PlayerECSModule::PR_Nametag");
+    static void AddTo(flecs::world& ecs, flecs::entity entity);
 
-        flecs::entity nametagEntity = ecs.entity()
-            .is_a(nametagPrefab)
-            ;
-        
-        Vec3 offset = ((entity.get<Transform>()->scale.y * 0.5f) + 0.1f) * Vec3::UP;
-
-        nametagEntity.set<Transform>({nametagEntity, offset});
-        nametagEntity.child_of(entity);
-    }
-
-    static void AddTo(flecs::world& ecs, flecs::entity entity, const Vec3 offset)
-    {
-        flecs::entity nametagPrefab = CommonECSModule::GetPrefab(ecs, "hh::PlayerECSModule::PR_Nametag");
-
-        flecs::entity nametagEntity = ecs.entity()
-            .is_a(nametagPrefab)
-            ;
-        nametagEntity.set<Transform>({nametagEntity, offset});
-        nametagEntity.child_of(entity);
-    }
+    static void AddTo(flecs::world& ecs, flecs::entity entity, const velecs::Vec3 offset);
 
     void Display
     (
-        const Transform& transform,
-        const Transform* const cameraTransform,
-        const PerspectiveCamera* const perspectiveCamera,
-        const float fontScale
-    ) const
-    {
-        Vec2 screenPos = transform.GetScreenPosition(cameraTransform, perspectiveCamera);
-        ImVec2 windowPos = ImVec2(screenPos.x, screenPos.y);
-        ImVec2 windowPivotPos = ImVec2(0.5f, 0.5f);
-        ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivotPos);
-
-        ImGuiWindowFlags windowFlags =
-            ImGuiWindowFlags_NoDecoration
-            | ImGuiWindowFlags_AlwaysAutoResize
-            | ImGuiWindowFlags_NoSavedSettings
-            | ImGuiWindowFlags_NoFocusOnAppearing
-            | ImGuiWindowFlags_NoNav
-            | ImGuiWindowFlags_NoBackground
-            ;
-
-        const std::string name = transform.GetParent().name();
-        const std::string windowName = name + " Nametag";
-        ImGui::Begin(windowName.c_str(), nullptr, windowFlags);
-        ImGui::Text(name.c_str());
-        ImGui::End();
-    }
+        const velecs::Transform& transform,
+        const velecs::Transform* const cameraTransform,
+        const velecs::PerspectiveCamera* const perspectiveCamera
+    ) const;
 
 protected:
     // Protected Fields
@@ -103,4 +68,4 @@ private:
     // Private Methods
 };
 
-} // namespace velecs
+} // namespace hh

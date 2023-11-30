@@ -30,8 +30,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     ecs.import<InputECSModule>();
     ecs.import<RenderingECSModule>();
     ecs.import<PhysicsECSModule>();
-
-    ecs.component<Nametag>();
+    ecs.import<NametagECSModule>();
 
     // CreatePlayerEntity("Player");
 
@@ -42,7 +41,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     ecs.set<MainCamera>({cameraEntity, extent});
 
-    flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "velecs::CommonECSModule::PR_Entity");
     flecs::entity trianglePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_TriangleRender");
     flecs::entity squarePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_SquareRender");
     flecs::entity player = ecs.entity("Player")
@@ -56,11 +54,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     // player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
     
     cameraEntity.child_of(player);
-
-    flecs::entity nametagPrefab = ecs.prefab("PR_Nametag")
-        .is_a(entityPrefab)
-        .add<Nametag>()
-        ;
 
     Nametag::AddTo(ecs, player);
 
@@ -127,40 +120,6 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
                 HandleInput(deltaTime, input, cameraTransform, player, transform, linear);
             }
         });
-    
-    ecs.system<Transform, Nametag>()
-        .kind(stages->Draw)
-        .iter([this](flecs::iter& it, Transform* transforms, Nametag* nametags)
-        {
-            float deltaTime = it.delta_time();
-
-            flecs::world ecs = it.world();
-
-            flecs::entity mainCameraEntity = ecs.singleton<MainCamera>();
-            flecs::entity cameraEntity = mainCameraEntity.get<MainCamera>()->camera;
-            const Transform* const cameraTransform = cameraEntity.get<Transform>();
-            const PerspectiveCamera* const perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
-
-            flecs::entity playerEntity = ecs.lookup("Player");
-            float fontScale = 1.0f;
-            if (playerEntity != flecs::entity::null())
-            {
-                const Player* const player = playerEntity.get<Player>();
-                player->camMinZoom;
-                player->camMaxZoom;
-
-                const float zoomPercent = (player->camMaxZoom - abs(cameraTransform->position.z) - player->camMinZoom) / (player->camMaxZoom - player->camMinZoom);
-                fontScale *= zoomPercent;
-            }
-
-            for (auto i : it)
-            {
-                Transform& transform = transforms[i];
-                Nametag& nametag = nametags[i];
-                nametag.Display(transform, cameraTransform, perspectiveCamera, fontScale);
-            }
-        }
-    );
 }
 
 // Public Methods
@@ -204,7 +163,7 @@ void PlayerECSModule::HandleInput
         ((input->IsHeld(SDLK_w)) ? Vec3::UP : Vec3::ZERO) +
         ((input->IsHeld(SDLK_s)) ? Vec3::DOWN : Vec3::ZERO)).Normalize();
 
-    linear.velocity = 1.0f * (velDir);
+    linear.velocity = player.baseMovementSpeed * (velDir);
 
 
     player.targetCamPos = Vec3
