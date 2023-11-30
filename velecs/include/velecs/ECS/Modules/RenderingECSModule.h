@@ -124,6 +124,8 @@ private:
     VkSemaphore _presentSemaphore{VK_NULL_HANDLE}, _renderSemaphore{VK_NULL_HANDLE}; /// @brief Semaphore for synchronizing image presentation.
     VkFence _renderFence{VK_NULL_HANDLE}; /// @brief Fence for synchronizing rendering operations.
 
+    VkPipeline currentPipeline{VK_NULL_HANDLE};
+
     VkPipelineLayout _trianglePipelineLayout{VK_NULL_HANDLE}; /// @brief Handle to the pipeline layout.
     VkPipeline _trianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
     VkPipeline _redTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
@@ -203,6 +205,8 @@ private:
     void PreDrawStep(float deltaTime);
 
     void PostDrawStep(float deltaTime);
+
+    void BindPipeline(const Material& material);
 
     void Draw
     (

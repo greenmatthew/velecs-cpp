@@ -212,6 +212,11 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                     UploadMesh(mesh);
                 }
 
+                if (currentPipeline != material.pipeline)
+                {
+                    BindPipeline(material);
+                }
+
                 if (usingPerspective)
                 {
                     const glm::mat4 renderMatrix = transform.GetRenderMatrix(cameraTransform, perspectiveCamera);
@@ -1073,13 +1078,7 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
     _frameNumber++;
 }
 
-void RenderingECSModule::Draw
-(
-    const float deltaTime,
-    const glm::mat4 renderMatrix,
-    const SimpleMesh& mesh,
-    const Material& material
-)
+void RenderingECSModule::BindPipeline(const Material& material)
 {
     vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
 
@@ -1097,7 +1096,16 @@ void RenderingECSModule::Draw
 
     vkCmdSetViewport(_mainCommandBuffer, 0, 1, &viewport);
     vkCmdSetScissor(_mainCommandBuffer, 0, 1, &scissor);
+}
 
+void RenderingECSModule::Draw
+(
+    const float deltaTime,
+    const glm::mat4 renderMatrix,
+    const SimpleMesh& mesh,
+    const Material& material
+)
+{
     //bind the mesh vertex buffer with offset 0
     VkDeviceSize offset = 0;
     vkCmdBindVertexBuffers(_mainCommandBuffer, 0, 1, &mesh._vertexBuffer._buffer, &offset);
