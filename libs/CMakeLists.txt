@@ -1,3 +1,13 @@
+# @file    CMakeLists.txt
+# @author  Matthew Green
+# @date    2023-11-30 13:48:34
+# 
+# @section LICENSE
+# 
+# Copyright (c) 2023 Matthew Green - All rights reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+
 cmake_minimum_required(VERSION 3.10)
 
 # Assuming VULKAN_SDK environment variable is set to the root of the Vulkan SDK
@@ -60,12 +70,6 @@ target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2 SDL2main)
 set(VK_BOOTSTRAP_DISABLE_WARNINGS OFF CACHE BOOL "Disable warnings during compilation")
 set(VK_BOOTSTRAP_WERROR OFF CACHE BOOL "Enable warnings as errors during compilation")
 add_subdirectory(vkbootstrap)
-
-
-
-# tiny_obj_loader (header only)
-add_library(tinyobjloader STATIC tinyobjloader/tiny_obj_loader.h tinyobjloader/tiny_obj_loader.cc)
-target_include_directories(tinyobjloader PUBLIC tinyobjloader)
 
 
 

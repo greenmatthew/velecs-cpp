@@ -1,3 +1,13 @@
+# @file    CMakeLists.txt
+# @author  Matthew Green
+# @date    2023-11-30 13:47:14
+# 
+# @section LICENSE
+# 
+# Copyright (c) 2023 Matthew Green - All rights reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
+
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0079 NEW)
 
@@ -27,7 +37,6 @@ target_link_libraries(velecs
     flecs::flecs_static
     vk-bootstrap
     imgui
-    tinyobjloader
     assimp
 )
 
@@ -41,6 +50,5 @@ target_link_libraries(HarvestHavoc PRIVATE
     flecs::flecs_static
     vk-bootstrap
     imgui
-    tinyobjloader
     assimp
 )
