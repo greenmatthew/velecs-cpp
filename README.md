@@ -1,5 +1,10 @@
 # HarvestHavoc
 
+## Content
+
+- [How to Build](#how-to-build)
+- [Credits](#credits)
+
 ## How to Build
 
 > ***\*\*Requirements: Windows 10 or 11\*\****
@@ -151,3 +156,7 @@ After generating the build system files, you have two main ways to build and run
         > ```./bin/Release/HarvestHavoc.exe```
     - For a Debug build, use:
         > ```./bin/Debug/HarvestHavoc.exe```
+
+## Credits
+
+To see the credits please go [here](/CREDITS.md).
