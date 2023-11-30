@@ -44,7 +44,7 @@ struct OrthoCamera : public Camera {
 
     const glm::mat4 GetProjectionMatrix() const override
     {
-        return glm::mat4(1.0f);
+        throw std::exception("Method is not implemented yet.");
     }
 
 protected:

@@ -6,6 +6,8 @@ set(VULKAN_SDK $ENV{VULKAN_SDK})
 find_package(Vulkan REQUIRED)
 
 add_library(glm INTERFACE)
+target_compile_definitions(glm INTERFACE GLM_FORCE_DEPTH_ZERO_TO_ONE)
+
 add_library(vma INTERFACE)
 
 

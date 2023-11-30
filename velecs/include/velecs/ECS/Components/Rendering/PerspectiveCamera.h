@@ -42,7 +42,10 @@ struct PerspectiveCamera : public Camera {
         const float nearPlaneOffset = 0.1f,
         const float farPlaneOffset = 200.0f)
         : Camera(resolution, nearPlaneOffset, farPlaneOffset),
-            verticalFov(verticalFov) {}
+            verticalFov(verticalFov)
+        {
+            RecalculateProjectionMatrix();
+        }
     
     PerspectiveCamera(PerspectiveCamera&&) = default;
 
@@ -56,6 +59,7 @@ struct PerspectiveCamera : public Camera {
     const float& SetVerticalFov(const float verticalFov)
     {
         this->verticalFov = verticalFov;
+        RecalculateProjectionMatrix();
     }
 
     const float& GetVerticalFov() const
@@ -65,15 +69,29 @@ struct PerspectiveCamera : public Camera {
 
     const glm::mat4 GetProjectionMatrix() const override
     {
-        glm::mat4 projection = glm::perspective
+        return glm::perspective
         (
             glm::radians(GetVerticalFov()),
             GetAspectRatio(),
             nearPlaneOffset,
             farPlaneOffset
         );
+    }
 
-        return projection;
+    const glm::mat4& GetProjectionMatrix2() const
+    {
+        return projectionMatrix;
+    }
+
+    void RecalculateProjectionMatrix()
+    {
+        projectionMatrix = glm::perspective
+        (
+            glm::radians(GetVerticalFov()),
+            GetAspectRatio(),
+            nearPlaneOffset,
+            farPlaneOffset
+        );
     }
 
 protected:
@@ -85,6 +103,8 @@ protected:
 
 private:
     // Private Fields
+
+    glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
     // Private Methods
 };

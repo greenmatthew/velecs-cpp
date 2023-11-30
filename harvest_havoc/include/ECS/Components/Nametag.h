@@ -38,11 +38,42 @@ public:
 
     // Public Methods
 
-    void Display(const Transform& transform, const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
+    static void AddTo(flecs::world& ecs, flecs::entity entity)
     {
-        Vec2 absPos = transform.GetScreenPosition(cameraTransform, perspectiveCamera);
-        ImVec2 windowPos = ImVec2(absPos.x, absPos.y);
-        ImVec2 windowPivotPos = ImVec2(0.5f, 0.5f); // Pivot at the top-right corner of the window
+        flecs::entity nametagPrefab = CommonECSModule::GetPrefab(ecs, "hh::PlayerECSModule::PR_Nametag");
+
+        flecs::entity nametagEntity = ecs.entity()
+            .is_a(nametagPrefab)
+            ;
+        
+        Vec3 offset = ((entity.get<Transform>()->scale.y * 0.5f) + 0.1f) * Vec3::UP;
+
+        nametagEntity.set<Transform>({nametagEntity, offset});
+        nametagEntity.child_of(entity);
+    }
+
+    static void AddTo(flecs::world& ecs, flecs::entity entity, const Vec3 offset)
+    {
+        flecs::entity nametagPrefab = CommonECSModule::GetPrefab(ecs, "hh::PlayerECSModule::PR_Nametag");
+
+        flecs::entity nametagEntity = ecs.entity()
+            .is_a(nametagPrefab)
+            ;
+        nametagEntity.set<Transform>({nametagEntity, offset});
+        nametagEntity.child_of(entity);
+    }
+
+    void Display
+    (
+        const Transform& transform,
+        const Transform* const cameraTransform,
+        const PerspectiveCamera* const perspectiveCamera,
+        const float fontScale
+    ) const
+    {
+        Vec2 screenPos = transform.GetScreenPosition(cameraTransform, perspectiveCamera);
+        ImVec2 windowPos = ImVec2(screenPos.x, screenPos.y);
+        ImVec2 windowPivotPos = ImVec2(0.5f, 0.5f);
         ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivotPos);
 
         ImGuiWindowFlags windowFlags =

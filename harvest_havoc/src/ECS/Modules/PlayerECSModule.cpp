@@ -35,62 +35,30 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
 
     // CreatePlayerEntity("Player");
 
-    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f,-2.0f}, Vec3::ZERO, Vec2{1700.0f, 900.0f});
+    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f, -2.0f}, Vec3{0.0f, 0.0f, 0.0f}, Vec2{1700.0f, 900.0f});
     ecs.set<MainCamera>({cameraEntity});
 
     flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "velecs::CommonECSModule::PR_Entity");
     flecs::entity trianglePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_TriangleRender");
     flecs::entity squarePrefab = CommonECSModule::GetPrefab(ecs, "velecs::RenderingECSModule::PR_SquareRender");
-    flecs::entity player = ecs.entity()
+    flecs::entity player = ecs.entity("Player")
         .is_a(trianglePrefab)
-        .set_name("Player")
         .add<Player>()
         .add<LinearKinematics>()
+        .add<AngularKinematics>()
         ;
+    player.get_mut<Transform>()->entity = player;
+    player.get_mut<Material>()->color = Color32::GREEN;
     // player.set_override<SimpleMesh>({SimpleMesh::MONKEY()});
     
-    player.get_mut<Material>()->color = Color32::GREEN;
-    // player.get_mut<Transform>()->scale = Vec3::ZERO;
-    
-    player.get_mut<Transform>()->entity = player;
-    // player.get_mut<Transform>()->position = Vec3::BACKWARD * 2.0f;
-    // player.get_mut<Transform>()->rotation.x = 90.0f;
-    // player.get_mut<Transform>()->rotation.y = 180.0f;
-    // player.set<AngularKinematics>({Vec3(45.0f, 0.0f, 0.0f), Vec3::ZERO});
-    
     cameraEntity.child_of(player);
-
-    Transform& cameraTransform = *cameraEntity.get_ref<Transform>().get();
-    flecs::entity parent = flecs::entity::null();
-    if (cameraTransform.TryGetParent(parent))
-    {
-        std::cout << parent.name() << std::endl;
-    }
-    const Transform* parentTransform;
-    if (cameraTransform.TryGetParentTransform(parentTransform))
-    {
-        std::cout << parentTransform->position << std::endl;
-    }
-
-    std::cout << cameraTransform.GetAbsPosition() << std::endl;
-
-    cameraTransform.scale = Vec3::ONE * 2.5f;
-
-    std::cout << player.get<Transform>()->GetCameraEntity().name() << std::endl;
-
-    // exit(0);
 
     flecs::entity nametagPrefab = ecs.prefab("PR_Nametag")
         .is_a(entityPrefab)
         .add<Nametag>()
         ;
 
-    flecs::entity nametagEntity = ecs.entity()
-        .is_a(nametagPrefab)
-        ;
-    nametagEntity.get_mut<Transform>()->entity = nametagEntity;
-    
-    nametagEntity.child_of(player);
+    Nametag::AddTo(ecs, player);
 
     flecs::entity entity1 = ecs.entity()
         .is_a(trianglePrefab)
@@ -99,6 +67,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity1.get_mut<Transform>()->entity = entity1;
     entity1.get_mut<Transform>()->position = Vec3::UP + Vec3::RIGHT;
     entity1.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
+    Nametag::AddTo(ecs, entity1);
 
     flecs::entity entity2 = ecs.entity()
         .is_a(squarePrefab)
@@ -108,6 +77,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity2.get_mut<Transform>()->position = Vec3::UP + Vec3::LEFT;
     entity2.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
     entity2.get_mut<Material>()->color = Color32::YELLOW;
+    Nametag::AddTo(ecs, entity2);
 
     flecs::entity entity3 = ecs.entity()
         .is_a(squarePrefab)
@@ -117,6 +87,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity3.get_mut<Transform>()->position = Vec3::DOWN + Vec3::RIGHT;
     entity3.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
     entity3.get_mut<Material>()->color = Color32::ORANGE;
+    Nametag::AddTo(ecs, entity3);
     
     flecs::entity entity4 = ecs.entity()
         .is_a(squarePrefab)
@@ -126,30 +97,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     entity4.get_mut<Transform>()->position = Vec3::DOWN + Vec3::LEFT;
     entity4.get_mut<Transform>()->scale = Vec3::ONE * 0.1f;
     entity4.get_mut<Material>()->color = Color32::WHITE;
-    
-    ecs.system()
-        .kind(stages->Update)
-        .iter([this](flecs::iter& it)
-        {
-            flecs::world ecs = it.world();
-
-            flecs::entity cameraEntity = ecs.singleton<MainCamera>().get<MainCamera>()->camera;
-            const Transform* const cameraTransform = cameraEntity.get<Transform>();
-            const PerspectiveCamera* const perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
-
-            flecs::entity player = ecs.lookup("hh::PlayerECSModule::Player");
-            flecs::entity entity1 = ecs.lookup("hh::PlayerECSModule::Entity1");
-            flecs::entity entity2 = ecs.lookup("hh::PlayerECSModule::Entity2");
-            flecs::entity entity3 = ecs.lookup("hh::PlayerECSModule::Entity3");
-            flecs::entity entity4 = ecs.lookup("hh::PlayerECSModule::Entity4");
-
-            std::cout << "player screen pos: " << player.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;
-            std::cout << "entity1 screen pos: " << entity1.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;
-            std::cout << "entity2 screen pos: " << entity2.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
-            std::cout << "entity3 screen pos: " << entity3.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
-            std::cout << "entity4 screen pos: " << entity4.get<Transform>()->GetScreenPosition(cameraTransform, perspectiveCamera) << std::endl;    
-        }
-    );
+    Nametag::AddTo(ecs, entity4);
 
     ecs.system<Player, Transform, LinearKinematics>()
         .kind(stages->Update)
@@ -189,12 +137,23 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
             const Transform* const cameraTransform = cameraEntity.get<Transform>();
             const PerspectiveCamera* const perspectiveCamera = cameraEntity.get<PerspectiveCamera>();
 
+            flecs::entity playerEntity = ecs.lookup("Player");
+            float fontScale = 1.0f;
+            if (playerEntity != flecs::entity::null())
+            {
+                const Player* const player = playerEntity.get<Player>();
+                player->camMinZoom;
+                player->camMaxZoom;
+
+                const float zoomPercent = (player->camMaxZoom - abs(cameraTransform->position.z) - player->camMinZoom) / (player->camMaxZoom - player->camMinZoom);
+                fontScale *= zoomPercent;
+            }
+
             for (auto i : it)
             {
                 Transform& transform = transforms[i];
                 Nametag& nametag = nametags[i];
-
-                nametag.Display(transform, cameraTransform, perspectiveCamera);
+                nametag.Display(transform, cameraTransform, perspectiveCamera, fontScale);
             }
         }
     );
@@ -244,9 +203,13 @@ void PlayerECSModule::HandleInput
     linear.velocity = 1.0f * (velDir);
 
 
-    player.targetCamPos = player.targetCamPos + (input->mouseWheel.y * Vec3::BACKWARD);
+    player.targetCamPos = Vec3
+    (
+        cameraTransform->position.x,
+        cameraTransform->position.y,
+        std::clamp(player.targetCamPos.z - input->mouseWheel.y, -player.camMaxZoom, -player.camMinZoom)
+    );
     // Max and min are flipped and negative bc of the coordinate system
-    player.targetCamPos.z = std::clamp(player.targetCamPos.z, -player.camMaxZoom, -player.camMinZoom);
     cameraTransform->position = Vec3::Lerp(cameraTransform->position, player.targetCamPos, player.camZoomSpeed * deltaTime);
 
     if (input->IsPressed(SDLK_KP_PLUS))
@@ -259,6 +222,36 @@ void PlayerECSModule::HandleInput
     {
         cameraTransform->rotation.x += 5.0f;
         std::cout << cameraTransform->rotation << std::endl;
+    }
+
+
+    if (input->IsPressed(SDLK_RIGHT))
+    {
+        cameraTransform->position -= Vec3::RIGHT * 0.25f;
+        std::cout << "pressed right arrow key" << std::endl;
+        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
+        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
+    }
+    if (input->IsPressed(SDLK_LEFT))
+    {
+        cameraTransform->position -= Vec3::LEFT * 0.25f;
+        std::cout << "pressed left arrow key" << std::endl;
+        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
+        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
+    }
+    if (input->IsPressed(SDLK_UP))
+    {
+        cameraTransform->position -= Vec3::UP * 0.25f;
+        std::cout << "pressed up arrow key" << std::endl;
+        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
+        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
+    }
+    if (input->IsPressed(SDLK_DOWN))
+    {
+        cameraTransform->position -= Vec3::DOWN * 0.25f;
+        std::cout << "pressed down arrow key" << std::endl;
+        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
+        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
     }
 }
 

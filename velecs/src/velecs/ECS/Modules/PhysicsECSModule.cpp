@@ -28,10 +28,6 @@ namespace velecs {
 PhysicsECSModule::PhysicsECSModule(flecs::world& ecs)
     : IECSModule(ecs)
 {
-    // ecs.module<PhysicsECSModule>();
-
-    // auto stages = ecs.singleton<PipelineStages>().get<PipelineStages>();
-
     ecs.component<Transform>();
     ecs.component<LinearKinematics>();
     ecs.component<AngularKinematics>();
@@ -48,20 +44,6 @@ PhysicsECSModule::PhysicsECSModule(flecs::world& ecs)
 
                     linear.velocity += linear.acceleration * deltaTime * deltaTime;
                     transform.position += linear.velocity * deltaTime;
-
-                    //auto entity = it.entity(i);
-                    //const char* entityName = entity.name();
-                    //if (entityName)
-                    //{
-                    //    std::cout << "name: " << entityName << std::endl;
-                    //}
-                    //else
-                    //{
-                    //    std::cout << "name: n/a" << std::endl;
-                    //}
-                    //std::cout << "id: " << entity.id() << std::endl;
-                    //std::cout << "vel: " << linear.velocity << std::endl;
-                    //std::cout << "pos: " << transform.position << '\n' << std::endl;
                 }
             }
     );
@@ -82,8 +64,6 @@ PhysicsECSModule::PhysicsECSModule(flecs::world& ecs)
             }
     );
 }
-
-
 
 // Public Methods
 

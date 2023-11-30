@@ -58,7 +58,7 @@ public:
 
     // Public Methods
 
-/// @brief Gets the parent entity of this transform's entity.
+    /// @brief Gets the parent entity of this transform's entity.
     /// @throws std::runtime_error if the entity handle is not set.
     /// @return The parent entity.
     flecs::entity GetParent() const;
@@ -77,10 +77,6 @@ public:
     /// @param[out] transform The Transform component of the parent entity, if found.
     /// @return True if the parent's Transform component is found, false otherwise.
     bool TryGetParentTransform(const Transform*& transform) const;
-
-    /// @brief Calculates the absolute position of the entity in the world.
-    /// @return The absolute world position.
-    const Vec3 GetAbsPosition() const;
 
     /// @brief Retrieves the entity associated with the main camera in the scene.
     /// @throws std::runtime_error if the MainCamera component is missing or uninitialized.
@@ -103,10 +99,17 @@ public:
     /// @return A mutable pointer to the Transform component of the main camera entity.
     Transform* const GetCameraTransform();
 
-    /// @brief Computes the model matrix based on the entity's position, rotation, and scale.
-    /// @param[in] useScale Determines whether to include scaling in the matrix.
-    /// @return The computed model matrix.
-    glm::mat4 GetModelMatrix(const bool useScale = true) const;
+    /// @brief Calculates the absolute position of the entity in the world.
+    /// @return The absolute world position.
+    const Vec3 GetAbsPosition() const;
+
+    Vec3 GetForwardVector() const;
+
+    glm::mat4 GetWorldMatrix() const;
+
+    glm::mat4 GetWorldMatrixNoScale() const;
+
+    glm::mat4 GetViewMatrix() const;
 
     /// @brief Calculates the render matrix for perspective camera rendering.
     /// @param[in] cameraTransform The Transform component of the camera.

@@ -784,7 +784,7 @@ void RenderingECSModule::InitPipelines()
     pipelineBuilder._scissor.extent = windowExtent;
 
     //configure the rasterizer to draw filled triangles
-    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE);
+    pipelineBuilder._rasterizer = vkinit::rasterization_state_create_info(VK_POLYGON_MODE_FILL, VK_CULL_MODE_NONE, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 
     //we don't use multisampling, so just run the default one
     pipelineBuilder._multisampling = vkinit::multisampling_state_create_info();

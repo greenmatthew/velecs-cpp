@@ -12,7 +12,9 @@
 
 #include "velecs/Math/Vec2.h"
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>  // For transformation functions
+#include <glm/gtx/string_cast.hpp>       // For glm::to_string
 
 namespace velecs {
 
@@ -78,19 +80,6 @@ bool Transform::TryGetParentTransform(const Transform*& transform) const
     return true;
 }
 
-const Vec3 Transform::GetAbsPosition() const
-{
-    Vec3 absPosition = position;
-    const Transform* currentTransform = this;
-
-    while (currentTransform->TryGetParentTransform(currentTransform))
-    {
-        absPosition -= currentTransform->position; // Accumulate the position
-    }
-
-    return absPosition;
-}
-
 flecs::entity Transform::GetCameraEntity() const
 {
     const MainCamera * const mainCamera = entity.world().get<MainCamera>();
@@ -144,78 +133,141 @@ Transform* const Transform::GetCameraTransform()
     return transform;
 }
 
-glm::mat4 Transform::GetModelMatrix(const bool useScale /* = true*/) const
+const Vec3 Transform::GetAbsPosition() const
 {
-    glm::mat4 model = glm::mat4(1.0f); 
-
-    // Apply scaling
-    if (useScale)
+    const Transform* parentTransform;
+    if (TryGetParentTransform(parentTransform))
     {
-        model = glm::scale(model, (glm::vec3)scale);
+        return position + parentTransform->GetAbsPosition();
     }
+    else
+    {
+        return position;
+    }
+}
 
-    // Apply rotation around the x, y, and z axes
-    model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
-    model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
-    model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+Vec3 Transform::GetForwardVector() const
+{
+    // Assuming rotation.x = pitch, rotation.y = yaw, rotation.z = roll
+    // For a camera facing along the negative Z-axis by default
+    float yaw = glm::radians(rotation.y);
+    float pitch = glm::radians(rotation.x);
 
-    glm::mat4 worldTranslation = glm::translate(glm::mat4(1.0f), (glm::vec3)GetAbsPosition());
+    Vec3 forward
+    {
+        sin(yaw) * cos(pitch),
+        -sin(pitch), // Negative because Y is down in Vulkan
+        -cos(yaw) * cos(pitch)
+    };
 
-    return worldTranslation * model;
+    return forward.Normalize();
+}
+
+glm::mat4 Transform::GetWorldMatrix() const
+{
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position));
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(scale));
+
+    glm::mat4 localTransformation = translationMatrix * rotationMatrix * scaleMatrix;
+
+    const Transform* parentTransform;
+    if (TryGetParentTransform(parentTransform))
+    {
+        return parentTransform->GetWorldMatrix() * localTransformation;
+    }
+    else
+    {
+        return localTransformation;
+    }
+}
+
+glm::mat4 Transform::GetWorldMatrixNoScale() const
+{
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position));
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+
+    glm::mat4 localTransformation = translationMatrix * rotationMatrix;
+
+    const Transform* parentTransform;
+    if (TryGetParentTransform(parentTransform))
+    {
+        return parentTransform->GetWorldMatrixNoScale() * localTransformation;
+    }
+    else
+    {
+        return localTransformation;
+    }
+}
+
+glm::mat4 Transform::GetViewMatrix() const
+{
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-position));
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+    glm::mat4 localTransform  = translationMatrix * rotationMatrix;
+
+    const Transform* parentTransform;
+    if (TryGetParentTransform(parentTransform))
+    {
+        return glm::inverse(parentTransform->GetWorldMatrixNoScale() * localTransform);
+    }
+    else
+    {
+        return glm::inverse(localTransform);
+    } 
 }
 
 glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
 {
-    // Compute the view matrix
-    glm::mat4 view = cameraTransform->GetModelMatrix(false);
+    glm::mat4 view = cameraTransform->GetViewMatrix();
 
-    // Compute the projection matrix
     glm::mat4 projection = perspectiveCamera->GetProjectionMatrix();
 
-    // Compute the model matrix
-    glm::mat4 model = GetModelMatrix();
+    glm::mat4 world = GetWorldMatrix();
 
-    return projection * view * model;
+    return projection * view * world;
 }
 
 glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const OrthoCamera* const orthoCamera) const
 {
     // Compute the view matrix
-    glm::mat4 view = cameraTransform->GetModelMatrix(false);
+    glm::mat4 view = cameraTransform->GetViewMatrix();
 
     // Compute the projection matrix
     glm::mat4 projection = orthoCamera->GetProjectionMatrix();
 
     // Compute the model matrix
-    glm::mat4 model = GetModelMatrix();
+    glm::mat4 world = GetWorldMatrix();
 
-    // Calculate the final mesh matrix
-    glm::mat4 meshMatrix = projection * view * model;
-
-    return meshMatrix;
+    return projection * view * world;
 }
 
 const Vec2 Transform::GetScreenPosition(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
 {
-    // Get the view matrix from the camera
-    glm::mat4 viewMatrix = cameraTransform->GetModelMatrix(false);
+    // Local space to world space
+    glm::vec4 worldSpacePos = GetWorldMatrixNoScale() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
-    // Get the projection matrix from the camera
+    // World space to camera (view) space
+    glm::mat4 viewMatrix = cameraTransform->GetViewMatrix();
+    glm::vec4 cameraSpacePos = viewMatrix * worldSpacePos;
+
+    // Camera space to clip space
     glm::mat4 projectionMatrix = perspectiveCamera->GetProjectionMatrix();
-
-    // Transform the world position to camera space
-    glm::vec4 cameraSpacePos = glm::inverse(viewMatrix) * glm::vec4((glm::vec3)this->GetAbsPosition(), 1.0f);
-
-    // Transform the camera space position to clip space
     glm::vec4 clipSpacePos = projectionMatrix * cameraSpacePos;
 
-    // Perform perspective division to get Normalized Device Coordinates (NDC)
+    // Perspective division to get NDC
     glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
 
-    // Map from NDC space [-1, 1] to screen space [0, resolution]
+    // NDC to screen space
     Vec2 screenPos;
     screenPos.x = (ndcSpacePos.x + 1) * 0.5f * perspectiveCamera->GetResolution().x;
-    screenPos.y = (1 - ndcSpacePos.y) * 0.5f * perspectiveCamera->GetResolution().y; // Y is inverted
+    screenPos.y = (ndcSpacePos.y + 1) * 0.5f * perspectiveCamera->GetResolution().y;  // Corrected for Vulkan's NDC
 
     return screenPos;
 }

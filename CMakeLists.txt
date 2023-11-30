@@ -22,6 +22,8 @@ target_link_libraries(velecs
     Vulkan::Vulkan
     SDL2
     SDL2main
+    glm
+    vma
     flecs::flecs_static
     vk-bootstrap
     imgui
@@ -34,6 +36,8 @@ target_link_libraries(HarvestHavoc PRIVATE
     Vulkan::Vulkan
     SDL2
     SDL2main
+    glm
+    vma
     flecs::flecs_static
     vk-bootstrap
     imgui

@@ -102,7 +102,6 @@ SimpleMesh SimpleMesh::Load(std::string filePath)
     return mesh;
 }
 
-
 bool SimpleMesh::TryLoad(const std::string& filePath, SimpleMesh*& mesh)
 {
     try
