@@ -67,7 +67,10 @@ public:
     static flecs::entity Create
     (
         flecs::world& ecs,
-        const flecs::entity parent
+        const flecs::entity parent,
+        const Vec3 position = Vec3::ZERO,
+        const Vec3 rotation = Vec3::ZERO,
+        const Vec3 scale = Vec3::ONE
     );
 
     static flecs::entity Create
@@ -78,6 +81,8 @@ public:
         const Vec3 scale = Vec3::ONE,
         const flecs::entity parent = flecs::entity::null()
     );
+
+    static flecs::entity Find(flecs::world& ecs, const std::string& searchPath);
 
 protected:
     // Protected Fields

@@ -66,10 +66,13 @@ flecs::entity Entity::Create
 flecs::entity Entity::Create
 (
     flecs::world& ecs,
-    const flecs::entity parent
+    const flecs::entity parent,
+    const Vec3 position /*= Vec3::ZERO*/,
+    const Vec3 rotation /*= Vec3::ZERO*/,
+    const Vec3 scale /*= Vec3::ONE*/
 )
 {
-    return Create(ecs, "", Vec3::ZERO, Vec3::ZERO, Vec3::ONE, parent);
+    return Create(ecs, "", position, rotation, scale, parent);
 }
 
 flecs::entity Entity::Create
@@ -82,6 +85,21 @@ flecs::entity Entity::Create
 )
 {
     return Create(ecs, "", position, rotation, scale, parent);
+}
+
+flecs::entity Entity::Find(flecs::world& ecs, const std::string& searchPath)
+{
+    flecs::entity entity = ecs.lookup(searchPath.c_str());
+    if (entity != flecs::entity::null() && !entity.has(flecs::Prefab))
+    {
+        return entity;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid entity: '" + searchPath + "'. Ensure the path is correctly formatted, "
+                                 "including any necessary parent-child relationships (e.g., 'Parent::Child') and "
+                                 "module prefixes (e.g., 'Module::PrefabName') if applicable.");
+    }
 }
 
 // Protected Fields

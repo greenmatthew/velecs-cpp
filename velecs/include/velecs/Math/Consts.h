@@ -19,5 +19,7 @@ namespace velecs {
     constexpr float RAD_TO_DEG = 180.0f / PI; /// @brief Conversion factor to convert radians to degrees.
     constexpr float FLOAT_POS_INFINITY = std::numeric_limits<float>::infinity(); /// @brief Representation of positive infinity in floating-point.
     constexpr float FLOAT_NEG_INFINITY = -FLOAT_POS_INFINITY; /// @brief Representation of negative infinity in floating-point.
+    constexpr float FLOAT_MAX_VALUE = std::numeric_limits<float>::max();
+    constexpr float FLOAT_MIN_VALUE = std::numeric_limits<float>::min();
 
 } // namespace velecs

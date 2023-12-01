@@ -117,15 +117,9 @@ Transform* const Transform::GetCameraTransform()
 
 const Vec3 Transform::GetAbsPosition() const
 {
-    const Transform* parentTransform;
-    if (TryGetParentTransform(parentTransform))
-    {
-        return position + parentTransform->GetAbsPosition();
-    }
-    else
-    {
-        return position;
-    }
+    glm::mat4 world = GetWorldMatrix();
+    glm::vec4 posV4 = world * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    return Vec3(posV4.x, posV4.y, posV4.z);
 }
 
 Vec3 Transform::GetForwardVector() const

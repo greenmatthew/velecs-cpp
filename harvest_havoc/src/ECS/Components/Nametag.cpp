@@ -41,10 +41,15 @@ flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity, const std
     return entity;
 }
 
-flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity)
+flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity, const std::string& name /*= ""*/)
 {
     Vec3 offset = ((entity.get<Transform>()->scale.y * 0.5f) + 0.1f) * Vec3::UP;
 
+    return AddTo(ecs, entity, name, offset);
+}
+
+flecs::entity& Nametag::AddTo(flecs::world& ecs, flecs::entity entity, const Vec3 offset)
+{
     return AddTo(ecs, entity, "", offset);
 }
 
