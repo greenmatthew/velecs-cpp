@@ -25,14 +25,6 @@ NametagECSModule::NametagECSModule(flecs::world& ecs)
 
     ecs.component<Nametag>();
 
-    flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "velecs::CommonECSModule::PR_Entity");
-    flecs::entity nametagPrefab = ecs.prefab("PR_Nametag")
-        .is_a(entityPrefab)
-        .add<Nametag>()
-        ;
-
-    std::cout << nametagPrefab.path() << std::endl;
-
     ecs.system<Transform, Nametag>()
         .kind(stages->Draw)
         .iter([this](flecs::iter& it, Transform* transforms, Nametag* nametags)
