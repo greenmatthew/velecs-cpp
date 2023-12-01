@@ -46,7 +46,7 @@ PlayerECSModule::PlayerECSModule(flecs::world& ecs)
     flecs::entity renderingECSModule = ecs.lookup("velecs::RenderingECSModule");
     const Rect extent = renderingECSModule.get<RenderingECSModule>()->GetWindowExtent();
 
-    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f, -2.0f}, Vec3{0.0f, 0.0f, 0.0f}, extent.max.x / extent.max.y);
+    flecs::entity cameraEntity = RenderingECSModule::CreatePerspectiveCamera(ecs, Vec3{0.0f, 0.0f, -10.0f}, Vec3{0.0f, 0.0f, 0.0f}, extent.max.x / extent.max.y);
     cameraEntity.child_of(player);
 
     ecs.set<MainCamera>({cameraEntity, extent});
@@ -149,48 +149,6 @@ void PlayerECSModule::HandleInput
     );
     // Max and min are flipped and negative bc of the coordinate system
     cameraTransform->position = Vec3::Lerp(cameraTransform->position, player.targetCamPos, player.camZoomSpeed * deltaTime);
-
-    if (input->IsPressed(SDLK_KP_PLUS))
-    {
-        cameraTransform->rotation.x += -5.0f;
-        std::cout << cameraTransform->rotation << std::endl;
-    }
-
-    if (input->IsPressed(SDLK_KP_MINUS))
-    {
-        cameraTransform->rotation.x += 5.0f;
-        std::cout << cameraTransform->rotation << std::endl;
-    }
-
-
-    if (input->IsPressed(SDLK_RIGHT))
-    {
-        cameraTransform->position -= Vec3::RIGHT * 0.25f;
-        std::cout << "pressed right arrow key" << std::endl;
-        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
-        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
-    }
-    if (input->IsPressed(SDLK_LEFT))
-    {
-        cameraTransform->position -= Vec3::LEFT * 0.25f;
-        std::cout << "pressed left arrow key" << std::endl;
-        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
-        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
-    }
-    if (input->IsPressed(SDLK_UP))
-    {
-        cameraTransform->position -= Vec3::UP * 0.25f;
-        std::cout << "pressed up arrow key" << std::endl;
-        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
-        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
-    }
-    if (input->IsPressed(SDLK_DOWN))
-    {
-        cameraTransform->position -= Vec3::DOWN * 0.25f;
-        std::cout << "pressed down arrow key" << std::endl;
-        std::cout << "new cam pos: " << cameraTransform->position << std::endl;
-        std::cout << "new cam abs pos: " << cameraTransform->GetAbsPosition() << '\n' << std::endl;
-    }
 }
 
 } // namespace hh

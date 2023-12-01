@@ -30,8 +30,8 @@ public:
 
     velecs::Vec3 targetCamPos{ 0.0f, 0.0f, -2.0f };
     float camZoomSpeed{ 10.0f }; // m/s
-    float camMinZoom{ 2.0f }; // m
-    float camMaxZoom{ 20.0f }; // m
+    float camMinZoom{ 10.0f }; // m
+    float camMaxZoom{ 25.0f }; // m
 
     // Constructors and Destructors
 
