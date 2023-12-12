@@ -218,6 +218,8 @@ private:
 
     template<typename TMesh>
     void UploadMesh(TMesh& mesh);
+
+    void DisplayFPSCounter() const;
 };
 
 } // namespace velecs

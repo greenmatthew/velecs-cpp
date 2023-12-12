@@ -122,33 +122,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             {
                 // ImGui::ShowDemoWindow(); // Show demo window! :)
 
-                static float f = 0.0f;
-                static int counter = 0;
-                static ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-                // Set window flags
-                ImGuiWindowFlags window_flags =
-                    ImGuiWindowFlags_NoDecoration |
-                    ImGuiWindowFlags_AlwaysAutoResize |
-                    ImGuiWindowFlags_NoSavedSettings |
-                    ImGuiWindowFlags_NoFocusOnAppearing |
-                    ImGuiWindowFlags_NoNav
-                    ;
-                
-                // Calculate the top-right position for the FPS counter
-                ImVec2 window_pos = ImVec2(io.DisplaySize.x - 10.0f, 10.0f); // 10 pixels from the top-right corner
-                ImVec2 window_pos_pivot = ImVec2(1.0f, 0.0f); // Pivot at the top-right corner of the window
-                ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
-
-                // Begin the window with the specified flags
-                ImGui::Begin("FPS Counter", nullptr, window_flags);
-
-                // Display FPS
-                ImGui::Text("FPS: %.1f", io.Framerate);
-                ImGui::Text("ms/frame: %.3f", 1000.0f / io.Framerate);
-
-                // End the window
-                ImGui::End();
+                DisplayFPSCounter();
             }
         );
 
@@ -420,7 +394,7 @@ void RenderingECSModule::InitWindow()
     // We initialize SDL and create a window with it. 
     SDL_Init(SDL_INIT_VIDEO);
 
-    SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
+    SDL_WindowFlags windowFlags = (SDL_WindowFlags)(SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
     _window = SDL_CreateWindow(
         "Harvest Havoc",
@@ -428,7 +402,7 @@ void RenderingECSModule::InitWindow()
         SDL_WINDOWPOS_UNDEFINED,
         1700,
         900,
-        window_flags
+        windowFlags
     );
     if (_window == nullptr)
     {
@@ -1169,6 +1143,35 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
     vmaMapMemory(_allocator, mesh._indexBuffer._allocation, &indexData);
     memcpy(indexData, mesh._indices.data(), mesh._indices.size() * sizeof(uint32_t));
     vmaUnmapMemory(_allocator, mesh._indexBuffer._allocation);
+}
+
+void RenderingECSModule::DisplayFPSCounter() const
+{
+    static ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Set window flags
+    ImGuiWindowFlags windowFlags =
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoNav
+        ;
+    
+    // Calculate the top-right position for the FPS counter
+    ImVec2 windowPos = ImVec2(io.DisplaySize.x - 10.0f, 10.0f); // 10 pixels from the top-right corner
+    ImVec2 windowPivot = ImVec2(1.0f, 0.0f); // Pivot at the top-right corner of the window
+    ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
+
+    // Begin the window with the specified flags
+    ImGui::Begin("FPS Counter", nullptr, windowFlags);
+
+    // Display FPS
+    ImGui::Text("FPS: %.1f", io.Framerate);
+    ImGui::Text("ms/frame: %.3f", 1000.0f / io.Framerate);
+
+    // End the window
+    ImGui::End();
 }
 
 } // namespace velecs
