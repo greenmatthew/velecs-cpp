@@ -1,6 +1,14 @@
-cmake_minimum_required(VERSION 3.10)
+# @file    CMakeLists.txt
+# @author  Matthew Green
+# @date    2023-12-14 17:03:59
+# 
+# @section LICENSE
+# 
+# Copyright (c) 2023 Matthew Green - All rights reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited
+# Proprietary and confidential
 
-add_subdirectory(assets)
+cmake_minimum_required(VERSION 3.10)
 
 file(GLOB_RECURSE HARVEST_HAVOC_HEADERS "include/*.h")
 file(GLOB_RECURSE HARVEST_HAVOC_SOURCES "src/*.cpp")
