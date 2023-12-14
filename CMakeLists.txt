@@ -42,13 +42,4 @@ target_link_libraries(velecs
 
 target_link_libraries(HarvestHavoc PRIVATE
     velecs
-    Vulkan::Vulkan
-    SDL2
-    SDL2main
-    glm
-    vma
-    flecs::flecs_static
-    vk-bootstrap
-    imgui
-    assimp
 )
