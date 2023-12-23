@@ -46,7 +46,7 @@ target_link_libraries(velecs
 )
 
 # Add dependencies on custom asset targets
-add_dependencies(velecs assets)
+add_dependencies(velecs velecs-assets)
 
 # Use source_group with TREE to mirror directory structure
 source_group(
