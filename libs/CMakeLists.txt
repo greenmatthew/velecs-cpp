@@ -36,9 +36,24 @@ set_target_properties(SDL2main PROPERTIES
   IMPORTED_LOCATION "${VULKAN_SDK}/Lib/SDL2main.lib"
 )
 
+##############################################################################################
+### Libs using Git submodules: ###############################################################
+##############################################################################################
+
+#---------------------------------------------------------------------------------------------
+#-- ASSIMP -----------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build package with shared libraries.")
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library.")
+set(ASSIMP_INSTALL OFF CACHE BOOL "Disable Assimp install.")
+
+add_subdirectory(assimp)
 
 
-# flecs
+
+#---------------------------------------------------------------------------------------------
+#-- FLECS ------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
 set(FLECS_STATIC ON CACHE BOOL "Build static flecs lib")
 set(FLECS_SHARED OFF CACHE BOOL "Build shared flecs lib")
 set(FLECS_PIC ON CACHE BOOL "Compile static flecs lib with position independent code (PIC)")
@@ -47,7 +62,9 @@ add_subdirectory(flecs)
 
 
 
-# imgui
+#---------------------------------------------------------------------------------------------
+#-- Dear ImGui -------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
 add_library(imgui STATIC)
 target_include_directories(imgui PUBLIC imgui)
 target_sources(imgui PRIVATE 
@@ -66,15 +83,23 @@ target_link_libraries(imgui PUBLIC Vulkan::Vulkan SDL2 SDL2main)
 
 
 
-# vkbootstrap
+#---------------------------------------------------------------------------------------------
+#-- stb --------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+add_library(stb INTERFACE)
+target_sources(stb PRIVATE
+    stb/stb_image.h
+    stb/stb_perlin.h
+    stb/stb_truetype.h
+    stb/stb_image_write.h
+)
+target_include_directories(stb INTERFACE stb)
+
+
+
+#---------------------------------------------------------------------------------------------
+#-- vkbootstrap ------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
 set(VK_BOOTSTRAP_DISABLE_WARNINGS OFF CACHE BOOL "Disable warnings during compilation")
 set(VK_BOOTSTRAP_WERROR OFF CACHE BOOL "Enable warnings as errors during compilation")
 add_subdirectory(vkbootstrap)
-
-
-
-# ASSIMP
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build package with shared libraries.")
-set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library.")
-set(ASSIMP_INSTALL OFF CACHE BOOL "Disable Assimp install.")
-add_subdirectory(assimp)

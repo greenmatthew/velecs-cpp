@@ -39,10 +39,11 @@ target_link_libraries(velecs
     SDL2main
     glm
     vma
-    flecs::flecs_static
-    vk-bootstrap
-    imgui
     assimp
+    flecs::flecs_static
+    imgui
+    stb
+    vk-bootstrap
 )
 
 # Add dependencies on custom asset targets
