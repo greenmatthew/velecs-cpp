@@ -14,6 +14,7 @@
 
 #include "velecs/Memory/DeletionQueue.h"
 #include "velecs/Memory/UploadContext.h"
+#include "velecs/Memory/AllocatedImage.h"
 
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Vec3.h"
@@ -152,6 +153,12 @@ private:
     VkPipelineLayout simpleMeshPipelineLayout{VK_NULL_HANDLE};
     VkPipeline simpleMeshPipeline{VK_NULL_HANDLE};
 
+    VkImageView _depthImageView{VK_NULL_HANDLE};
+    AllocatedImage _depthImage;
+    VkFormat _depthFormat{VK_FORMAT_UNDEFINED};
+
+    VkDescriptorPool imguiPool{VK_NULL_HANDLE};
+
     // Private Methods
 
     void InitWindow();
@@ -168,7 +175,7 @@ private:
     /// It is called by the Init method during engine initialization.
     void InitSwapchain();
 
-    void RebuildSwapchain();
+    void CleanupSwapchain();
 
     /// @brief Initializes command buffers and pools for rendering.
     ///
@@ -188,6 +195,8 @@ private:
     /// It is called by the Init method during engine initialization.
     void InitFrameBuffers();
 
+    void CleanupFrameBuffers();
+
     /// @brief Initializes synchronization structures used for rendering.
     ///
     /// This method sets up semaphores and fences used to synchronize rendering operations.
@@ -204,7 +213,9 @@ private:
     ///
     /// This method sets up ImGUI which is used for rendering the user interface.
     /// It is called by the Init method during engine initialization.
-    void InitImGUI();
+    void InitImGui();
+
+    void CleanupImGui();
 
     void PreDrawStep(float deltaTime);
 

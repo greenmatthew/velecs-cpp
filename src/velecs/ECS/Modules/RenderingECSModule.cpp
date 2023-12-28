@@ -74,7 +74,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     InitSyncStructures();
     InitPipelines();
 
-    InitImGUI();
+    InitImGui();
 
     ecs.component<Transform>();
     ecs.component<Mesh>();
@@ -214,24 +214,15 @@ RenderingECSModule::~RenderingECSModule()
     // make sure the GPU has stopped doing its things
     vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
 
-    ImGui_ImplVulkan_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
-    ImGui::DestroyContext();
+    CleanupImGui();
 
     _mainDeletionQueue.Flush();
 
-    const size_t swapchain_imagecount = _swapchainImages.size();
-    for (int i = 0; i < swapchain_imagecount; i++)
-    {
-        vkDestroyFramebuffer(_device, _framebuffers[i], nullptr);
-        vkDestroyImageView(_device, _swapchainImageViews[i], nullptr);
-    }
-    _swapchainImageViews.clear();
-    _framebuffers.clear();
+    CleanupFrameBuffers();
+    CleanupSwapchain();
 
     vkDestroyRenderPass(_device, _renderPass, nullptr);
     vkDestroyCommandPool(_device, _commandPool, nullptr);
-    vkDestroySwapchainKHR(_device, _swapchain, nullptr);
 
     vmaDestroyAllocator(_allocator);
     vkDestroyDevice(_device, nullptr);
@@ -278,11 +269,13 @@ void RenderingECSModule::OnWindowResize()
     {
         // Poll for events to keep the application responsive
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                exit(0); // Or handle the quit event appropriately
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
+                exit(0);
             }
-            // Handle other necessary events
+            // Handle other events if necessary
         }
 
         // Recheck the window size
@@ -293,28 +286,13 @@ void RenderingECSModule::OnWindowResize()
 
     vkDeviceWaitIdle(_device);
 
+    CleanupFrameBuffers();
+    CleanupSwapchain();
+
     windowExtent.width = width;
     windowExtent.height = height;
     
     ecs().get_mut<MainCamera>()->extent = GetWindowExtent();
-
-    for (auto imageView : _swapchainImageViews)
-    {
-        vkDestroyImageView(_device, imageView, nullptr);
-    }
-    _swapchainImageViews.clear(); // Clear the list after destroying the image views
-
-    if (_swapchain != VK_NULL_HANDLE)
-    {
-        vkDestroySwapchainKHR(_device, _swapchain, nullptr);
-        _swapchain = VK_NULL_HANDLE; // Reset the swapchain handle
-    }
-
-    for (auto framebuffer : _framebuffers)
-    {
-        vkDestroyFramebuffer(_device, framebuffer, nullptr);
-    }
-    _framebuffers.clear();
 
     InitSwapchain();
     InitFrameBuffers();
@@ -560,6 +538,72 @@ void RenderingECSModule::InitSwapchain()
     _swapchainImageViews = vkbSwapchain.get_image_views().value();
 
     _swapchainImageFormat = vkbSwapchain.image_format;
+
+
+
+    //depth image size will match the window
+    VkExtent3D depthImageExtent = {
+        windowExtent.width,
+        windowExtent.height,
+        1
+    };
+
+    //hardcoding the depth format to 32 bit float
+    _depthFormat = VK_FORMAT_D32_SFLOAT;
+
+    //the depth image will be an image with the format we selected and Depth Attachment usage flag
+    VkImageCreateInfo dimg_info = vkinit::image_create_info(_depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, depthImageExtent);
+
+    //for the depth image, we want to allocate it from GPU local memory
+    VmaAllocationCreateInfo dimg_allocinfo = {};
+    dimg_allocinfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+    dimg_allocinfo.requiredFlags = VkMemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    //allocate and create the image
+    vmaCreateImage(_allocator, &dimg_info, &dimg_allocinfo, &_depthImage._image, &_depthImage._allocation, nullptr);
+
+    //build an image-view for the depth image to use for rendering
+    VkImageViewCreateInfo dview_info = vkinit::imageview_create_info(_depthFormat, _depthImage._image, VK_IMAGE_ASPECT_DEPTH_BIT);
+
+    VK_CHECK(vkCreateImageView(_device, &dview_info, nullptr, &_depthImageView));
+
+    //add to deletion queues
+    // _mainDeletionQueue.PushDeletor
+    // (
+    //     [=]()
+    //     {
+    //         vkDestroyImageView(_device, _depthImageView, nullptr);
+    //         vmaDestroyImage(_allocator, _depthImage._image, _depthImage._allocation);
+    //     }
+    // );
+}
+
+void RenderingECSModule::CleanupSwapchain()
+{
+    if (_depthImageView != VK_NULL_HANDLE)
+    {
+        vkDestroyImageView(_device, _depthImageView, nullptr);
+        _depthImageView = VK_NULL_HANDLE;
+    }
+
+    if (_depthImage._image != VK_NULL_HANDLE || _depthImage._allocation != VK_NULL_HANDLE)
+    {
+        vmaDestroyImage(_allocator, _depthImage._image, _depthImage._allocation);
+        _depthImage._image = VK_NULL_HANDLE;
+        _depthImage._allocation = VK_NULL_HANDLE;
+    }
+
+    for (auto imageView : _swapchainImageViews)
+    {
+        vkDestroyImageView(_device, imageView, nullptr);
+    }
+    _swapchainImageViews.clear(); // Clear the list after destroying the image views
+
+    if (_swapchain != VK_NULL_HANDLE)
+    {
+        vkDestroySwapchainKHR(_device, _swapchain, nullptr);
+        _swapchain = VK_NULL_HANDLE; // Reset the swapchain handle
+    }
 }
 
 void RenderingECSModule::InitCommands()
@@ -590,37 +634,48 @@ void RenderingECSModule::InitCommands()
     );
 
     //allocate the default command buffer that we will use for the instant commands
-	VkCommandBufferAllocateInfo cmdAllocInfo2 = vkinit::command_buffer_allocate_info(_uploadContext._commandPool, 1);
-	VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo2, &_uploadContext._commandBuffer));
+    VkCommandBufferAllocateInfo cmdAllocInfo2 = vkinit::command_buffer_allocate_info(_uploadContext._commandPool, 1);
+    VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo2, &_uploadContext._commandBuffer));
 }
 
 void RenderingECSModule::InitDefaultRenderPass()
 {
-    // the renderpass will use this color attachment.
+    // COLOR ATTACHMENT
+
     VkAttachmentDescription color_attachment = {};
-    //the attachment will have the format needed by the swapchain
-    color_attachment.format = _swapchainImageFormat;
-    //1 sample, we won't be doing MSAA
-    color_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    // we Clear when this attachment is loaded
-    color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    // we keep the attachment stored when the renderpass ends
-    color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    //we don't care about stencil
-    color_attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    color_attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-
-    //we don't know or care about the starting layout of the attachment
-    color_attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-    //after the renderpass ends, the image has to be on a layout ready for display
-    color_attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
+    
+    color_attachment.format = _swapchainImageFormat; // the attachment will have the format needed by the swapchain
+    color_attachment.samples = VK_SAMPLE_COUNT_1_BIT; // 1 sample, we won't be doing MSAA 
+    color_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;  // we Clear when this attachment is loaded
+    color_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE; // we keep the attachment stored when the renderpass ends
+    color_attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE; // we don't care about stencil
+    color_attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE; // we don't care about stencil
+    color_attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED; // we don't know nor care about the starting layout of the attachment
+    color_attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // after the renderpass ends, the image has to be on a layout ready for display
 
     VkAttachmentReference color_attachment_ref = {};
-    //attachment number will index into the pAttachments array in the parent renderpass itself
-    color_attachment_ref.attachment = 0;
+    color_attachment_ref.attachment = 0; // attachment number will index into the pAttachments array in the parent renderpass itself
     color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    // DEPTH ATTACHMENT
+
+    VkAttachmentDescription depth_attachment = {};
+    depth_attachment.flags = 0;
+    depth_attachment.format = _depthFormat;
+    depth_attachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    depth_attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    depth_attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    depth_attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    depth_attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depth_attachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    depth_attachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+    VkAttachmentReference depth_attachment_ref = {};
+    depth_attachment_ref.attachment = 1;
+    depth_attachment_ref.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+
+
 
     //we are going to create 1 subpass, which is the minimum you can do
     VkSubpassDescription subpass = {};
@@ -665,6 +720,15 @@ void RenderingECSModule::InitFrameBuffers()
         fb_info.pAttachments = &_swapchainImageViews[i];
         VK_CHECK(vkCreateFramebuffer(_device, &fb_info, nullptr, &_framebuffers[i]));
     }
+}
+
+void RenderingECSModule::CleanupFrameBuffers()
+{
+    for (auto framebuffer : _framebuffers)
+    {
+        vkDestroyFramebuffer(_device, framebuffer, nullptr);
+    }
+    _framebuffers.clear();
 }
 
 void RenderingECSModule::InitSyncStructures()
@@ -873,7 +937,7 @@ static void check_vk_result(VkResult err)
         abort();
 }
 
-void RenderingECSModule::InitImGUI()
+void RenderingECSModule::InitImGui()
 {
     //1: create descriptor pool for IMGUI
     // the size of the pool is very oversize, but it's copied from imgui demo itself.
@@ -899,7 +963,6 @@ void RenderingECSModule::InitImGUI()
     pool_info.poolSizeCount = (uint32_t)std::size(pool_sizes);
     pool_info.pPoolSizes = pool_sizes;
 
-    VkDescriptorPool imguiPool;
     VK_CHECK(vkCreateDescriptorPool(_device, &pool_info, nullptr, &imguiPool));
 
     // Setup Dear ImGui context
@@ -927,15 +990,15 @@ void RenderingECSModule::InitImGUI()
     // init_info.Allocator = YOUR_ALLOCATOR;
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info, _renderPass);
+}
 
-    // add the destroy the imgui created structures
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            vkDestroyDescriptorPool(_device, imguiPool, nullptr);
-        }
-    );
+void RenderingECSModule::CleanupImGui()
+{
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    vkDestroyDescriptorPool(_device, imguiPool, nullptr);
 }
 
 void RenderingECSModule::PreDrawStep(float deltaTime)
