@@ -47,6 +47,11 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build package with shared libraries.")
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library.")
 set(ASSIMP_INSTALL OFF CACHE BOOL "Disable Assimp install.")
 
+set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF CACHE BOOL "Default value of all ASSIMP_BUILD_XXX_IMPORTER values" FORCE)
+set(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF CACHE BOOL "Default value of all ASSIMP_BUILD_XXX_EXPORTER values" FORCE)
+
+set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "Build the FBX importer.")
+
 add_subdirectory(assimp)
 
 
