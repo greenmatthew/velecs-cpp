@@ -28,5 +28,9 @@ namespace vkinit
     VkFenceCreateInfo fence_create_info(VkFenceCreateFlags flags = 0);
     
     VkSemaphoreCreateInfo semaphore_create_info(VkSemaphoreCreateFlags flags = 0);
+
+    VkCommandBufferBeginInfo command_buffer_begin_info(VkCommandBufferUsageFlags flags = 0);
+    
+    VkSubmitInfo submit_info(VkCommandBuffer* cmd);
 }
 

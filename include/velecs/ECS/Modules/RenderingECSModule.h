@@ -13,6 +13,8 @@
 #include "velecs/ECS/Modules/IECSModule.h"
 
 #include "velecs/Memory/DeletionQueue.h"
+#include "velecs/Memory/UploadContext.h"
+
 #include "velecs/Math/Vec2.h"
 #include "velecs/Math/Vec3.h"
 
@@ -31,6 +33,8 @@
 #include <VkBootstrap.h>
 
 #include <vector>
+
+#include <imgui.h>
 
 struct SDL_Window;
 
@@ -132,7 +136,7 @@ private:
     VkPipeline _triangleWireFramePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
     VkPipeline _rainbowTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
 
-    size_t renderPipelineIndex{4};
+    UploadContext _uploadContext;
 
     DeletionQueue _mainDeletionQueue;
 
@@ -218,6 +222,8 @@ private:
 
     template<typename TMesh>
     void UploadMesh(TMesh& mesh);
+
+    void ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function);
 
     void DisplayFPSCounter() const;
 };

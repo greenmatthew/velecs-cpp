@@ -37,7 +37,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_sdl2.h>
 #include <backends/imgui_impl_vulkan.h>
 
@@ -574,6 +574,24 @@ void RenderingECSModule::InitCommands()
     VkCommandBufferAllocateInfo cmdAllocInfo = vkinit::command_buffer_allocate_info(_commandPool, 1);
 
     VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo, &_mainCommandBuffer));
+
+
+
+    VkCommandPoolCreateInfo uploadCommandPoolInfo = vkinit::command_pool_create_info(_graphicsQueueFamily);
+    //create pool for upload context
+    VK_CHECK(vkCreateCommandPool(_device, &uploadCommandPoolInfo, nullptr, &_uploadContext._commandPool));
+
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroyCommandPool(_device, _uploadContext._commandPool, nullptr);
+        }
+    );
+
+    //allocate the default command buffer that we will use for the instant commands
+	VkCommandBufferAllocateInfo cmdAllocInfo2 = vkinit::command_buffer_allocate_info(_uploadContext._commandPool, 1);
+	VK_CHECK(vkAllocateCommandBuffers(_device, &cmdAllocInfo2, &_uploadContext._commandBuffer));
 }
 
 void RenderingECSModule::InitDefaultRenderPass()
@@ -656,13 +674,9 @@ void RenderingECSModule::InitSyncStructures()
 
     VK_CHECK(vkCreateFence(_device, &fenceCreateInfo, nullptr, &_renderFence));
 
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            vkDestroyFence(_device, _renderFence, nullptr);
-        }
-    );
+    VkFenceCreateInfo uploadFenceCreateInfo = vkinit::fence_create_info();
+
+    VK_CHECK(vkCreateFence(_device, &uploadFenceCreateInfo, nullptr, &_uploadContext._uploadFence));
 
     //for the semaphores we don't need any flags
     VkSemaphoreCreateInfo semaphoreCreateInfo = vkinit::semaphore_create_info();
@@ -674,6 +688,9 @@ void RenderingECSModule::InitSyncStructures()
     (
         [=]()
         {
+            vkDestroyFence(_device, _uploadContext._uploadFence, nullptr);
+            vkDestroyFence(_device, _renderFence, nullptr);
+
             vkDestroySemaphore(_device, _presentSemaphore, nullptr);
             vkDestroySemaphore(_device, _renderSemaphore, nullptr);
         }
@@ -912,13 +929,13 @@ void RenderingECSModule::InitImGUI()
     ImGui_ImplVulkan_Init(&init_info, _renderPass);
 
     // add the destroy the imgui created structures
-     _mainDeletionQueue.PushDeletor
-     (
-         [=]()
-         {
-             vkDestroyDescriptorPool(_device, imguiPool, nullptr);
-         }
-     );
+    _mainDeletionQueue.PushDeletor
+    (
+        [=]()
+        {
+            vkDestroyDescriptorPool(_device, imguiPool, nullptr);
+        }
+    );
 }
 
 void RenderingECSModule::PreDrawStep(float deltaTime)
@@ -1088,41 +1105,130 @@ void RenderingECSModule::Draw
 template<typename TMesh>
 void RenderingECSModule::UploadMesh(TMesh& mesh)
 {
+    if (typeid(TMesh) != typeid(SimpleMesh))
+    {
+        throw std::exception("Anything other than SimpleMesh is the only thing implemented at the moment.");
+    }
+
+    const size_t verticesBufferSize = mesh._vertices.size() * sizeof(SimpleMesh);
     //allocate vertex buffer
-    VkBufferCreateInfo bufferInfo = {};
-    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    VkBufferCreateInfo stagingVerticesBufferInfo = {};
+    stagingVerticesBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     //this is the total size, in bytes, of the buffer we are allocating
-    bufferInfo.size = mesh._vertices.size() * sizeof(SimpleVertex);
+    stagingVerticesBufferInfo.size = verticesBufferSize;
     //this buffer is going to be used as a Vertex Buffer
-    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    stagingVerticesBufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
 
     //let the VMA library know that this data should be writeable by CPU, but also readable by GPU
     VmaAllocationCreateInfo vmaallocInfo = {};
-    vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+    vmaallocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    AllocatedBuffer stagingVerticesBuffer;
 
     // Allocate vertex buffer
-    VK_CHECK(vmaCreateBuffer(_allocator, &bufferInfo, &vmaallocInfo,
+    VK_CHECK(vmaCreateBuffer(_allocator, &stagingVerticesBufferInfo, &vmaallocInfo,
+        &stagingVerticesBuffer._buffer,
+        &stagingVerticesBuffer._allocation,
+        nullptr));
+    
+    // Allocate index buffer
+    const size_t indicesBufferSize = mesh._indices.size() * sizeof(uint32_t); // Size of index buffer in bytes
+    VkBufferCreateInfo stagingIndicesBufferInfo = {};
+    stagingIndicesBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    stagingIndicesBufferInfo.size =  indicesBufferSize;
+    stagingIndicesBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+
+    VmaAllocationCreateInfo indexAllocInfo = {};
+    indexAllocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    AllocatedBuffer stagingIndicesBuffer;
+
+    // Allocate the index buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &stagingIndicesBufferInfo, &indexAllocInfo,
+        &stagingIndicesBuffer._buffer,
+        &stagingIndicesBuffer._allocation,
+        nullptr));
+
+    //copy vertex data
+    void* vertexData;
+    vmaMapMemory(_allocator, stagingVerticesBuffer._allocation, &vertexData);
+    memcpy(vertexData, mesh._vertices.data(), mesh._vertices.size() * sizeof(SimpleVertex));
+    vmaUnmapMemory(_allocator, stagingVerticesBuffer._allocation);
+
+    // Copy index data
+    void* indexData;
+    vmaMapMemory(_allocator, stagingIndicesBuffer._allocation, &indexData);
+    memcpy(indexData, mesh._indices.data(), mesh._indices.size() * sizeof(uint32_t));
+    vmaUnmapMemory(_allocator, stagingIndicesBuffer._allocation);
+
+
+    // ------------------------------------------------------
+    // --- GPU Buffers --------------------------------------
+    // ------------------------------------------------------
+
+    VkBufferCreateInfo verticesBufferInfo = {};
+    verticesBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    verticesBufferInfo.pNext = nullptr;
+    //this is the total size, in bytes, of the buffer we are allocating
+    verticesBufferInfo.size = verticesBufferSize;
+    //this buffer is going to be used as a Vertex Buffer
+    verticesBufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+
+    //let the VMA library know that this data should be GPU native
+    vmaallocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+    //allocate the buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &verticesBufferInfo, &vmaallocInfo,
         &mesh._vertexBuffer._buffer,
         &mesh._vertexBuffer._allocation,
         nullptr));
     
-    // Allocate index buffer
-    VkBufferCreateInfo indexBufferInfo = {};
-    indexBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    indexBufferInfo.size = mesh._indices.size() * sizeof(uint32_t); // Size of index buffer in bytes
-    indexBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+    VkBufferCreateInfo indicesBufferInfo = {};
+    indicesBufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    indicesBufferInfo.pNext = nullptr;
+    //this is the total size, in bytes, of the buffer we are allocating
+    indicesBufferInfo.size = indicesBufferSize;
+    //this buffer is going to be used as a Vertex Buffer
+    indicesBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
-    VmaAllocationCreateInfo indexAllocInfo = {};
-    indexAllocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+    //let the VMA library know that this data should be GPU native
+    vmaallocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 
-    // Allocate the index buffer
-    VK_CHECK(vmaCreateBuffer(_allocator, &indexBufferInfo, &indexAllocInfo,
+    //allocate the buffer
+    VK_CHECK(vmaCreateBuffer(_allocator, &indicesBufferInfo, &vmaallocInfo,
         &mesh._indexBuffer._buffer,
         &mesh._indexBuffer._allocation,
         nullptr));
+    
+    ImmediateSubmit
+    (
+        [=](VkCommandBuffer cmd)
+        {
+            VkBufferCopy copy;
+            copy.dstOffset = 0;
+            copy.srcOffset = 0;
+            copy.size = verticesBufferSize;
+            vkCmdCopyBuffer(cmd, stagingVerticesBuffer._buffer, mesh._vertexBuffer._buffer, 1, &copy);
+        }
+    );
 
-    //add the destruction of triangle mesh buffer to the deletion queue
+    ImmediateSubmit
+    (
+        [=](VkCommandBuffer cmd)
+        {
+            VkBufferCopy copy;
+            copy.dstOffset = 0;
+            copy.srcOffset = 0;
+            copy.size = indicesBufferSize;
+            vkCmdCopyBuffer(cmd, stagingIndicesBuffer._buffer, mesh._indexBuffer._buffer, 1, &copy);
+        }
+    );
+
+    // ------------------------------------------------------
+    // --- CPU & GPU Buffers Cleanup ------------------------
+    // ------------------------------------------------------
+
     _mainDeletionQueue.PushDeletor
     (
         [=]()
@@ -1132,17 +1238,36 @@ void RenderingECSModule::UploadMesh(TMesh& mesh)
         }
     );
 
-    //copy vertex data
-    void* vertexData;
-    vmaMapMemory(_allocator, mesh._vertexBuffer._allocation, &vertexData);
-    memcpy(vertexData, mesh._vertices.data(), mesh._vertices.size() * sizeof(SimpleVertex));
-    vmaUnmapMemory(_allocator, mesh._vertexBuffer._allocation);
+    vmaDestroyBuffer(_allocator, stagingVerticesBuffer._buffer, stagingVerticesBuffer._allocation);
+    vmaDestroyBuffer(_allocator, stagingIndicesBuffer._buffer, stagingIndicesBuffer._allocation);
+}
 
-    // Copy index data
-    void* indexData;
-    vmaMapMemory(_allocator, mesh._indexBuffer._allocation, &indexData);
-    memcpy(indexData, mesh._indices.data(), mesh._indices.size() * sizeof(uint32_t));
-    vmaUnmapMemory(_allocator, mesh._indexBuffer._allocation);
+void RenderingECSModule::ImmediateSubmit(std::function<void(VkCommandBuffer cmd)>&& function)
+{
+    VkCommandBuffer cmd = _uploadContext._commandBuffer;
+
+    //begin the command buffer recording. We will use this command buffer exactly once before resetting, so we tell vulkan that
+    VkCommandBufferBeginInfo cmdBeginInfo = vkinit::command_buffer_begin_info(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
+
+    VK_CHECK(vkBeginCommandBuffer(cmd, &cmdBeginInfo));
+
+    //execute the function
+    function(cmd);
+
+    VK_CHECK(vkEndCommandBuffer(cmd));
+
+    VkSubmitInfo submit = vkinit::submit_info(&cmd);
+
+
+    //submit command buffer to the queue and execute it.
+    // _uploadFence will now block until the graphic commands finish execution
+    VK_CHECK(vkQueueSubmit(_graphicsQueue, 1, &submit, _uploadContext._uploadFence));
+
+    vkWaitForFences(_device, 1, &_uploadContext._uploadFence, true, 9999999999);
+    vkResetFences(_device, 1, &_uploadContext._uploadFence);
+
+    // reset the command buffers inside the command pool
+    vkResetCommandPool(_device, _uploadContext._commandPool, 0);
 }
 
 void RenderingECSModule::DisplayFPSCounter() const
@@ -1164,7 +1289,7 @@ void RenderingECSModule::DisplayFPSCounter() const
     ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always, windowPivot);
 
     // Begin the window with the specified flags
-    ImGui::Begin("FPS Counter", nullptr, windowFlags);
+        ImGui::Begin("FPS Counter", nullptr, windowFlags);
 
     // Display FPS
     ImGui::Text("FPS: %.1f", io.Framerate);
