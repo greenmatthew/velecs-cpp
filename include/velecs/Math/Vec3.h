@@ -33,12 +33,12 @@ public:
     static const Vec3 ZERO;         /// @brief A vector with all components set to zero (0, 0, 0).
     static const Vec3 ONE;          /// @brief A vector with all components set to one (1, 1, 1).
     static const Vec3 NEG_ONE;      /// @brief A vector with all components set to negative one (-1, -1, -1).
-    static const Vec3 UP;           /// @brief A vector representing the up direction in a right-handed coordinate system (0, -1, 0).
-    static const Vec3 DOWN;         /// @brief A vector representing the down direction in a right-handed coordinate system (0, 1, 0).
     static const Vec3 RIGHT;        /// @brief A vector representing the right direction in a right-handed coordinate system (1, 0, 0).
     static const Vec3 LEFT;         /// @brief A vector representing the left direction in a right-handed coordinate system (-1, 0, 0).
-    static const Vec3 FORWARD;      /// @brief A vector representing the forward direction in a right-handed coordinate system (0, 0, 1).
-    static const Vec3 BACKWARD;     /// @brief A vector representing the backward direction in a right-handed coordinate system (0, 0, -1).
+    static const Vec3 UP;           /// @brief A vector representing the up direction in a right-handed coordinate system (0, 1, 0).
+    static const Vec3 DOWN;         /// @brief A vector representing the down direction in a right-handed coordinate system (0, -1, 0).
+    static const Vec3 FORWARD;      /// @brief A vector representing the forward direction in a right-handed coordinate system (0, 0, -1).
+    static const Vec3 BACKWARD;     /// @brief A vector representing the backward direction in a right-handed coordinate system (0, 0, 1).
     static const Vec3 POS_INFINITY; /// @brief A vector with all components set to positive infinity.
     static const Vec3 NEG_INFINITY; /// @brief A vector with all components set to negative infinity.
     static const Vec3 UNIT;         /// @brief A normalized vector with magnitude equal to 1. Derived from Vec3::ONE.
