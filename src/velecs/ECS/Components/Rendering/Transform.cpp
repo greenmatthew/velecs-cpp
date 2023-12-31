@@ -229,29 +229,20 @@ glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, con
 
 const Vec2 Transform::GetScreenPosition(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
 {
-    // Local space to world space
-    glm::vec4 worldSpacePos = GetWorldMatrixNoScale() * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-    // World space to camera (view) space
-    glm::mat4 viewMatrix = cameraTransform->GetViewMatrix();
-    glm::vec4 cameraSpacePos = viewMatrix * worldSpacePos;
-
-    // Camera space to clip space
-    glm::mat4 projectionMatrix = perspectiveCamera->GetProjectionMatrix();
-    glm::vec4 clipSpacePos = projectionMatrix * cameraSpacePos;
+    // Get clip space pos
+    glm::vec4 clipSpacePos = GetRenderMatrix(cameraTransform, perspectiveCamera) * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
     // Perspective division to get NDC
     glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
 
-    
     Vec2 resolution = entity.world().get<MainCamera>()->extent.max;
 
-    // NDC to screen space
-    Vec2 screenPos;
-    screenPos.x = (ndcSpacePos.x + 1) * 0.5f * resolution.x;
-    screenPos.y = (ndcSpacePos.y + 1) * 0.5f * resolution.y;  // Corrected for Vulkan's NDC
-
-    return screenPos;
+    // NDC to screen space and return the result
+    return Vec2
+    {
+        (ndcSpacePos.x + 1) * 0.5f * resolution.x,
+        (ndcSpacePos.y + 1) * 0.5f * resolution.y
+    };
 }
 
 // Protected Fields
