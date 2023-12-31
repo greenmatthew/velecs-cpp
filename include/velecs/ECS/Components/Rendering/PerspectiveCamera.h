@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "velecs/Math/Consts.h"
+
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -75,6 +77,16 @@ struct PerspectiveCamera {
 
     // Public Methods
 
+    const float& GetNearPlaneOffset() const
+    {
+        return nearPlaneOffset;
+    }
+
+    const float& GetFarPlaneOffset() const
+    {
+        return farPlaneOffset;
+    }
+
     const float& GetAspectRatio() const
     {
         return aspectRatio;
@@ -104,13 +116,30 @@ struct PerspectiveCamera {
 
     void RecalculateProjectionMatrix()
     {
-        projectionMatrix = glm::perspective
-        (
-            glm::radians(verticalFov),
-            aspectRatio,
-            nearPlaneOffset,
-            farPlaneOffset
-        );
+        // Define the coordinate system change matrix (X)
+        glm::mat4 X = glm::mat4(1.0f); // Start with an identity matrix
+        X[1][1] = -1.0f; // Flip Y axis
+        X[2][2] = -1.0f; // Flip Z axis
+
+        const float vFovRads = DEG_TO_RAD * verticalFov;
+        const float focalLength = 1.0 / (std::tan(vFovRads * 0.5));
+        const float x = focalLength / aspectRatio;
+        const float y = focalLength;
+        const float A = farPlaneOffset / (farPlaneOffset - nearPlaneOffset);
+        const float B = -nearPlaneOffset * A;
+
+        // Define the right-handed perspective projection matrix manually
+        glm::mat4 perspectiveMatrix = glm::mat4(0.0f); // Initialize all elements to 0
+        perspectiveMatrix[0][0] = x;
+        perspectiveMatrix[1][1] = y; // Negative for Vulkan's Y-axis
+        perspectiveMatrix[2][2] = A;
+        perspectiveMatrix[2][3] = 1.0f; // For perspective projection
+        perspectiveMatrix[3][2] = B;
+
+        // Combine the projection matrix with the coordinate system change matrix
+        // This is because Vulkan switches coordinate systems between world space and NDC space.
+        // Pre-applying this change to the perspective matrix so it is not forgotten.
+        projectionMatrix = perspectiveMatrix * X;
     }
 
 protected:

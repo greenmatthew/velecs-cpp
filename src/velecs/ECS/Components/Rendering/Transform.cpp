@@ -14,7 +14,8 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>  // For transformation functions
-#include <glm/gtx/string_cast.hpp>       // For glm::to_string
+
+#include "velecs/Math/GLMUtility.h"
 
 namespace velecs {
 
@@ -182,7 +183,7 @@ glm::mat4 Transform::GetWorldMatrixNoScale() const
 
 glm::mat4 Transform::GetViewMatrix() const
 {
-    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-position));
+    glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(position));
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(rotation.x), glm::vec3(1, 0, 0));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
     rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
@@ -201,13 +202,15 @@ glm::mat4 Transform::GetViewMatrix() const
 
 glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const PerspectiveCamera* const perspectiveCamera) const
 {
-    glm::mat4 view = cameraTransform->GetViewMatrix();
-
     glm::mat4 projection = perspectiveCamera->GetProjectionMatrix();
+
+    glm::mat4 view = cameraTransform->GetViewMatrix();
 
     glm::mat4 world = GetWorldMatrix();
 
-    return projection * view * world;
+    glm::mat4 render = projection * view * world;
+
+    return render;
 }
 
 glm::mat4 Transform::GetRenderMatrix(const Transform* const cameraTransform, const OrthoCamera* const orthoCamera) const
