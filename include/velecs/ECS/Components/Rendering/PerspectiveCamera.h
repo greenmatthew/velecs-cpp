@@ -122,7 +122,7 @@ struct PerspectiveCamera {
         X[2][2] = -1.0f; // Flip Z axis
 
         const float vFovRads = DEG_TO_RAD * verticalFov;
-        const float focalLength = 1.0 / (std::tan(vFovRads * 0.5));
+        const float focalLength = 1.0f / (std::tanf(vFovRads * 0.5f));
         const float x = focalLength / aspectRatio;
         const float y = focalLength;
         const float A = farPlaneOffset / (farPlaneOffset - nearPlaneOffset);
