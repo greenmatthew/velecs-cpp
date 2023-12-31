@@ -1,24 +1,12 @@
 import bpy
-import os
-
-# Get the current .blend file's directory
-blend_file_path = bpy.data.filepath
-blend_file_directory = os.path.dirname(blend_file_path)
-
-# Go up one directory level
-parent_directory = os.path.dirname(blend_file_directory)
-
-# Set the export file path
-export_file_name = 'mesh.obj'
-export_file_path = os.path.join(parent_directory, export_file_name)
-
 op = bpy.context.active_operator
-op.filepath = export_file_path
+
+op.filepath = 'D:\\Dev\\VulkanProjects\\HarvestHavoc\\libs\\velecs\\assets\\meshes\\equilateral_triangle.obj'
 op.export_animation = False
 op.start_frame = 1
 op.end_frame = 250
-op.forward_axis = 'NEGATIVE_Y'
-op.up_axis = 'NEGATIVE_Z'
+op.forward_axis = 'Y'
+op.up_axis = 'Z'
 op.global_scale = 1.0
 op.apply_modifiers = True
 op.export_eval_mode = 'DAG_EVAL_VIEWPORT'
