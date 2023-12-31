@@ -36,6 +36,7 @@ public:
     VkPipelineColorBlendAttachmentState _colorBlendAttachment; /// @brief Color blending settings for the pipeline.
     VkPipelineMultisampleStateCreateInfo _multisampling; /// @brief Multisampling state parameters.
     VkPipelineLayout _pipelineLayout{VK_NULL_HANDLE}; /// @brief The layout of the pipeline, describing shader stages and more.
+    VkPipelineDepthStencilStateCreateInfo _depthStencil;
 
     // Constructors and Destructors
     

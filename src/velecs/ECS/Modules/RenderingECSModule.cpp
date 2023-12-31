@@ -640,7 +640,7 @@ void RenderingECSModule::InitCommands()
 
 void RenderingECSModule::InitDefaultRenderPass()
 {
-    // COLOR ATTACHMENT
+    // ATTACHMENTS
 
     VkAttachmentDescription color_attachment = {};
     
@@ -657,7 +657,6 @@ void RenderingECSModule::InitDefaultRenderPass()
     color_attachment_ref.attachment = 0; // attachment number will index into the pAttachments array in the parent renderpass itself
     color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    // DEPTH ATTACHMENT
 
     VkAttachmentDescription depth_attachment = {};
     depth_attachment.flags = 0;
@@ -674,25 +673,48 @@ void RenderingECSModule::InitDefaultRenderPass()
     depth_attachment_ref.attachment = 1;
     depth_attachment_ref.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
+    // array of 2 attachments, one for the color, and other for depth
+    VkAttachmentDescription attachments[2] = { color_attachment, depth_attachment };
 
+    // SUBPASS
 
-
-    //we are going to create 1 subpass, which is the minimum you can do
+    // we are going to create 1 subpass, which is the minimum you can do
     VkSubpassDescription subpass = {};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &color_attachment_ref;
+    subpass.pDepthStencilAttachment = &depth_attachment_ref; // hook the depth attachment into the subpass
 
+    // DEPENDENCIES
+
+    VkSubpassDependency dependency = {};
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+    VkSubpassDependency depth_dependency = {};
+    depth_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    depth_dependency.dstSubpass = 0;
+    depth_dependency.srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+    depth_dependency.srcAccessMask = 0;
+    depth_dependency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+    depth_dependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+    VkSubpassDependency dependencies[2] = { dependency, depth_dependency };
+
+    // RENDER PASS
 
     VkRenderPassCreateInfo render_pass_info = {};
     render_pass_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-
-    //connect the color attachment to the info
-    render_pass_info.attachmentCount = 1;
-    render_pass_info.pAttachments = &color_attachment;
-    //connect the subpass to the info
-    render_pass_info.subpassCount = 1;
+    render_pass_info.attachmentCount = 2;
+    render_pass_info.pAttachments = &attachments[0];
+    render_pass_info.subpassCount = 1; // connect the subpass to the info
     render_pass_info.pSubpasses = &subpass;
+    render_pass_info.dependencyCount = 2;
+    render_pass_info.pDependencies = &dependencies[0];
 
     VK_CHECK(vkCreateRenderPass(_device, &render_pass_info, nullptr, &_renderPass));
 }
@@ -717,7 +739,13 @@ void RenderingECSModule::InitFrameBuffers()
     //create framebuffers for each of the swapchain image views
     for (int i = 0; i < swapchain_imagecount; i++)
     {
-        fb_info.pAttachments = &_swapchainImageViews[i];
+        VkImageView attachments[2];
+        attachments[0] = _swapchainImageViews[i];
+        attachments[1] = _depthImageView;
+
+        fb_info.pAttachments = attachments;
+        fb_info.attachmentCount = 2;
+
         VK_CHECK(vkCreateFramebuffer(_device, &fb_info, nullptr, &_framebuffers[i]));
     }
 }
@@ -799,6 +827,8 @@ void RenderingECSModule::InitPipelines()
 
     //a single blend attachment with no blending and writing to RGBA
     pipelineBuilder._colorBlendAttachment = vkinit::color_blend_attachment_state();
+
+    pipelineBuilder._depthStencil = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 
     //use the triangle layout we created
     pipelineBuilder._pipelineLayout = _trianglePipelineLayout;
@@ -1034,6 +1064,12 @@ void RenderingECSModule::PreDrawStep(float deltaTime)
     Color32 color = Color32::FromHex("#181818");
     clearValue.color = { { color.r/255.0f, color.g/255.0f, color.b/255.0f, color.a/255.0f } };
 
+    //clear depth at 1
+	VkClearValue depthClear;
+	depthClear.depthStencil.depth = 1.f;
+
+    VkClearValue clearValues[] = { clearValue, depthClear };
+
     //start the main renderpass.
     //We will use the clear color from above, and the framebuffer of the index the swapchain gave us
     VkRenderPassBeginInfo rpInfo = {};
@@ -1047,8 +1083,8 @@ void RenderingECSModule::PreDrawStep(float deltaTime)
     rpInfo.framebuffer = _framebuffers[swapchainImageIndex];
 
     //connect clear values
-    rpInfo.clearValueCount = 1;
-    rpInfo.pClearValues = &clearValue;
+    rpInfo.clearValueCount = 2;
+    rpInfo.pClearValues = &clearValues[0];
 
     vkCmdBeginRenderPass(_mainCommandBuffer, &rpInfo, VK_SUBPASS_CONTENTS_INLINE);
 }

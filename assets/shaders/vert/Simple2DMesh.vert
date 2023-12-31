@@ -23,5 +23,8 @@ layout( push_constant ) uniform constants
 
 void main()
 {
-    gl_Position = PushConstants.renderMatrix * vec4(vPosition, 1.0f);
+    vec4 pos = PushConstants.renderMatrix * vec4(vPosition, 1.0f);
+    vec4 ndcPos = pos / pos.w;
+
+    gl_Position = ndcPos;
 }
