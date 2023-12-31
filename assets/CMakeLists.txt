@@ -23,6 +23,7 @@ set(PATHS_TO_IGNORE
     "*.DISABLED"
     "*/CMakeLists.txt"
     "${ASSETS_DIR}/meshes/source/"
+    "**monkey.obj"
 )
 debug_message("Ignored patterns: ${PATHS_TO_IGNORE}")
 
