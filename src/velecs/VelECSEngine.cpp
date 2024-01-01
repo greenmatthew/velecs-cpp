@@ -56,6 +56,7 @@ VelECSEngine& VelECSEngine::Run()
 
         ecsManager->ecs.progress(deltaTime);
     }
+    
     return *this;
 }
 
