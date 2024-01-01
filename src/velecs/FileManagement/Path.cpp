@@ -44,43 +44,13 @@ namespace velecs {
 
 // Public Fields
 
+const std::string Path::GAME_DIR    = Path::GetParentDirPath(get_executable_path());
+
+const std::string Path::ASSETS_DIR  = Combine(GAME_DIR,   "assets");
+const std::string Path::SHADERS_DIR = Combine(ASSETS_DIR, "shaders");
+const std::string Path::MESHES_DIR  = Combine(ASSETS_DIR, "meshes");
+
 // Public Methods
-
-const std::string& Path::GAME_DIR()
-{
-    static const std::string GAME_DIR{Path::GetParentDirPath(get_executable_path())};
-    return GAME_DIR;
-}
-
-const std::string& Path::ASSETS_DIR()
-{
-    static const std::string ASSETS_DIR{Combine(GAME_DIR(), "assets")};
-    return ASSETS_DIR;
-}
-
-const std::string& Path::SHADERS_DIR()
-{
-    static const std::string SHADERS_DIR{Combine(ASSETS_DIR(), "shaders")};
-    return SHADERS_DIR;
-}
-
-const std::string& Path::VERT_SHADERS_DIR()
-{
-    static const std::string VERT_SHADERS_DIR{Combine(SHADERS_DIR(), "vert")};
-    return VERT_SHADERS_DIR;
-}
-
-const std::string& Path::FRAG_SHADERS_DIR()
-{
-    static const std::string FRAG_SHADERS_DIR{Combine(SHADERS_DIR(), "frag")};
-    return FRAG_SHADERS_DIR;
-}
-
-const std::string& Path::MESHES_DIR()
-{
-    static const std::string MESHES_DIR{Combine(ASSETS_DIR(), "meshes")};
-    return MESHES_DIR;
-}
 
 bool Path::Exists(const std::string& path)
 {
@@ -156,58 +126,6 @@ template<typename... Paths>
 std::string Path::Combine(const std::string& path1, const std::string& path2, Paths... paths)
 {
     return Combine(Combine(path1, path2), paths...);
-}
-
-std::string Path::ResolvePath(std::string path)
-{
-    std::replace(path.begin(), path.end(), '/', '\\');
-
-    if (Path::IsAbsolute(path))
-    {
-        if (Path::Exists(path))
-        {
-            return path;
-        }
-    }
-    else
-    {
-        std::vector<std::string> paths
-        {
-            Combine(Path::GAME_DIR(), path),
-            Combine(Path::ASSETS_DIR(), path),
-        };
-
-        for (const auto& it : paths)
-        {
-            if (Path::Exists(it))
-            {
-                return it;
-            }
-        }
-
-        // if (File::Exists(path) && File::HasExtension(path))
-        // {
-        //     auto getStartPath = [](File::Type fileType) -> const std::string
-        //     {
-        //         switch (fileType)
-        //         {
-        //             case File::Type::SHADER:
-        //                 return Path::SHADERS_DIR;
-        //             default:
-        //                 return Path::GAME_DIR;
-        //         }
-        //     };
-
-        //     const std::string startPath{ getStartPath(File::DetermineFileType(path)) };
-        //     std::string newPath = Path::Combine(startPath, path);
-        //     if (File::Exists(newPath))
-        //     {
-        //         return newPath;
-        //     }
-        // }
-    }
-
-    throw PathNotFoundException<Path>(path);
 }
 
 // Protected Fields

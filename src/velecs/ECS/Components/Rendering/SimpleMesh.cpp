@@ -47,7 +47,7 @@ const SimpleMesh& SimpleMesh::MONKEY()
 
 SimpleMesh SimpleMesh::Load(std::string filePath)
 {
-    filePath = Path::Combine(Path::MESHES_DIR(), filePath);
+    filePath = Path::Combine(Path::MESHES_DIR, filePath);
 
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(filePath, aiProcess_ValidateDataStructure);
