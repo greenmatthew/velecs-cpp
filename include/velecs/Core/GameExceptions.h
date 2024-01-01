@@ -262,4 +262,36 @@ public:
         : DirectoryException<TWhereExceptionOccurred>("Directory not found: " + dirPath) {}
 };
 
+/// @class EntitySearchPathInvalid
+/// @brief Represents an exception for an invalid entity search path.
+///
+/// Derived from GameRuntimeException, this class encapsulates the specific error
+/// case where an entity search path was invalid or the entity could not be found.
+/// @tparam TWhereExceptionOccurred The type where the exception occurred.
+/// This type's name will be prefixed to the error message.
+template <typename TWhereExceptionOccurred>
+class EntitySearchPathInvalidException : public GameRuntimeException<TWhereExceptionOccurred> {
+public:
+    /// @brief Constructs an EntitySearchPathInvalid exception with a specific error message.
+    /// @param[in] searchPath The entity search path that was invalid or could not be found.
+    explicit EntitySearchPathInvalidException(const std::string& searchPath)
+        : GameRuntimeException<TWhereExceptionOccurred>("Invalid entity search path: '" + searchPath + "'. Ensure the path is correctly formatted, including any necessary parent-child relationships (e.g., 'Parent::Child') and module prefixes (e.g., 'Module::PrefabName') if applicable.") {}
+};
+
+/// @class EntityMissingMaterialException
+/// @brief Represents an exception for an entity found without the expected Material component.
+///
+/// Derived from GameRuntimeException, this class encapsulates the specific error
+/// case where an entity was found, but it was missing the expected Material component.
+/// @tparam TWhereExceptionOccurred The type where the exception occurred.
+/// This type's name will be prefixed to the error message.
+template <typename TWhereExceptionOccurred>
+class EntityMissingMaterialException : public GameRuntimeException<TWhereExceptionOccurred> {
+public:
+    /// @brief Constructs an EntityMissingMaterialException with a specific error message.
+    /// @param[in] searchPath The entity search path for which the Material component was missing.
+    explicit EntityMissingMaterialException(const std::string& searchPath)
+        : GameRuntimeException<TWhereExceptionOccurred>("Entity found but missing a Material component: '" + searchPath + "'. Ensure the entity exists with the required Material component.") {}
+};
+
 } // namespace velecs
