@@ -131,27 +131,24 @@ private:
 
     VkPipeline currentPipeline{VK_NULL_HANDLE};
 
+    std::vector<VkPipeline> pipelines;
+    std::vector<VkPipelineLayout> pipelineLayouts;
+
     VkPipelineLayout _trianglePipelineLayout{VK_NULL_HANDLE}; /// @brief Handle to the pipeline layout.
-    VkPipeline _trianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
-    VkPipeline _redTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
     VkPipeline _triangleWireFramePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
-    VkPipeline _rainbowTrianglePipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
+    VkPipeline _rainbowSimpleMeshPipeline{VK_NULL_HANDLE}; /// @brief Handle to the pipeline.
+
+    VkPipelineLayout _meshPipelineLayout{VK_NULL_HANDLE};
+    VkPipeline _meshPipeline{VK_NULL_HANDLE};
+
+    VkPipelineLayout simpleMeshPipelineLayout{VK_NULL_HANDLE};
+    VkPipeline simpleMeshPipeline{VK_NULL_HANDLE};
 
     UploadContext _uploadContext;
 
     DeletionQueue _mainDeletionQueue;
 
     VmaAllocator _allocator{nullptr};
-
-    VkPipelineLayout _meshPipelineLayout{VK_NULL_HANDLE};
-    VkPipeline _meshPipeline{VK_NULL_HANDLE};
-    Mesh _triangleMesh;
-
-    Mesh _monkeyMesh;
-
-    SimpleMesh simpleTriangleMesh;
-    VkPipelineLayout simpleMeshPipelineLayout{VK_NULL_HANDLE};
-    VkPipeline simpleMeshPipeline{VK_NULL_HANDLE};
 
     VkImageView _depthImageView{VK_NULL_HANDLE};
     AllocatedImage _depthImage;

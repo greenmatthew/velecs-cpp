@@ -81,11 +81,13 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
     ecs.component<SimpleMesh>();
     ecs.component<Material>();
 
+    const Material* const simpleMeshUnlit = Material::Create(ecs, "SimpleMesh/Color", &simpleMeshPipeline, &simpleMeshPipelineLayout);
+
     flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "CommonECSModule::PR_Entity");
     flecs::entity renderPrefab = ecs.prefab("PR_Render")
         .is_a(entityPrefab)
         .add<SimpleMesh>()
-        .set<Material>({Color32::MAGENTA, simpleMeshPipeline, simpleMeshPipelineLayout})
+        .set<Material>(*simpleMeshUnlit)
         ;
 
     flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
@@ -172,7 +174,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
                     UploadMesh(mesh);
                 }
 
-                if (currentPipeline != material.pipeline)
+                if (currentPipeline != *material.pipeline)
                 {
                     BindPipeline(material);
                 }
@@ -197,8 +199,7 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
         {
             flecs::world ecs = it.world();
 
-            flecs::entity inputEntity = ecs.singleton<Input>();
-            const Input* const input = inputEntity.get<Input>();
+            const Input* const input = ecs.get<Input>();
 
             if (input->IsPressed(SDLK_F11))
             {
@@ -207,6 +208,38 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
             }
         }
     );
+
+    ecs.system()
+        .kind(stages->Housekeeping)
+        .iter
+        (
+            [this](flecs::iter& it)
+            {
+                flecs::world ecs = it.world();
+                const Input* const input = ecs.get<Input>();
+                if (input->isQuitting)
+                {
+                    PipelineStages* const pipelineStages = ecs.get_mut<PipelineStages>();
+                    pipelineStages->FinalCleanup.add(flecs::Phase).depends_on(pipelineStages->Housekeeping);
+                    vkWaitForFences(_device, 1, &_renderFence, true, 1000000000);
+                }
+            }
+        );
+
+    ecs.system<Material>()
+        .kind(stages->FinalCleanup)
+        .iter
+        (
+            [this](flecs::iter& it, Material* materials)
+            {
+                for (auto i : it)
+                {
+                    Material& mat = materials[i];
+
+                    mat.Cleanup(_device);
+                }
+            }
+        );
 }
 
 RenderingECSModule::~RenderingECSModule()
@@ -791,13 +824,6 @@ void RenderingECSModule::InitSyncStructures()
 
 void RenderingECSModule::InitPipelines()
 {
-    //build the pipeline layout that controls the inputs/outputs of the shader
-    //we are not using descriptor sets or other systems yet, so no need to use anything other than empty default
-    VkPipelineLayoutCreateInfo pipeline_layout_info = vkinit::pipeline_layout_create_info();
-
-    VK_CHECK(vkCreatePipelineLayout(_device, &pipeline_layout_info, nullptr, &_trianglePipelineLayout));
-
-
     //build the stage-create-info for both vertex and fragment stages. This lets the pipeline know the shader modules per stage
     PipelineBuilder pipelineBuilder;
 
@@ -830,19 +856,7 @@ void RenderingECSModule::InitPipelines()
 
     pipelineBuilder._depthStencil = vkinit::depth_stencil_create_info(true, true, VK_COMPARE_OP_LESS_OR_EQUAL);
 
-    //use the triangle layout we created
-    pipelineBuilder._pipelineLayout = _trianglePipelineLayout;
 
-    //add the other shaders
-    auto rainbowTriangleVertShader = ShaderModule::CreateVertexShaderModule(_device, "RainbowTriangle.vert.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *rainbowTriangleVertShader));
-    auto rainbowTriangleFragShader = ShaderModule::CreateFragmentShaderModule(_device, "RainbowTriangle.frag.spv");
-    pipelineBuilder._shaderStages.push_back(vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *rainbowTriangleFragShader));
-
-    _rainbowTrianglePipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
-
-    //clear the shader stages for the builder
-    pipelineBuilder._shaderStages.clear();
 
 
 
@@ -880,19 +894,23 @@ void RenderingECSModule::InitPipelines()
     pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)vertexDescription.bindings.size();
 
     //add the other shaders
-    const auto meshVertShader = ShaderModule::CreateVertexShaderModule(_device, "TriangleMesh.vert.spv");
-    pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *meshVertShader));
+    const ShaderModule meshVertShader = ShaderModule::CreateVertShader(_device, "Mesh/Mesh.vert.spv");
+    pipelineBuilder._shaderStages.push_back(meshVertShader.pipelineShaderStageCreateInfo);
 
     //make sure that triangleFragShader is holding the compiled colored_triangle.frag
-    const auto meshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "TriangleMesh.frag.spv");
-    pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *meshFragShader));
+    const ShaderModule meshFragShader = ShaderModule::CreateFragShader(_device, "Mesh/Mesh.frag.spv");
+    pipelineBuilder._shaderStages.push_back(meshFragShader.pipelineShaderStageCreateInfo);
 
     pipelineBuilder._pipelineLayout = _meshPipelineLayout;
 
+    _meshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    Material::Create(ecs(), "Mesh/Mesh", &_meshPipeline, &_meshPipelineLayout);
+
     //clear the shader stages for the builder
     pipelineBuilder._shaderStages.clear();
+
+    
 
 
 
@@ -926,36 +944,34 @@ void RenderingECSModule::InitPipelines()
     pipelineBuilder._vertexInputInfo.pVertexBindingDescriptions = simpleMeshVertexDescription.bindings.data();
     pipelineBuilder._vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)simpleMeshVertexDescription.bindings.size();
 
-    //add the other shaders
-    const auto simpleMeshVertShader = ShaderModule::CreateVertexShaderModule(_device, "Simple2DMesh.vert.spv");
-    pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, *simpleMeshVertShader));
+    
+    const ShaderModule simpleMeshVertShader = ShaderModule::CreateVertShader(_device, "SimpleMesh/SolidColor.vert.spv");
+    pipelineBuilder._shaderStages.push_back(simpleMeshVertShader.pipelineShaderStageCreateInfo);
 
     //make sure that triangleFragShader is holding the compiled colored_triangle.frag
-    const auto simpleMeshFragShader = ShaderModule::CreateFragmentShaderModule(_device, "Simple2DMesh.frag.spv");
-    pipelineBuilder._shaderStages.push_back(
-        vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, *simpleMeshFragShader));
+    const ShaderModule simpleMeshFragShader = ShaderModule::CreateFragShader(_device, "SimpleMesh/SolidColor.frag.spv");
+    pipelineBuilder._shaderStages.push_back(simpleMeshFragShader.pipelineShaderStageCreateInfo);
 
     pipelineBuilder._pipelineLayout = simpleMeshPipelineLayout;
 
     //build the mesh triangle pipeline
     simpleMeshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
 
-    _mainDeletionQueue.PushDeletor
-    (
-        [=]()
-        {
-            //destroy the pipelines we have created
-            vkDestroyPipeline(_device, _rainbowTrianglePipeline, nullptr);
-            vkDestroyPipeline(_device, _meshPipeline, nullptr);
-            vkDestroyPipeline(_device, simpleMeshPipeline, nullptr);
+    Material::Create(ecs(), "SimpleMesh/SolidColor", &simpleMeshPipeline, &simpleMeshPipelineLayout);
 
-            //destroy the pipeline layout that they use
-            vkDestroyPipelineLayout(_device, _trianglePipelineLayout, nullptr);
-            vkDestroyPipelineLayout(_device, _meshPipelineLayout, nullptr);
-            vkDestroyPipelineLayout(_device, simpleMeshPipelineLayout, nullptr);
-        }
-    );
+    pipelineBuilder._shaderStages.clear();
+
+
+
+    //add the other shaders
+    const ShaderModule rainbowTriangleVertShader = ShaderModule::CreateVertShader(_device, "SimpleMesh/Rainbow.vert.spv");
+    pipelineBuilder._shaderStages.push_back(rainbowTriangleVertShader.pipelineShaderStageCreateInfo);
+    const ShaderModule rainbowTriangleFragShader = ShaderModule::CreateFragShader(_device, "SimpleMesh/Rainbow.frag.spv");
+    pipelineBuilder._shaderStages.push_back(rainbowTriangleFragShader.pipelineShaderStageCreateInfo);
+
+    _rainbowSimpleMeshPipeline = pipelineBuilder.BuildPipeline(_device, _renderPass);
+
+    Material::Create(ecs(), "SimpleMesh/Rainbow", &_rainbowSimpleMeshPipeline, &simpleMeshPipelineLayout);
 }
 
 static void check_vk_result(VkResult err)
@@ -1157,7 +1173,7 @@ void RenderingECSModule::PostDrawStep(float deltaTime)
 
 void RenderingECSModule::BindPipeline(const Material& material)
 {
-    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, material.pipeline);
+    vkCmdBindPipeline(_mainCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, *material.pipeline);
 
     VkViewport viewport = {};
     viewport.x = 0.0f;
@@ -1195,7 +1211,7 @@ void RenderingECSModule::Draw
     constants.renderMatrix = renderMatrix;
 
     //upload the matrix to the GPU via push constants
-    vkCmdPushConstants(_mainCommandBuffer, material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MeshPushConstants), &constants);
+    vkCmdPushConstants(_mainCommandBuffer, *material.pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MeshPushConstants), &constants);
 
     //we can now draw the mesh
     vkCmdDrawIndexed(_mainCommandBuffer, (uint32_t)mesh._indices.size(), 1, 0, 0, 0);
