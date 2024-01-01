@@ -1,6 +1,6 @@
-/// @file    ColoredTriangle.frag
+/// @file    Simple2DMesh.frag
 /// @author  Matthew Green
-/// @date    2023-11-07 14:27:52
+/// @date    2023-11-26 13:48:01
 /// 
 /// @section LICENSE
 /// 
@@ -10,10 +10,16 @@
 
 #version 450 // GLSL v4.5
 
-layout(location = 0) in vec3 inColor; // Input color
+layout( push_constant ) uniform constants
+{
+    vec4 color;
+    mat4 renderMatrix;
+} PushConstants;
+
+
 layout(location = 0) out vec4 outFragColor; // Output color
 
 void main()
 {
-    outFragColor = vec4(inColor, 1.0f);
+    outFragColor = PushConstants.color;
 }
