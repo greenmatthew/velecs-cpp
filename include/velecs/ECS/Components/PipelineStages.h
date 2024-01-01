@@ -19,6 +19,11 @@ namespace velecs {
 ///
 /// Rest of description.
 struct PipelineStages {
+public:
+    // Enums
+
+    // Public Fields
+
     flecs::entity InputUpdate;
 	flecs::entity Update;
 	flecs::entity Collisions;
@@ -26,6 +31,28 @@ struct PipelineStages {
 	flecs::entity Draw;
 	flecs::entity PostDraw;
 	flecs::entity Housekeeping;
+
+    flecs::entity FinalCleanup;
+
+    // Constructors and Destructors
+
+    /// @brief Default constructor.
+    PipelineStages() = default;
+
+    /// @brief Default deconstructor.
+    ~PipelineStages() = default;
+
+    // Public Methods
+
+protected:
+    // Protected Fields
+
+    // Protected Methods
+
+private:
+    // Private Fields
+
+    // Private Methods
 };
 
 } // namespace velecs

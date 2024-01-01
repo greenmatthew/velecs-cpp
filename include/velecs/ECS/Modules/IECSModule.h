@@ -39,7 +39,7 @@ public:
 
         ecs.import<PipelineECSModule>();
 
-        stages = ecs.singleton<PipelineStages>().get<PipelineStages>();
+        stages = ecs.get<PipelineStages>();
 
         ecs.import<CommonECSModule>();
 

@@ -10,6 +10,8 @@
 
 #include "velecs/ECS/Modules/PipelineECSModule.h"
 
+#include "velecs/ECS/Components/Input.h"
+
 #include <iostream>
 
 namespace velecs {
@@ -33,6 +35,8 @@ PipelineECSModule::PipelineECSModule(flecs::world& ecs)
     flecs::entity postDraw = ecs.entity("PostDrawPhase").add(flecs::Final).add(flecs::Phase).depends_on(draw);
     flecs::entity housekeeping = ecs.entity("HousekeepingPhase").add(flecs::Final).add(flecs::Phase).depends_on(postDraw);
 
+    flecs::entity finalCleanup = ecs.entity("FinalCleanupPhase").add(flecs::Final);
+
     ecs.set<PipelineStages>
     (
         {
@@ -42,7 +46,9 @@ PipelineECSModule::PipelineECSModule(flecs::world& ecs)
             preDraw,
             draw,
             postDraw,
-            housekeeping
+            housekeeping,
+
+            finalCleanup
         }
     );
     
@@ -52,6 +58,8 @@ PipelineECSModule::PipelineECSModule(flecs::world& ecs)
         .cascade(flecs::DependsOn)
         .build();
     ecs.set_pipeline(pipeline);
+
+    
 
     // Add dummy systems backwards to the order of the phases
     // to ensure no false positives
