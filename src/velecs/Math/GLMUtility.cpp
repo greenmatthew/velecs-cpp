@@ -22,10 +22,10 @@ std::string GLMUtility::ToString(const glm::mat4& mat)
 {
     std::ostringstream oss;
     oss << std::fixed << std::setprecision(6);  // Set fixed-point notation and precision
-    for (size_t row = 0; row < 4; ++row)
+    for (int row = 0; row < 4; ++row)
     {
         oss << "[ ";
-        for (size_t col = 0; col < 4; ++col)
+        for (int col = 0; col < 4; ++col)
         {
             oss << mat[col][row] << ' ';  // Access elements in column-major order
         }
