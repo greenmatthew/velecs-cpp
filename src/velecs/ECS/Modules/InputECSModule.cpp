@@ -29,25 +29,22 @@ InputECSModule::InputECSModule(flecs::world& ecs)
 
     ecs.set<Input>({});
 
-    ecs.system<Input>()
+    ecs.system()
         .kind(stages->InputUpdate)
-        .iter([this](flecs::iter& it, Input* inputs)
+        .iter([](flecs::iter& it)
         {
-            for (auto i : it)
-            {
-                Input& input = inputs[i];
+            Input* const input = it.world().get_mut<Input>();
 
-                UpdateInput(it, input);
-            }
+            UpdateInput(it, input);
         }
     );
 }
 
 // Public Methods
 
-void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
+void InputECSModule::UpdateInput(flecs::iter& it, Input* const input)
 {
-    input.prevKeyFlags = input.currKeyFlags;
+    input->prevKeyFlags = input->currKeyFlags;
     SDL_Event event;
     Vec2 mouseDelta = Vec2::ZERO;
     Vec2 mouseWheel = Vec2::ZERO;
@@ -59,7 +56,7 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
         switch (event.type)
         {
         case SDL_QUIT:
-            input.isQuitting = true; // Set the flag to quit
+            input->isQuitting = true; // Set the flag to quit
             break;
         case SDL_WINDOWEVENT:
         {
@@ -99,18 +96,18 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
             SDL_Keycode keycode = event.key.keysym.sym;
             if (event.key.repeat == 0)
             {
-                input.currKeyFlags[keycode] = true;
+                input->currKeyFlags[keycode] = true;
             }
             break;
         }
         case SDL_KEYUP:
         {
             SDL_Keycode keycode = event.key.keysym.sym;
-            input.currKeyFlags[keycode] = false;
+            input->currKeyFlags[keycode] = false;
             break;
         }
         case SDL_MOUSEMOTION:
-            input.mousePos = Vec2(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
+            input->mousePos = Vec2(static_cast<float>(event.motion.x), static_cast<float>(event.motion.y));
             mouseDelta += Vec2(static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel));
             break;
         case SDL_MOUSEWHEEL:
@@ -121,8 +118,8 @@ void InputECSModule::UpdateInput(flecs::iter& it, Input& input)
         }
     }
 
-    input.mouseDelta = mouseDelta;
-    input.mouseWheel = mouseWheel;
+    input->mouseDelta = mouseDelta;
+    input->mouseWheel = mouseWheel;
 }
 
 // Protected Fields
