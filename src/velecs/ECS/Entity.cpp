@@ -9,6 +9,7 @@
 /// Proprietary and confidential
 
 #include "velecs/ECS/Entity.h"
+#include "velecs/Core/GameExceptions.h"
 
 namespace velecs {
 
@@ -96,9 +97,24 @@ flecs::entity Entity::Find(flecs::world& ecs, const std::string& searchPath)
     }
     else
     {
-        throw std::runtime_error("Invalid entity: '" + searchPath + "'. Ensure the path is correctly formatted, "
-                                 "including any necessary parent-child relationships (e.g., 'Parent::Child') and "
-                                 "module prefixes (e.g., 'Module::PrefabName') if applicable.");
+        throw EntitySearchPathInvalidException<Entity>(searchPath);
+    }
+}
+
+bool Entity::TryFind(flecs::world& ecs, const std::string& searchPath, flecs::entity& outEntity, std::string* outFailureReason /* = nullptr */)
+{
+    try
+    {
+        outEntity = Find(ecs, searchPath);
+        return true;
+    }
+    catch (const EntitySearchPathInvalidException<Entity> e)
+    {
+        if (outFailureReason)
+        {
+            *outFailureReason = e.what();
+        }
+        return false;
     }
 }
 
