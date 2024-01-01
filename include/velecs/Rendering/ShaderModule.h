@@ -21,43 +21,41 @@ namespace velecs {
 /// @brief A wrapper class for Vulkan shader modules.
 ///
 /// ShaderModule encapsulates Vulkan shader modules, providing lifecycle management
-/// and shader loading functionalities.
+/// and shader loading functionalities. It manages the creation and destruction of
+/// Vulkan shader modules and associated pipeline shader stage create info.
 class ShaderModule {
 public:
     // Enums
 
     // Public Fields
 
-    // Destructors
+    VkDevice device{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan device.
+    VkShaderModule shaderModule{VK_NULL_HANDLE}; /// @brief Handle to the Vulkan shader module.
+    VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo{}; /// @brief Information for creating a pipeline shader stage.
+
+    // Constructors & Destructors
+
+    ShaderModule() = default;
 
     /// @brief Destructor that releases the Vulkan shader module resource.
+    /// Calls vkDestroyShaderModule to clean up the Vulkan shader module.
     ~ShaderModule();
     
     // Public Methods
 
-    /// @brief Creates a vertex shader module from a file.
-    ///
+    /// @brief Creates a vertex shader from a file.
     /// @param device The Vulkan device.
-    /// @param filePath The path to the SPIR-V file. Can be absolute or relative to Path::VERT_SHADERS_DIR.
-    /// @return A unique_ptr to the created ShaderModule.
-    static std::unique_ptr<ShaderModule> CreateVertexShaderModule(const VkDevice device, const std::string& filePath);
+    /// @param relFilePath Relative file path to the vertex shader SPIR-V file, relative to Path::SHADERS_DIR.
+    /// @return A ShaderModule object with the vertex shader loaded.
+    /// Throws runtime_error if the shader file can't be opened, the file is not a valid vertex shader, or shader module creation fails.
+    static ShaderModule CreateVertShader(const VkDevice device, const std::string& relFilePath);
 
-    /// @brief Creates a fragment shader module from a file.
-    ///
+    /// @brief Creates a fragment shader from a file.
     /// @param device The Vulkan device.
-    /// @param filePath The path to the SPIR-V file. Can be absolute or relative to Path::FRAG_SHADERS_DIR.
-    /// @return A unique_ptr to the created ShaderModule.
-    static std::unique_ptr<ShaderModule> CreateFragmentShaderModule(const VkDevice device, const std::string& filePath);
-
-    /// @brief Gets the Vulkan shader module handle.
-    ///
-    /// @return The Vulkan shader module handle.
-    const VkShaderModule get() const;
-
-    /// @brief Implicit conversion to VkShaderModule.
-    ///
-    /// @return The Vulkan shader module handle.
-    operator const VkShaderModule() const;
+    /// @param relFilePath Relative file path to the fragment shader SPIR-V file, relative to Path::SHADERS_DIR.
+    /// @return A ShaderModule object with the fragment shader loaded.
+    /// Throws runtime_error if the shader file can't be opened, the file is not a valid fragment shader, or shader module creation fails.
+    static ShaderModule CreateFragShader(const VkDevice device, const std::string& relFilePath);
 
 protected:
     // Protected Fields
@@ -67,61 +65,30 @@ protected:
 private:
     // Private Fields
 
-    VkDevice device; /// @brief The Vulkan device handle.
-    VkShaderModule shaderModule; /// @brief The Vulkan shader module handle.
-
     // Constructors
-
-    /// @brief Constructor.
-    ///
-    /// @param device The Vulkan device handle.
-    /// @param shaderModule The Vulkan shader module handle.
-    ShaderModule(const VkDevice device, const VkShaderModule shaderModule);
 
     // Private Methods
 
-    /// @brief Creates a unique_ptr to a ShaderModule instance.
-    ///
-    /// @param device The Vulkan device handle.
-    /// @param shaderModule The Vulkan shader module handle.
-    /// @return A unique_ptr to a ShaderModule instance.
-    ///
-    /// This method facilitates the creation of a ShaderModule instance wrapped in a unique_ptr,
-    /// utilizing a nested struct to access the private constructor of ShaderModule.
-    static std::unique_ptr<ShaderModule> CreateUniquePtr(const VkDevice device, const VkShaderModule shaderModule);
+    /// @brief Loads a shader from a file.
+    /// @param device The Vulkan device.
+    /// @param relFilePath Relative file path to the shader SPIR-V file, relative to Path::SHADERS_DIR.
+    /// @return A VkShaderModule created from the specified file.
+    /// Throws runtime_error if the shader file can't be opened or Vulkan shader module creation fails.
+    static VkShaderModule LoadShader(const VkDevice device, const std::string& relFilePath);
 
-    /// @brief Loads a shader module from a SPIR-V file.
-    ///
-    /// @param device The Vulkan device handle.
-    /// @param filePath The path to the SPIR-V file.
-    /// @param outShaderModule A pointer to a VkShaderModule structure where the loaded shader module will be stored.
-    /// @return Returns true if the shader module was loaded successfully, false otherwise.
-    ///
-    /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
-    /// and stores the shader module in the provided VkShaderModule structure.
-    static bool LoadShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule);
+    /// @brief Loads a vertex shader from a file.
+    /// @param device The Vulkan device.
+    /// @param filePath Relative file path to the vertex shader SPIR-V file, relative to Path::SHADERS_DIR.
+    /// @return A VkShaderModule created from the specified file.
+    /// Validates the file extension and throws runtime_error if it's not a valid vertex shader file or shader module creation fails.
+    static VkShaderModule LoadVertexShader(const VkDevice device, const std::string& filePath);
 
-    /// @brief Loads a vertex shader module from a SPIR-V file.
-    ///
-    /// @param device The Vulkan device handle.
-    /// @param filePath The path to the SPIR-V file containing the vertex shader code. Can be absolute or relative to Path::VERT_SHADERS_DIR.
-    /// @param outShaderModule A pointer to a VkShaderModule structure where the loaded shader module will be stored.
-    /// @return Returns true if the vertex shader module was loaded successfully, false otherwise.
-    ///
-    /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
-    /// and stores the shader module in the provided VkShaderModule structure.
-    static bool LoadVertexShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule);
-
-    /// @brief Loads a fragment shader module from a SPIR-V file.
-    ///
-    /// @param device The Vulkan device handle.
-    /// @param filePath The path to the SPIR-V file containing the fragment shader code. Can be absolute or relative to Path::FRAG_SHADERS_DIR.
-    /// @param outFragShaderModule A pointer to a VkShaderModule structure where the loaded shader module will be stored.
-    /// @return Returns true if the fragment shader module was loaded successfully, false otherwise.
-    ///
-    /// This method reads a SPIR-V file from disk, creates a Vulkan shader module from the contents, 
-    /// and stores the shader module in the provided VkShaderModule structure.
-    static bool LoadFragmentShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule);
+    /// @brief Loads a fragment shader from a file.
+    /// @param device The Vulkan device.
+    /// @param filePath Relative file path to the fragment shader SPIR-V file, relative to Path::SHADERS_DIR.
+    /// @return A VkShaderModule created from the specified file.
+    /// Validates the file extension and throws runtime_error if it's not a valid fragment shader file or shader module creation fails.
+    static VkShaderModule LoadFragmentShader(const VkDevice device, const std::string& filePath);
 
 };
 

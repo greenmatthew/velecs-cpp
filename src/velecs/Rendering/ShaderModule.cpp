@@ -19,6 +19,7 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 namespace velecs {
 
@@ -36,38 +37,20 @@ ShaderModule::~ShaderModule()
 
 // Public Methods
 
-std::unique_ptr<ShaderModule> ShaderModule::CreateVertexShaderModule(const VkDevice device, const std::string& filePath)
+ShaderModule ShaderModule::CreateVertShader(const VkDevice device, const std::string& filePath)
 {
-    VkShaderModule vertShaderModule;
-    if (!LoadVertexShader(device, filePath, &vertShaderModule))
-    {
-        std::cout << "Error when building or loading the vertex shader module: " << filePath << std::endl;
-        return nullptr;
-    }
-    std::cout << "Successfully built and loaded vertex shader module: " << filePath << std::endl;
-    return CreateUniquePtr(device, vertShaderModule);
+    VkShaderModule shaderModule = LoadShader(device, filePath);
+    VkPipelineShaderStageCreateInfo info = vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_VERTEX_BIT, shaderModule);
+
+    return ShaderModule{ device, shaderModule, info };
 }
 
-std::unique_ptr<ShaderModule> ShaderModule::CreateFragmentShaderModule(const VkDevice device, const std::string& filePath)
+ShaderModule ShaderModule::CreateFragShader(const VkDevice device, const std::string& filePath)
 {
-    VkShaderModule fragShaderModule;
-    if (!LoadFragmentShader(device, filePath, &fragShaderModule))
-    {
-        std::cout << "Error when building or loading the fragment shader module: " << filePath << std::endl;
-        return nullptr;
-    }
-    std::cout << "Successfully built and loaded fragment shader module: " << filePath << std::endl;
-    return CreateUniquePtr(device, fragShaderModule);
-}
+    VkShaderModule shaderModule = LoadShader(device, filePath);
+    VkPipelineShaderStageCreateInfo info = vkinit::pipeline_shader_stage_create_info(VK_SHADER_STAGE_FRAGMENT_BIT, shaderModule);
 
-const VkShaderModule ShaderModule::get() const
-{
-    return shaderModule;
-}
-
-ShaderModule::operator const VkShaderModule() const
-{
-    return shaderModule;
+    return ShaderModule{ device, shaderModule, info };
 }
 
 // Protected Fields
@@ -78,28 +61,17 @@ ShaderModule::operator const VkShaderModule() const
 
 // Constructors
 
-ShaderModule::ShaderModule(const VkDevice device, const VkShaderModule shaderModule)
-    : device(device), shaderModule(shaderModule) {}
-
 // Private Methods
 
-std::unique_ptr<ShaderModule> ShaderModule::CreateUniquePtr(const VkDevice device, const VkShaderModule shaderModule)
+VkShaderModule ShaderModule::LoadShader(const VkDevice device, const std::string& relFilePath)
 {
-    struct UniquePtrWrapper : public ShaderModule
-    {
-        UniquePtrWrapper(const VkDevice device, const VkShaderModule shaderModule) : ShaderModule(device, shaderModule) {}
-    };
+    const std::string fullFilePath = Path::Combine(Path::SHADERS_DIR, relFilePath);
 
-    return std::make_unique<UniquePtrWrapper>(device, shaderModule);
-}
-
-bool ShaderModule::LoadShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
-{
     //open the file. With cursor at the end
-    std::ifstream file(filePath, std::ios::ate | std::ios::binary);
+    std::ifstream file(fullFilePath, std::ios::ate | std::ios::binary);
     if (!file.is_open())
     {
-        return false;
+        throw std::runtime_error("Issue opening shader file.");
     }
 
     //find what the size of the file is by looking up the location of the cursor
@@ -129,55 +101,35 @@ bool ShaderModule::LoadShader(const VkDevice device, const std::string& filePath
 
     //check that the creation goes well.
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+    VkResult result = vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule);
+    if (result != VK_SUCCESS)
     {
-        return false;
+        std::ostringstream oss;
+        oss << "Failed to create shader module; Vulkan error: " << result;
+        throw std::runtime_error(oss.str());
     }
 
-    *outShaderModule = shaderModule;
-    return true;
+    return shaderModule;
 }
 
-bool ShaderModule::LoadVertexShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
+VkShaderModule ShaderModule::LoadVertexShader(const VkDevice device, const std::string& filePath)
 {
-    const std::string newPath{ Path::Combine(Path::VERT_SHADERS_DIR(), std::string{filePath})};
-    if (File::Exists(newPath))
+    if (File::HasExtension(".vert.spv"))
     {
-        return LoadShader(device, newPath, outShaderModule);
+        throw std::runtime_error("Provided path: " + filePath + " is not a valid vertex shader file name. It requires a '.vert.spv' extension.");
     }
-    else
-    {
-        try
-        {
-            return LoadShader(device, filePath, outShaderModule);
-        }
-        catch (std::exception ex)
-        {
-            return false;
-        }
-    }
-    return false;
+    VkShaderModule shaderModule = LoadShader(device, filePath);
+    return shaderModule;
 }
 
-bool ShaderModule::LoadFragmentShader(const VkDevice device, const std::string& filePath, VkShaderModule* outShaderModule)
+VkShaderModule ShaderModule::LoadFragmentShader(const VkDevice device, const std::string& filePath)
 {
-    const std::string newPath{ Path::Combine(Path::FRAG_SHADERS_DIR(), filePath)};
-    if (File::Exists(newPath))
+    if (File::HasExtension(".frag.spv"))
     {
-        return LoadShader(device, newPath, outShaderModule);
+        throw std::runtime_error("Provided path: " + filePath + " is not a valid vertex shader file name. It requires a '.frag.spv' extension.");
     }
-    else
-    {
-        try
-        {
-            return LoadShader(device, filePath, outShaderModule);
-        }
-        catch (std::exception ex)
-        {
-            return false;
-        }
-    }
-    return false;
+    VkShaderModule shaderModule = LoadShader(device, filePath);
+    return shaderModule;
 }
 
 } // namespace velecs
