@@ -19,10 +19,33 @@ namespace velecs {
 
 // Public Methods
 
-// flecs::entity Entity::CreateNoTransform(flecs::world& ecs)
-// {
-//     return ecs.entity();
-// }
+void Entity::Init(flecs::world& world)
+{
+    ecs(&world);
+}
+
+flecs::world& Entity::ecs(flecs::world* newWorld /* = nullptr */)
+{
+    static flecs::world* worldPtr = nullptr;  // Static pointer to hold the world reference
+    
+    if (newWorld != nullptr)
+    {
+        if (worldPtr == nullptr)
+        {
+            worldPtr = newWorld;  // Set the world pointer if it hasn't been set
+        }
+        else
+        {
+            throw std::runtime_error("World is already initialized.");  // Prevent reinitialization
+        }
+    }
+    else if (worldPtr == nullptr)
+    {
+        throw std::runtime_error("World is not initialized yet.");  // Ensure it's initialized before usage
+    }
+    
+    return *worldPtr;  // Return a reference to the stored world object
+}
 
 flecs::entity Entity::Create
 (
