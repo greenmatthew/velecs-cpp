@@ -10,4 +10,8 @@
 // add headers that you want to pre-compile here
 #include "Debug.h"
 
+#include <optional>
+
+constexpr auto None = std::nullopt;
+
 #endif //PCH_H
