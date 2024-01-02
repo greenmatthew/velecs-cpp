@@ -84,6 +84,39 @@ flecs::entity Prefab::Create
 
 
 
+flecs::entity Prefab::CreateFromPrefab
+(
+    const std::string& name,
+    const flecs::entity prefab,
+    Transform transform
+)
+{
+    return Create(name, transform)
+        .is_a(prefab);
+}
+
+flecs::entity Prefab::CreateFromPrefab
+(
+    const std::string& name,
+    const flecs::entity prefab,
+    const std::optional<Vec3> pos /* = None */,
+    const std::optional<Vec3> rot /* = None */,
+    const std::optional<Vec3> scale /* = None */
+)
+{
+    const Transform* const prefabTransform = prefab.get<Transform>();
+    Transform transform;
+
+    transform.position = pos.value_or(prefabTransform->position);
+    transform.rotation = rot.value_or(prefabTransform->rotation);
+    transform.scale = scale.value_or(prefabTransform->scale);
+
+    return CreateFromPrefab(name, prefab, transform);
+}
+
+
+
+
 
 flecs::entity Prefab::Find(const std::string& searchPath)
 {

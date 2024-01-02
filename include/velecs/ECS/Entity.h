@@ -85,9 +85,9 @@ public:
     static flecs::entity CreateFromPrefab
     (
         const flecs::entity prefab,
-        const std::optional<Vec3> pos = Vec3::ZERO,
-        const std::optional<Vec3> rot = Vec3::ZERO,
-        const std::optional<Vec3> scale = Vec3::ONE,
+        const std::optional<Vec3> pos = None,
+        const std::optional<Vec3> rot = None,
+        const std::optional<Vec3> scale = None,
         const std::optional<flecs::entity> parent = None
     );
 
@@ -95,9 +95,9 @@ public:
     (
         const flecs::entity prefab,
         const flecs::entity parent,
-        const std::optional<Vec3> pos = Vec3::ZERO,
-        const std::optional<Vec3> rot = Vec3::ZERO,
-        const std::optional<Vec3> scale = Vec3::ONE
+        const std::optional<Vec3> pos = None,
+        const std::optional<Vec3> rot = None,
+        const std::optional<Vec3> scale = None
     );
     
 

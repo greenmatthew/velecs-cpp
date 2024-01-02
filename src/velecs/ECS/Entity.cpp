@@ -112,23 +112,29 @@ flecs::entity Entity::CreateFromPrefab
 flecs::entity Entity::CreateFromPrefab
 (
     const flecs::entity prefab,
-    const std::optional<Vec3> pos /* = Vec3::ZERO */,
-    const std::optional<Vec3> rot /* = Vec3::ZERO */,
-    const std::optional<Vec3> scale /* = Vec3::ONE */,
+    const std::optional<Vec3> pos /* = None */,
+    const std::optional<Vec3> rot /* = None */,
+    const std::optional<Vec3> scale /* = None */,
     const std::optional<flecs::entity> parent /* = None */
 )
 {
-    return Create(pos, rot, scale, parent)
-        .is_a(prefab);
+    const Transform* const prefabTransform = prefab.get<Transform>();
+    Transform transform;
+
+    transform.position = pos.value_or(prefabTransform->position);
+    transform.rotation = rot.value_or(prefabTransform->rotation);
+    transform.scale = scale.value_or(prefabTransform->scale);
+
+    return CreateFromPrefab(prefab, transform, parent);;
 }
 
 flecs::entity Entity::CreateFromPrefab
 (
     const flecs::entity prefab,
     const flecs::entity parent,
-    const std::optional<Vec3> pos /* = Vec3::ZERO */,
-    const std::optional<Vec3> rot /* = Vec3::ZERO */,
-    const std::optional<Vec3> scale /* = Vec3::ONE */
+    const std::optional<Vec3> pos /* = None */,
+    const std::optional<Vec3> rot /* = None */,
+    const std::optional<Vec3> scale /* = None */
 )
 {
     return CreateFromPrefab(prefab, pos, rot, scale, parent);

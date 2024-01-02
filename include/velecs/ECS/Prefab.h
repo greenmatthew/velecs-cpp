@@ -55,6 +55,24 @@ public:
         const std::optional<Vec3> scale = Vec3::ONE
     );
 
+
+    static flecs::entity CreateFromPrefab
+    (
+        const std::string& name,
+        const flecs::entity prefab,
+        Transform transform
+    );
+
+    static flecs::entity CreateFromPrefab
+    (
+        const std::string& name,
+        const flecs::entity prefab,
+        const std::optional<Vec3> pos = None,
+        const std::optional<Vec3> rot = None,
+        const std::optional<Vec3> scale = None
+    );
+
+
     /// @brief Retrieves a prefab entity based on a given search path.
     /// @param[in] searchPath A string representing the path to the prefab.
     /// @return The found prefab entity.
