@@ -27,6 +27,8 @@ CommonECSModule::CommonECSModule(flecs::world& ecs)
 
     flecs::entity ep = ecs.prefab("PR_Entity")
         .override<Transform>();
+    
+    Entity::Init(ecs);
 }
 
 // Public Methods
@@ -61,48 +63,6 @@ bool CommonECSModule::TryGetPrefab(flecs::world& ecs, const std::string& searchP
         return false;
     }
     return true;
-}
-
-
-
-flecs::entity CommonECSModule::CreateEntity
-(
-    flecs::world& ecs,
-    const std::string& name,
-    flecs::entity& parent
-)
-{
-    return CreateEntity(ecs, name, Vec3::ZERO, Vec3::ZERO, parent);
-}
-
-flecs::entity CommonECSModule::CreateEntity
-(
-    flecs::world& ecs,
-    const std::string& name,
-    const Vec3 position,
-    const Vec3 rotation /* = Vec3::ZERO */,
-    flecs::entity& parent /* = flecs::entity::null() */
-)
-{
-    flecs::entity entity = ecs.prefab("Entity")
-        .set_name(name.c_str())
-        .override<Transform>();
-    
-    entity.set<Transform>({entity, position, rotation});
-
-    if (parent != flecs::entity::null())
-    {
-        if (parent.is_valid())
-        {
-            entity.child_of(parent);
-        }
-        else
-        {
-            std::exception("Parent is not a valid entity.");
-        }
-    }
-
-    return entity;
 }
 
 // Protected Fields

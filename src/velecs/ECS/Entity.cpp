@@ -26,67 +26,95 @@ namespace velecs {
 
 flecs::entity Entity::Create
 (
-    flecs::world& ecs,
-    const std::string& name /*= ""*/,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/,
-    const flecs::entity parent /*= flecs::entity::null()*/
+    Transform transform,
+    const std::optional<flecs::entity> parent /* = None */
 )
 {
-    flecs::entity entity;
-    if (!name.empty())
-    {
-        entity = ecs.entity(name.c_str());
-    }
-    else
-    {
-        entity = ecs.entity();
-    }
-    entity.set_override<Transform>({entity, position, rotation, scale});
+    flecs::world& world = ecs();
+    flecs::entity entity = world.entity();
 
-    // If a parent was provided set it to be the child of that parent entity.
-    if (parent != flecs::entity::null())
+    transform.entity = entity;
+
+    entity.set_override<Transform>(transform);
+
+    if (parent)
     {
-        entity.child_of(parent);
+        entity.child_of(parent.value());
     }
 
     return entity;
 }
 
- flecs::entity Entity::Create
+flecs::entity Entity::Create
 (
-    flecs::world& ecs,
-    const std::string& name,
-    const flecs::entity parent
+    const std::optional<Vec3> pos /* = Vec3::ZERO */,
+    const std::optional<Vec3> rot /* = Vec3::ZERO */,
+    const std::optional<Vec3> scale /* = Vec3::ONE */,
+    const std::optional<flecs::entity> parent /* = None */
 )
 {
-    return Create(ecs, name, Vec3::ZERO, Vec3::ZERO, Vec3::ONE, parent);
+    Transform transform;
+
+    transform.position = pos.value_or(Vec3::ZERO);
+    transform.rotation = rot.value_or(Vec3::ZERO);
+    transform.scale = scale.value_or(Vec3::ONE);
+
+    return Create(transform, parent);
 }
 
 flecs::entity Entity::Create
 (
-    flecs::world& ecs,
     const flecs::entity parent,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/
+    const std::optional<Vec3> pos /* = Vec3::ZERO */,
+    const std::optional<Vec3> rot /* = Vec3::ZERO */,
+    const std::optional<Vec3> scale /* = Vec3::ONE */
 )
 {
-    return Create(ecs, "", position, rotation, scale, parent);
+    return Create(pos, rot, scale, parent);
 }
 
-flecs::entity Entity::Create
+
+
+flecs::entity Entity::CreateFromPrefab
 (
-    flecs::world& ecs,
-    const Vec3 position,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/,
-    const flecs::entity parent /*= flecs::entity::null()*/
+    const flecs::entity prefab,
+    Transform transform,
+    std::optional<flecs::entity> parent /* = None */
 )
 {
-    return Create(ecs, "", position, rotation, scale, parent);
+    return Create(transform, parent)
+        .is_a(prefab);
 }
+
+flecs::entity Entity::CreateFromPrefab
+(
+    const flecs::entity prefab,
+    const std::optional<Vec3> pos /* = Vec3::ZERO */,
+    const std::optional<Vec3> rot /* = Vec3::ZERO */,
+    const std::optional<Vec3> scale /* = Vec3::ONE */,
+    const std::optional<flecs::entity> parent /* = None */
+)
+{
+    return Create(pos, rot, scale, parent)
+        .is_a(prefab);
+}
+
+flecs::entity Entity::CreateFromPrefab
+(
+    const flecs::entity prefab,
+    const flecs::entity parent,
+    const std::optional<Vec3> pos /* = Vec3::ZERO */,
+    const std::optional<Vec3> rot /* = Vec3::ZERO */,
+    const std::optional<Vec3> scale /* = Vec3::ONE */
+)
+{
+    return CreateFromPrefab(prefab, pos, rot, scale, parent);
+}
+
+
+
+
+
 
 flecs::entity Entity::Find(flecs::world& ecs, const std::string& searchPath)
 {

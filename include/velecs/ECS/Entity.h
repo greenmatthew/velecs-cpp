@@ -14,6 +14,8 @@
 
 #include <flecs.h>
 
+#include <optional>
+
 namespace velecs {
 
 /// @class Entity
@@ -41,46 +43,89 @@ public:
     // static flecs::entity Create
     // (
     //     flecs::world& ecs,
-    //     const Vec3 position = Vec3::ZERO,
-    //     const Vec3 rotation = Vec3::ZERO,
+    //     const Vec3 pos = Vec3::ZERO,
+    //     const Vec3 rot = Vec3::ZERO,
     //     const Vec3 scale = Vec3::ONE,
     //     const std::string& name = ""
     // );
 
+    static void Init(flecs::world& world)
+    {
+        ecs(&world);
+    }
+
+    static flecs::world& ecs(flecs::world* newWorld = nullptr)
+    {
+        static flecs::world* worldPtr = nullptr;  // Static pointer to hold the world reference
+        
+        if (newWorld != nullptr)
+        {
+            if (worldPtr == nullptr)
+            {
+                worldPtr = newWorld;  // Set the world pointer if it hasn't been set
+            }
+            else
+            {
+                throw std::runtime_error("World is already initialized.");  // Prevent reinitialization
+            }
+        }
+        else if (worldPtr == nullptr)
+        {
+            throw std::runtime_error("World is not initialized yet.");  // Ensure it's initialized before usage
+        }
+        
+        return *worldPtr;  // Return a reference to the stored world object
+    }
+
     static flecs::entity Create
     (
-        flecs::world& ecs,
-        const std::string& name = "",
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec3 scale = Vec3::ONE,
-        const flecs::entity parent = flecs::entity::null()
+        Transform transform,
+        const std::optional<flecs::entity> parent /* = None */
     );
 
     static flecs::entity Create
     (
-        flecs::world& ecs,
-        const std::string& name,
-        const flecs::entity parent
+        const std::optional<Vec3> pos = Vec3::ZERO,
+        const std::optional<Vec3> rot = Vec3::ZERO,
+        const std::optional<Vec3> scale = Vec3::ONE,
+        const std::optional<flecs::entity> parent = None
     );
 
     static flecs::entity Create
     (
-        flecs::world& ecs,
         const flecs::entity parent,
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec3 scale = Vec3::ONE
+        const std::optional<Vec3> pos = Vec3::ZERO,
+        const std::optional<Vec3> rot = Vec3::ZERO,
+        const std::optional<Vec3> scale = Vec3::ONE
     );
 
-    static flecs::entity Create
+    static flecs::entity CreateFromPrefab
     (
-        flecs::world& ecs,
-        const Vec3 position = Vec3::ZERO,
-        const Vec3 rotation = Vec3::ZERO,
-        const Vec3 scale = Vec3::ONE,
-        const flecs::entity parent = flecs::entity::null()
+        const flecs::entity prefab,
+        Transform transform,
+        const std::optional<flecs::entity> parent = None
     );
+
+    static flecs::entity CreateFromPrefab
+    (
+        const flecs::entity prefab,
+        const std::optional<Vec3> pos = Vec3::ZERO,
+        const std::optional<Vec3> rot = Vec3::ZERO,
+        const std::optional<Vec3> scale = Vec3::ONE,
+        const std::optional<flecs::entity> parent = None
+    );
+
+    static flecs::entity CreateFromPrefab
+    (
+        const flecs::entity prefab,
+        const flecs::entity parent,
+        const std::optional<Vec3> pos = Vec3::ZERO,
+        const std::optional<Vec3> rot = Vec3::ZERO,
+        const std::optional<Vec3> scale = Vec3::ONE
+    );
+    
+
+
 
     /// @brief Finds an entity in the ECS system based on the given search path.
     /// 

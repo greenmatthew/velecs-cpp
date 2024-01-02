@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "velecs/ECS/Entity.h"
+
 #include "velecs/ECS/Components/Rendering/Transform.h"
 
 #include <flecs.h>
@@ -60,22 +62,6 @@ public:
     /// is declared in a different module. If the prefab is not found or invalid, and verbose is true, an error message
     /// is printed to standard output. This method does not throw an exception.
     static bool TryGetPrefab(flecs::world& ecs, const std::string& searchPath, flecs::entity* prefab, bool verbose = true);
-
-    static flecs::entity CreateEntity
-    (
-        flecs::world& ecs,
-        const std::string& name,
-        flecs::entity& parent
-    );
-
-    static flecs::entity CreateEntity
-    (
-        flecs::world& ecs,
-        const std::string& name,
-        const Vec3 position,
-        const Vec3 rotation = Vec3::ZERO,
-        flecs::entity& parent = flecs::entity::null()
-    );
 
 protected:
     // Protected Fields
