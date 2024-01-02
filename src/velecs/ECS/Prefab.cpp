@@ -18,68 +18,105 @@ namespace velecs {
 
 // Public Methods
 
+void Prefab::Init(flecs::world& world)
+{
+    ecs(&world);
+}
+
+flecs::world& Prefab::ecs(flecs::world* newWorld /* = nullptr */)
+{
+    static flecs::world* worldPtr = nullptr;  // Static pointer to hold the world reference
+    
+    if (newWorld != nullptr)
+    {
+        if (worldPtr == nullptr)
+        {
+            worldPtr = newWorld;  // Set the world pointer if it hasn't been set
+        }
+        else
+        {
+            throw std::runtime_error("World is already initialized.");  // Prevent reinitialization
+        }
+    }
+    else if (worldPtr == nullptr)
+    {
+        throw std::runtime_error("World is not initialized yet.");  // Ensure it's initialized before usage
+    }
+    
+    return *worldPtr;  // Return a reference to the stored world object
+}
+
+
+
+
 flecs::entity Prefab::Create
 (
-    flecs::world& ecs,
-    const std::string& name /*= ""*/,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/,
-    const flecs::entity parent /*= flecs::entity::null()*/
+    const std::string& name,
+    Transform transform
 )
 {
-    flecs::entity entity;
-    if (!name.empty())
+    flecs::world& world = ecs();
+    flecs::entity prefab = world.prefab(name.c_str());
+
+    transform.entity = flecs::entity::null();
+
+    prefab.set_override<Transform>(transform);
+
+    return prefab;
+}
+
+flecs::entity Prefab::Create
+(
+    const std::string& name,
+    const std::optional<Vec3> pos /* = Vec3::ZERO */,
+    const std::optional<Vec3> rot /* = Vec3::ZERO */,
+    const std::optional<Vec3> scale /* = Vec3::ONE */
+)
+{
+    Transform transform;
+
+    transform.position = pos.value_or(Vec3::ZERO);
+    transform.rotation = rot.value_or(Vec3::ZERO);
+    transform.scale = scale.value_or(Vec3::ONE);
+
+    return Create(name, transform);
+}
+
+
+
+
+flecs::entity Prefab::Find(const std::string& searchPath)
+{
+    flecs::world& world = ecs();
+
+    flecs::entity prefab = world.lookup(searchPath.c_str());
+    if (prefab != flecs::entity::null() && prefab.has(flecs::Prefab))
     {
-        entity = ecs.prefab(name.c_str());
+        return prefab;
     }
     else
     {
-        entity = ecs.prefab();
+        throw std::runtime_error("Invalid prefab: '" + searchPath + "'. Ensure the path is correctly formatted, "
+                                 "including any necessary parent-child relationships (e.g., 'Parent::Child') and "
+                                 "module prefixes (e.g., 'Module::PrefabName') if applicable.");
     }
-    entity.set_override<Transform>({entity, position, rotation, scale});
+}
 
-    // If a parent was provided set it to be the child of that parent entity.
-    if (parent != flecs::entity::null())
+bool Prefab::TryFind(const std::string& searchPath, flecs::entity* prefab, bool verbose /* = true */)
+{
+    try
     {
-        entity.child_of(parent);
+        *prefab = Find(searchPath);
     }
-
-    return entity;
-}
-
- flecs::entity Prefab::Create
-(
-    flecs::world& ecs,
-    const std::string& name,
-    const flecs::entity parent
-)
-{
-    return Create(ecs, name, Vec3::ZERO, Vec3::ZERO, Vec3::ONE, parent);
-}
-
-flecs::entity Prefab::Create
-(
-    flecs::world& ecs,
-    const flecs::entity parent,
-    const Vec3 position /*= Vec3::ZERO*/,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/
-)
-{
-    return Create(ecs, "", position, rotation, scale, parent);
-}
-
-flecs::entity Prefab::Create
-(
-    flecs::world& ecs,
-    const Vec3 position,
-    const Vec3 rotation /*= Vec3::ZERO*/,
-    const Vec3 scale /*= Vec3::ONE*/,
-    const flecs::entity parent /*= flecs::entity::null()*/
-)
-{
-    return Create(ecs, "", position, rotation, scale, parent);
+    catch (const std::runtime_error& e)
+    {
+        if (verbose)
+        {
+            std::cout << e.what() << std::endl;
+        }
+        return false;
+    }
+    return true;
 }
 
 // Protected Fields

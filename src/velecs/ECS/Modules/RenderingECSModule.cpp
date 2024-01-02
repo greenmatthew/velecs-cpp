@@ -83,21 +83,14 @@ RenderingECSModule::RenderingECSModule(flecs::world& ecs)
 
     const Material* const simpleMeshUnlit = Material::Create(ecs, "SimpleMesh/Color", &simpleMeshPipeline, &simpleMeshPipelineLayout);
 
-    flecs::entity entityPrefab = CommonECSModule::GetPrefab(ecs, "CommonECSModule::PR_Entity");
-    flecs::entity renderPrefab = ecs.prefab("PR_Render")
-        .is_a(entityPrefab)
-        .add<SimpleMesh>()
-        .set<Material>(*simpleMeshUnlit)
-        ;
-
-    flecs::entity triangleRenderPrefab = ecs.prefab("PR_TriangleRender")
-        .is_a(renderPrefab)
-        .set<SimpleMesh>({ SimpleMesh::EQUILATERAL_TRIANGLE() })
+    flecs::entity trianglePrefab = Prefab::Create("PR_TriangleRender")
+        .set<SimpleMesh>(SimpleMesh::EQUILATERAL_TRIANGLE())
+        .set_override<Material>(*simpleMeshUnlit)
         ;
     
-    flecs::entity squareRenderPrefab = ecs.prefab("PR_SquareRender")
-        .is_a(renderPrefab)
-        .set<SimpleMesh>({ SimpleMesh::SQUARE() })
+    flecs::entity squarePrefab = Prefab::Create("PR_SquareRender")
+        .set<SimpleMesh>(SimpleMesh::SQUARE())
+        .set_override<Material>(*simpleMeshUnlit)
         ;
     
     ecs.system()
