@@ -16,3 +16,9 @@
 [submodule "libs/stb"]
 	path = libs/stb
 	url = https://github.com/nothings/stb.git
+[submodule "libs/velecs-ecs"]
+	path = libs/velecs-ecs
+	url = https://git.matthewgreen.gg/mgreen/velecs-ecs-cpp.git
+[submodule "libs/velecs-math"]
+	path = libs/velecs-math
+	url = https://git.matthewgreen.gg/mgreen/velecs-math-cpp.git
