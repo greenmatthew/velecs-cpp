@@ -16,47 +16,60 @@ project(velecs)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Check if VULKAN_SDK is set
+if(NOT DEFINED ENV{VULKAN_SDK})
+    message(FATAL_ERROR "VULKAN_SDK environment variable is not set")
+endif()
+
 find_package(Vulkan REQUIRED)
 
+# Set SDL2_DIR using VULKAN_SDK
+# set(SDL2_DIR "$ENV{VULKAN_SDK}/Lib/cmake/SDL2")
+# find_package(SDL2 REQUIRED)
+
 add_subdirectory(libs)
-add_subdirectory(assets)
+# add_subdirectory(assets)
 
-file(GLOB_RECURSE VELECS_SOURCES "src/*.cpp")
-file(GLOB_RECURSE VELECS_HEADERS "include/*.h")
-
-add_library(velecs ${VELECS_SOURCES} ${VELECS_HEADERS})
-
-target_include_directories(velecs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-target_precompile_headers(velecs PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/velecs/pch.h")
-
-# Get the absolute path to the root of your project
-get_filename_component(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}" ABSOLUTE)
-
-target_link_libraries(velecs
-    Vulkan::Vulkan
-    SDL2
-    SDL2main
-    glm
-    vma
-    assimp
-    flecs::flecs_static
-    imgui
-    stb
-    vk-bootstrap
+# Source files for the library
+set(LIB_SOURCES
+    src/Engine.cpp
 )
 
-# Add dependencies on custom asset targets
-add_dependencies(velecs velecs-assets)
+# Header files for the library (for IDE organization)
+set(LIB_HEADERS
+    include/velecs/engine2/Engine.hpp
+)
 
-# Use source_group with TREE to mirror directory structure
-source_group(
-    TREE "${ROOT_DIR}/include/velecs"
-    PREFIX "Header Files"
-    FILES ${VELECS_HEADERS}
+add_library(velecs-engine ${LIB_SOURCES} ${LIB_HEADERS})
+# source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${LIB_SOURCES} ${LIB_HEADERS})
+
+target_include_directories(velecs-engine
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PUBLIC "$ENV{VULKAN_SDK}/Include"
 )
-source_group(
-    TREE "${ROOT_DIR}/src/velecs"
-    PREFIX "Source Files"
-    FILES ${VELECS_SOURCES}
+
+target_link_libraries(velecs-engine
+    PUBLIC velecs-math    
+    PUBLIC SDL2
+    PUBLIC SDL2main
 )
+
+# Export the library target for use by parent projects
+if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    # We're being included as a submodule
+    set(VELECS_ENGINE_LIBRARIES velecs-engine PARENT_SCOPE)
+endif()
+
+
+# target_link_libraries(velecs
+#     Vulkan::Vulkan
+#     SDL2
+#     SDL2main
+#     glm
+#     vma
+#     assimp
+#     flecs::flecs_static
+#     imgui
+#     stb
+#     vk-bootstrap
+# )
