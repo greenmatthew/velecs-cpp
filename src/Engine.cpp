@@ -63,29 +63,79 @@ namespace velecs::engine
         return *this;
     }
 
+    void PrintWindowEvent(const std::string& message)
+    {
+        std::cout << "[WindowEvent] " << message << std::endl;
+    }
+
     void Engine::OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent)
     {
         switch (windowEvent.event)
         {
-        case SDL_WINDOWEVENT_RESIZED:
-            std::cout << "Window resized to: " << windowEvent.data1 << "x" << windowEvent.data2 << std::endl;
-            // OnWindowResized();
+        case SDL_WINDOWEVENT_SHOWN:
+            PrintWindowEvent("Window opened.");
+            break;
+
+        case SDL_WINDOWEVENT_FOCUS_GAINED:
+            PrintWindowEvent("Window gained focus.");
             break;
         
+        case SDL_WINDOWEVENT_FOCUS_LOST:
+            PrintWindowEvent("Window lost focus.");
+            break;
+        
+        case SDL_WINDOWEVENT_ENTER:
+            PrintWindowEvent("Mouse entered window.");
+            break;
+
+        case SDL_WINDOWEVENT_LEAVE:
+            PrintWindowEvent("Mouse left window.");
+            break;
+        
+        case SDL_WINDOWEVENT_RESIZED:
+        {
+            std::string newRes = std::to_string(windowEvent.data1) + "x" + std::to_string(windowEvent.data2);
+            PrintWindowEvent("Window resized to: " + newRes);
+            // OnWindowResized();
+            break;
+        }
+        case SDL_WINDOWEVENT_SIZE_CHANGED:
+        {
+            std::string newRes = std::to_string(windowEvent.data1) + "x" + std::to_string(windowEvent.data2);
+            PrintWindowEvent("Window size changed to: " + newRes);
+            // OnWindowResized();
+            break;
+        }
         case SDL_WINDOWEVENT_MAXIMIZED:
+            PrintWindowEvent("Window maximized.");
             // OnWindowMaximized();
             break;
         
         case SDL_WINDOWEVENT_MINIMIZED:
+            PrintWindowEvent("Window minimized.");
             // OnWindowMinimized();
             break;
         
+        case SDL_WINDOWEVENT_RESTORED:
+            PrintWindowEvent("Window has been restored to normal size and position.");
+            break;
+        
         case SDL_WINDOWEVENT_MOVED:
-            std::cout << "Window moved to: " << Vec2(static_cast<float>(windowEvent.data1), static_cast<float>(windowEvent.data2)) << std::endl;
+        {
+            Vec2 newPos = Vec2(static_cast<float>(windowEvent.data1), static_cast<float>(windowEvent.data2));
+            PrintWindowEvent("Window moved to: " + newPos.ToString());
+            break;
+        }
+        case SDL_WINDOWEVENT_EXPOSED:
+            PrintWindowEvent("Window exposed (should be redrawn).");
+            break;
+        
+        case SDL_WINDOWEVENT_CLOSE:
+            PrintWindowEvent("Window closing.");
             break;
         
         default:
-            std::cout << "Unhandled window event: " << (SDL_WindowEventID)windowEvent.event << std::endl;
+            PrintWindowEvent("Unhandled window event: " + std::to_string(windowEvent.event));
             break;
         }
     }
