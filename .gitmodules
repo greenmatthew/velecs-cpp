@@ -4,3 +4,6 @@
 [submodule "libs/velecs-math"]
 	path = libs/velecs-math
 	url = https://github.com/greenmatthew/velecs-math-cpp.git
+[submodule "libs/velecs-input"]
+	path = libs/velecs-input
+	url = https://github.com/greenmatthew/velecs-input-cpp.git

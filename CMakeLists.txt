@@ -36,7 +36,9 @@ target_include_directories(velecs-engine
 )
 
 target_link_libraries(velecs-engine
-    PUBLIC velecs-math    
+    PUBLIC velecs-math
+    # PUBLIC velecs-ecs
+    PUBLIC velecs-input
     PUBLIC SDL2-all
 )
 

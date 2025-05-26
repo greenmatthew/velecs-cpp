@@ -13,6 +13,9 @@
 #include "velecs/math/Vec2.hpp"
 using namespace velecs::math;
 
+#include "velecs/input/Input.hpp"
+using namespace velecs::input;
+
 #include <iostream>
 
 #include <SDL2/SDL.h>
@@ -149,6 +152,7 @@ namespace velecs::engine
             break;
         
         case SDL_WINDOWEVENT:
+            // Probably forward/handle this in velecs-rendering in future...
             OnWindowEvent(event, event.window);
             break;
         }
@@ -163,9 +167,21 @@ namespace velecs::engine
         {
             while (SDL_PollEvent(&event))
             {
+                // Forward event to ImGUI backend
+                // ImGui_ImplSDL2_ProcessEvent(&event);
+                
+                // Process system events
                 OnSDLEvent(event, running);
+
+                // Forward event to velecs-input for processing keyboard, mouse, controller, and joystick type events
+                Input::ProcessEvent(event);
             }
-            
+
+            // Call update once per frame after all events processed
+            Input().Update();
+
+            // velecs::rendering::RenderNextFrame();
+
             // Small delay to prevent 100% CPU usage
             SDL_Delay(16); // ~60 FPS
         }
