@@ -39,7 +39,7 @@ target_link_libraries(velecs-engine
     PUBLIC velecs-math
     # PUBLIC velecs-ecs
     PUBLIC velecs-input
-    PUBLIC SDL2-all
+    PUBLIC SDL3
 )
 
 # Export the library target for use by parent projects

@@ -12,7 +12,9 @@
 
 #include <string>
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_video.h>
 
 namespace velecs::engine
 {
@@ -34,9 +36,9 @@ namespace velecs::engine
 
         // Public Methods
 
-        inline static Engine Create()
+        inline static Engine* Create()
         {
-            return Engine();
+            return new Engine();
         }
 
         /// @brief Sets the application window title
@@ -66,15 +68,19 @@ namespace velecs::engine
         Engine& SetWindowResizable(const bool resizable);
 
         
-        Engine& Init();
+        SDL_AppResult Init();
+
+        void Update();
+
+        void ProcessSDLEvent(const SDL_Event& event);
 
         void OnWindowResized();
         inline void OnWindowMaximized() { OnWindowResized(); }
         void OnWindowMinimized();
 
-        void OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent);
+        // void OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent);
 
-        void OnSDLEvent(const SDL_Event event, bool& running);
+        // void OnSDLEvent(const SDL_Event event, bool& running);
 
         Engine& Run();
         Engine& Cleanup();
@@ -100,7 +106,7 @@ namespace velecs::engine
         /// @brief Default constructor.
         Engine() = default;
 
-        void InitWindow();
+        SDL_AppResult InitWindow();
         void CleanupWindow();
     };
 

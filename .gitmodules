@@ -10,6 +10,6 @@
 [submodule "libs/velecs-common"]
 	path = libs/velecs-common
 	url = https://github.com/greenmatthew/velecs-common-cpp.git
-[submodule "libs/SDL"]
-	path = libs/SDL
-	url = https://github.com/libsdl-org/SDL.git
+[submodule "libs/velecs-deps"]
+	path = libs/velecs-deps
+	url = https://github.com/greenmatthew/velecs-deps-cpp.git
