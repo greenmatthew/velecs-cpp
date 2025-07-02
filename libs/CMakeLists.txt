@@ -60,3 +60,41 @@ target_include_directories(SDL2-all INTERFACE "${VULKAN_SDK}/Include/SDL2")
 ##############################################################################################
 ### !SDL2 ####################################################################################
 ##############################################################################################
+
+##############################################################################################
+### SDL3 #####################################################################################
+##############################################################################################
+
+# Add SDL3 as a subdirectory (it's a git submodule)
+# Configure SDL3 options before adding the subdirectory
+
+# Build configuration
+set(SDL_SHARED OFF CACHE BOOL "Build SDL3 as shared library")
+set(SDL_STATIC ON CACHE BOOL "Build SDL3 as static library") 
+set(SDL_TEST_LIBRARY OFF CACHE BOOL "Build SDL3 test library")
+set(SDL_TESTS OFF CACHE BOOL "Build SDL3 tests")
+set(SDL_EXAMPLES OFF CACHE BOOL "Build SDL3 examples")
+set(SDL_INSTALL OFF CACHE BOOL "Disable SDL3 installation")
+
+# Core subsystems we need
+set(SDL_AUDIO ON CACHE BOOL "Enable Audio subsystem")
+set(SDL_VIDEO ON CACHE BOOL "Enable Video subsystem") 
+set(SDL_GPU OFF CACHE BOOL "Enable GPU subsystem")
+set(SDL_RENDER OFF CACHE BOOL "Enable Render subsystem")
+set(SDL_CAMERA OFF CACHE BOOL "Disable Camera subsystem")
+set(SDL_JOYSTICK ON CACHE BOOL "Enable Joystick subsystem")
+set(SDL_HAPTIC ON CACHE BOOL "Enable Haptic subsystem")
+set(SDL_HIDAPI ON CACHE BOOL "Enable HIDAPI subsystem")
+set(SDL_POWER ON CACHE BOOL "Enable Power subsystem")
+set(SDL_SENSOR ON CACHE BOOL "Enable Sensor subsystem")
+set(SDL_DIALOG ON CACHE BOOL "Disable Dialog subsystem")
+
+# Add SDL3 subdirectory
+# add_subdirectory(SDL)
+
+# add_library(SDL3 INTERFACE)
+# target_link_libraries(SDL3 INTERFACE SDL3::SDL3)
+
+##############################################################################################
+### !SDL3 ####################################################################################
+##############################################################################################

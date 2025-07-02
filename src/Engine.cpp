@@ -13,7 +13,7 @@
 #include "velecs/math/Vec2.hpp"
 using namespace velecs::math;
 
-#include "velecs/input/Input.hpp"
+#include "velecs/input/Common.hpp"
 using namespace velecs::input;
 
 #include <iostream>
@@ -162,6 +162,36 @@ namespace velecs::engine
     {
         bool running = true;
         SDL_Event event;
+
+        std::cout << "Creating profile..." << std::endl;
+        auto& defaultProfile = Input::CreateProfile("DefaultProfile")
+            .AddMap("Player", [](ActionMap& map){
+                std::cout << map.GetName() << std::endl;
+                map.AddAction("Jump", [](Action& action){
+                    action.AddBinding<ButtonBinding>("PC Jump", SDL_SCANCODE_SPACE);
+                    action.started += [](InputBindingContext ctx) { std::cout << "Pressed jump button." << std::endl; };
+                    action.cancelled += [](InputBindingContext ctx) { std::cout << "Released jump button." << std::endl; };
+                })
+                .AddAction("Move", [](Action& action){
+                    std::cout << action.GetName() << std::endl;
+                    action.AddBinding<Vec2Binding>("WASD Move", SDL_SCANCODE_D, SDL_SCANCODE_A, SDL_SCANCODE_W, SDL_SCANCODE_S, 0.1f)
+                        .AddBinding<Vec2Binding>("Arrow Keys Move", SDL_SCANCODE_RIGHT, SDL_SCANCODE_LEFT, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, 0.1f);
+
+                    action.performed += [](InputBindingContext ctx)
+                    {
+                        bool isWalking = (ctx.activeKeymods & KMOD_LSHIFT) == KMOD_NONE;
+                        if (isWalking)
+                            std::cout << "Walked in direction: " << ctx.GetVec2() << std::endl;
+                        else
+                            std::cout << "Sprinted in direction: " << ctx.GetVec2() << std::endl;
+                    };
+                });
+            })
+            .AddMap("UI", [](ActionMap& map){
+                std::cout << map.GetName() << std::endl;
+            })
+            ;
+        std::cout << "Finished creating profile." << std::endl;
     
         while (running)
         {
@@ -177,10 +207,11 @@ namespace velecs::engine
                 Input::ProcessEvent(event);
             }
 
-            // Call update once per frame after all events processed
-            Input().Update();
-
             // velecs::rendering::RenderNextFrame();
+
+            // Always call at the END of the frame
+            // Call update once per frame after all events processed
+            Input::Update();
 
             // Small delay to prevent 100% CPU usage
             SDL_Delay(16); // ~60 FPS

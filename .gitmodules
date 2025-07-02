@@ -7,3 +7,9 @@
 [submodule "libs/velecs-input"]
 	path = libs/velecs-input
 	url = https://github.com/greenmatthew/velecs-input-cpp.git
+[submodule "libs/velecs-common"]
+	path = libs/velecs-common
+	url = https://github.com/greenmatthew/velecs-common-cpp.git
+[submodule "libs/SDL"]
+	path = libs/SDL
+	url = https://github.com/libsdl-org/SDL.git
