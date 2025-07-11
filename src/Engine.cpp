@@ -64,36 +64,8 @@ SDL_AppResult Engine::Init()
 {
     SDL_AppResult result = InitWindow();
     if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-
-    std::cout << "Creating profile..." << std::endl;
-    auto& defaultProfile = Input::CreateProfile("DefaultProfile")
-        .AddMap("Player", [](ActionMap& map){
-            std::cout << map.GetName() << std::endl;
-            map.AddAction("Jump", [](Action& action){
-                action.AddBinding<ButtonBinding>("PC Jump", SDL_SCANCODE_SPACE);
-                action.started += [](InputBindingContext ctx) { std::cout << "Pressed jump button." << std::endl; };
-                action.cancelled += [](InputBindingContext ctx) { std::cout << "Released jump button." << std::endl; };
-            })
-            .AddAction("Move", [](Action& action){
-                std::cout << action.GetName() << std::endl;
-                action.AddBinding<Vec2Binding>("WASD Move", SDL_SCANCODE_D, SDL_SCANCODE_A, SDL_SCANCODE_W, SDL_SCANCODE_S, 0.1f)
-                    .AddBinding<Vec2Binding>("Arrow Keys Move", SDL_SCANCODE_RIGHT, SDL_SCANCODE_LEFT, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, 0.1f);
-
-                action.performed += [](InputBindingContext ctx)
-                {
-                    bool isWalking = (ctx.activeKeymods & SDL_KMOD_LSHIFT) == SDL_KMOD_NONE;
-                    if (isWalking)
-                        std::cout << "Walked in direction: " << ctx.GetVec2() << std::endl;
-                    else
-                        std::cout << "Sprinted in direction: " << ctx.GetVec2() << std::endl;
-                };
-            });
-        })
-        .AddMap("UI", [](ActionMap& map){
-            std::cout << map.GetName() << std::endl;
-        })
-        ;
-    std::cout << "Finished creating profile." << std::endl;
+    
+    Input::CreateDefaultProfile();
 
     return result;
 }
