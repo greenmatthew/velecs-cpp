@@ -15,9 +15,11 @@ cmake_minimum_required(VERSION 3.10)
 ##############################################################################################
 
 # Ordered considering dependencies...
+add_subdirectory(velecs-common)
 add_subdirectory(velecs-math)
 add_subdirectory(velecs-ecs) # depends on velecs-math
 add_subdirectory(velecs-input) # depends on velecs-math
+add_subdirectory(velecs-graphics)
 
 ##############################################################################################
 ### !velecs-X ################################################################################

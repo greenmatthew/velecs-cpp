@@ -13,3 +13,6 @@
 [submodule "libs/velecs-deps"]
 	path = libs/velecs-deps
 	url = https://github.com/greenmatthew/velecs-deps-cpp.git
+[submodule "libs/velecs-graphics"]
+	path = libs/velecs-graphics
+	url = https://github.com/greenmatthew/velecs-graphics-cpp.git

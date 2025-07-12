@@ -36,10 +36,11 @@ target_include_directories(velecs-engine
 )
 
 target_link_libraries(velecs-engine
-    PUBLIC velecs-math
-    # PUBLIC velecs-ecs
-    PUBLIC velecs-input
     PUBLIC SDL3
+    PUBLIC velecs-math
+    PUBLIC velecs-ecs
+    PUBLIC velecs-input
+    PUBLIC velecs-graphics
 )
 
 # Export the library target for use by parent projects

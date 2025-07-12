@@ -10,11 +10,14 @@
 
 #pragma once
 
-#include <string>
+#include <velecs/graphics/RenderEngine.hpp>
 
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_video.h>
+
+#include <string>
+#include <memory>
 
 namespace velecs::engine
 {
@@ -67,7 +70,6 @@ namespace velecs::engine
         /// @return Reference to this Engine instance for method chaining
         Engine& SetWindowResizable(const bool resizable);
 
-        
         SDL_AppResult Init();
 
         void Update();
@@ -100,6 +102,8 @@ namespace velecs::engine
         bool _windowResizable{true};
 
         SDL_Window* _window{nullptr};
+
+        std::unique_ptr<velecs::graphics::RenderEngine> _renderEngine;
 
         // Private Methods
 

@@ -62,9 +62,15 @@ Engine& Engine::SetWindowResizable(const bool resizable)
 
 SDL_AppResult Engine::Init()
 {
+    // Setup SDL window
     SDL_AppResult result = InitWindow();
     if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+
+    _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
+    result = _renderEngine->Init();
+    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
     
+    // Setup default action profile
     Input::CreateDefaultProfile();
 
     return result;
@@ -214,7 +220,16 @@ Engine& Engine::Run()
 
 Engine& Engine::Cleanup()
 {
-    CleanupWindow();
+    if (_renderEngine != nullptr)
+    {
+        _renderEngine->Cleanup();
+    }
+
+    if (_window != nullptr)
+    {
+        CleanupWindow();
+    }
+    
     return *this;
 }
 
@@ -242,7 +257,7 @@ SDL_AppResult Engine::InitWindow()
         return SDL_AppResult::SDL_APP_FAILURE;
     }
 
-    SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, "My Window");
+    SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, _title.c_str());
     SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, _windowFullscreen);
     SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, true);
     SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, _windowWidth);
@@ -263,6 +278,12 @@ SDL_AppResult Engine::InitWindow()
 void Engine::CleanupWindow()
 {
     SDL_DestroyWindow(_window);
+
+    if (_renderEngine != nullptr)
+    {
+        _renderEngine->Cleanup();
+        _renderEngine.reset();
+    }
 }
 
 } // namespace velecs::engine2
