@@ -16,7 +16,12 @@ project(velecs)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(libs)
+# Ordered considering dependencies...
+add_subdirectory(libs/velecs-common)
+add_subdirectory(libs/velecs-math)
+add_subdirectory(libs/velecs-ecs)
+add_subdirectory(libs/velecs-input)
+add_subdirectory(libs/velecs-graphics)
 
 # Source files for the library
 set(LIB_SOURCES
