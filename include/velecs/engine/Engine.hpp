@@ -18,6 +18,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 namespace velecs::engine
 {
@@ -39,9 +40,9 @@ namespace velecs::engine
 
         // Public Methods
 
-        inline static Engine* Create()
+        inline static Engine* Create(int argc, char** argv)
         {
-            return new Engine();
+            return new Engine({argv, argv + argc});
         }
 
         /// @brief Sets the application window title
@@ -95,6 +96,8 @@ namespace velecs::engine
     private:
         // Private Fields
 
+        const std::vector<std::string> _args;
+
         std::string _title{"Unnamed Application"};
         bool _windowFullscreen{false};
         unsigned int _windowWidth{1280};
@@ -108,7 +111,8 @@ namespace velecs::engine
         // Private Methods
 
         /// @brief Default constructor.
-        Engine() = default;
+        inline Engine(const std::vector<std::string>& args)
+            : _args(args) {}
 
         SDL_AppResult InitWindow();
         void CleanupWindow();

@@ -16,6 +16,9 @@ using namespace velecs::math;
 #include "velecs/input/Common.hpp"
 using namespace velecs::input;
 
+#include "velecs/common/Paths.hpp"
+using namespace velecs::common;
+
 #include <iostream>
 
 #include <SDL3/SDL.h>
@@ -62,6 +65,8 @@ Engine& Engine::SetWindowResizable(const bool resizable)
 
 SDL_AppResult Engine::Init()
 {
+    Paths::Initialize(_args[0]);
+
     // Setup SDL window
     SDL_AppResult result = InitWindow();
     if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
