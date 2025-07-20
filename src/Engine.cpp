@@ -84,6 +84,7 @@ SDL_AppResult Engine::Init()
 void Engine::Update()
 {
     Input::Update();
+    _renderEngine->Draw();
 }
 
 void PrintWindowEvent(const std::string& message)
