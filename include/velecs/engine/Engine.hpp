@@ -88,6 +88,38 @@ namespace velecs::engine
         Engine& Run();
         Engine& Cleanup();
 
+        /// @brief SDL application initialization callback wrapper
+        /// @param engine Pointer to an already allocated engine instance
+        /// @param argc Number of command line arguments
+        /// @param argv Array of command line argument strings
+        /// @return SDL_APP_CONTINUE on success, SDL_APP_FAILURE on error
+        /// @details This function handles SDL app initialization by calling Init() on
+        ///          the pre-existing Engine instance. All exceptions are caught and logged.
+        /// @note Assumes the engine instance is already allocated and configured
+        static SDL_AppResult SDL_AppInit(void **engine, int argc, char** argv);
+
+        /// @brief SDL application iteration callback wrapper
+        /// @param engine Pointer to the engine instance (from SDL_AppInit)
+        /// @return SDL_APP_CONTINUE to keep running, SDL_APP_FAILURE on error
+        /// @details Called every frame by SDL to update the engine. Handles input processing,
+        ///          game logic updates, and rendering. All exceptions are caught and logged.
+        static SDL_AppResult SDL_AppIterate(void *engine);
+
+        /// @brief SDL event processing callback wrapper
+        /// @param engine Pointer to the engine instance (from SDL_AppInit)
+        /// @param event The SDL event to process
+        /// @return SDL_APP_CONTINUE normally, SDL_APP_SUCCESS for quit events, SDL_APP_FAILURE on error
+        /// @details Processes SDL events including quit requests and forwards other events
+        ///          to the engine for input handling. All exceptions are caught and logged.
+        static SDL_AppResult SDL_AppEvent(void *engine, SDL_Event *event);
+
+        /// @brief SDL application cleanup callback wrapper
+        /// @param engine Pointer to the engine instance (from SDL_AppInit)
+        /// @param result The result code from the application run
+        /// @details Called when the application is shutting down. Performs cleanup of engine
+        ///          resources and deallocates the engine instance. All exceptions are caught and logged.
+        static void SDL_AppQuit(void *engine, SDL_AppResult result);
+
     protected:
         // Protected Fields
 

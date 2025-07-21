@@ -239,6 +239,78 @@ Engine& Engine::Cleanup()
     return *this;
 }
 
+SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv)
+{
+    try {
+        Engine& engineRef = *static_cast<Engine*>(*engine);
+        return engineRef.Init();
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during initialization: " << e.what() << std::endl;
+        return SDL_APP_FAILURE;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during initialization" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+SDL_AppResult Engine::SDL_AppIterate(void *engine)
+{
+    try {
+        Engine& engineRef = *static_cast<Engine*>(engine);
+        engineRef.Update();
+        return SDL_APP_CONTINUE;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during update: " << e.what() << std::endl;
+        return SDL_APP_FAILURE; // This will cause SDL to quit gracefully
+    }
+    catch (...) {
+        std::cerr << "Unknown error during update" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+SDL_AppResult Engine::SDL_AppEvent(void *engine, SDL_Event *event)
+{
+    try {
+        switch (event->type)
+        {
+        case SDL_EVENT_QUIT:
+            return SDL_APP_SUCCESS;
+        }
+
+        Engine& engineRef = *static_cast<Engine*>(engine);
+        engineRef.ProcessSDLEvent(*event);
+        return SDL_APP_CONTINUE;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during event processing: " << e.what() << std::endl;
+        return SDL_APP_FAILURE;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during event processing" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
+{
+    try
+    {
+        Engine* enginePtr = static_cast<Engine*>(engine);
+        enginePtr->Cleanup();
+        delete enginePtr;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during app quit: " << e.what() << std::endl;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during app quit" << std::endl;
+    }
+}
+
 // Protected Fields
 
 // Protected Methods
