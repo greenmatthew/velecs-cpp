@@ -29,6 +29,7 @@ namespace velecs::engine
     class Engine
     {
     public:
+        using ConfigurationFunc = std::function<void(Engine&)>;
         using EntryPointFunc = std::function<void()>;
     
         // Enums
@@ -78,23 +79,6 @@ namespace velecs::engine
         /// @return Reference to this Engine instance for method chaining
         Engine& SetEntryPoint(EntryPointFunc entryPoint);
 
-        SDL_AppResult Init();
-
-        void Update();
-
-        void ProcessSDLEvent(const SDL_Event& event);
-
-        void OnWindowResized();
-        inline void OnWindowMaximized() { OnWindowResized(); }
-        void OnWindowMinimized();
-
-        // void OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent);
-
-        // void OnSDLEvent(const SDL_Event event, bool& running);
-
-        Engine& Run();
-        Engine& Cleanup();
-
         /// @brief SDL application initialization callback wrapper
         /// @param engine Pointer to an already allocated engine instance
         /// @param argc Number of command line arguments
@@ -103,7 +87,12 @@ namespace velecs::engine
         /// @details This function handles SDL app initialization by calling Init() on
         ///          the pre-existing Engine instance. All exceptions are caught and logged.
         /// @note Assumes the engine instance is already allocated and configured
-        static SDL_AppResult SDL_AppInit(void **engine, int argc, char** argv);
+        static SDL_AppResult SDL_AppInit(
+            void **engine,
+            int argc,
+            char** argv,
+            ConfigurationFunc configure
+        );
 
         /// @brief SDL application iteration callback wrapper
         /// @param engine Pointer to the engine instance (from SDL_AppInit)
@@ -129,6 +118,23 @@ namespace velecs::engine
 
     protected:
         // Protected Fields
+
+        SDL_AppResult Init();
+
+        void Update();
+
+        void ProcessSDLEvent(const SDL_Event& event);
+
+        void OnWindowResized();
+        inline void OnWindowMaximized() { OnWindowResized(); }
+        void OnWindowMinimized();
+
+        // void OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent);
+
+        // void OnSDLEvent(const SDL_Event event, bool& running);
+
+        Engine& Run();
+        Engine& Cleanup();
 
         // Protected Methods
 

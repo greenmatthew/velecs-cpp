@@ -70,44 +70,127 @@ Engine& Engine::SetEntryPoint(EntryPointFunc entryPoint)
     return *this;
 }
 
-    SDL_AppResult Engine::Init()
-    {
-        Paths::Initialize(_args[0]);
-
-        // Setup SDL window
-        SDL_AppResult result = InitWindow();
-        if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-
-        _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
-        result = _renderEngine->Init();
-        if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, ConfigurationFunc configure)
+{
+    try {
+        // Create and configure the engine
+        Engine* enginePtr = Engine::Create(argc, argv);
+        *engine = enginePtr;
         
-        // Setup default action profile
-        Input::CreateDefaultProfile();
-
-        // Entry point is required - throw clear error if not set
-        if (_entryPoint == nullptr)
+        // Apply user configuration
+        if (configure)
         {
-            throw std::runtime_error(
-                "Missing required application entry point. "
-                "You must call SetEntryPoint() on your Engine instance before initialization. "
-                "Example: engine.SetEntryPoint(YourGameInitFunction);"
-            );
+            configure(*enginePtr);
         }
 
-        // Call user entry point after engine is fully initialized
-        try
-        {
-            _entryPoint();
-        }
-        catch (const std::exception& e)
-        {
-            std::cerr << "Error in application entry point: " << e.what() << std::endl;
-            return SDL_APP_FAILURE;
-        }
-
-        return result;
+        return enginePtr->Init();
     }
+    catch (const std::exception& e) {
+        std::cerr << "Error during initialization: " << e.what() << std::endl;
+        return SDL_APP_FAILURE;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during initialization" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+SDL_AppResult Engine::SDL_AppIterate(void *engine)
+{
+    try {
+        Engine& engineRef = *static_cast<Engine*>(engine);
+        engineRef.Update();
+        return SDL_APP_CONTINUE;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during update: " << e.what() << std::endl;
+        return SDL_APP_FAILURE; // This will cause SDL to quit gracefully
+    }
+    catch (...) {
+        std::cerr << "Unknown error during update" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+SDL_AppResult Engine::SDL_AppEvent(void *engine, SDL_Event *event)
+{
+    try {
+        switch (event->type)
+        {
+        case SDL_EVENT_QUIT:
+            return SDL_APP_SUCCESS;
+        }
+
+        Engine& engineRef = *static_cast<Engine*>(engine);
+        engineRef.ProcessSDLEvent(*event);
+        return SDL_APP_CONTINUE;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during event processing: " << e.what() << std::endl;
+        return SDL_APP_FAILURE;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during event processing" << std::endl;
+        return SDL_APP_FAILURE;
+    }
+}
+
+void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
+{
+    try
+    {
+        Engine* enginePtr = static_cast<Engine*>(engine);
+        enginePtr->Cleanup();
+        delete enginePtr;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error during app quit: " << e.what() << std::endl;
+    }
+    catch (...) {
+        std::cerr << "Unknown error during app quit" << std::endl;
+    }
+}
+
+// Protected Fields
+
+SDL_AppResult Engine::Init()
+{
+    Paths::Initialize(_args[0]);
+
+    // Setup SDL window
+    SDL_AppResult result = InitWindow();
+    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+
+    _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
+    result = _renderEngine->Init();
+    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+    
+    // Setup default action profile
+    Input::CreateDefaultProfile();
+
+    // Entry point is required - throw clear error if not set
+    if (_entryPoint == nullptr)
+    {
+        throw std::runtime_error(
+            "Missing required application entry point. "
+            "You must call SetEntryPoint() on your Engine instance before initialization. "
+            "Example: engine.SetEntryPoint(YourGameInitFunction);"
+        );
+    }
+
+    // Call user entry point after engine is fully initialized
+    try
+    {
+        _entryPoint();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Error in application entry point: " << e.what() << std::endl;
+        return SDL_APP_FAILURE;
+    }
+
+    return result;
+}
 
 void Engine::Update()
 {
@@ -266,80 +349,6 @@ Engine& Engine::Cleanup()
     
     return *this;
 }
-
-SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv)
-{
-    try {
-        Engine& engineRef = *static_cast<Engine*>(*engine);
-        return engineRef.Init();
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error during initialization: " << e.what() << std::endl;
-        return SDL_APP_FAILURE;
-    }
-    catch (...) {
-        std::cerr << "Unknown error during initialization" << std::endl;
-        return SDL_APP_FAILURE;
-    }
-}
-
-SDL_AppResult Engine::SDL_AppIterate(void *engine)
-{
-    try {
-        Engine& engineRef = *static_cast<Engine*>(engine);
-        engineRef.Update();
-        return SDL_APP_CONTINUE;
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error during update: " << e.what() << std::endl;
-        return SDL_APP_FAILURE; // This will cause SDL to quit gracefully
-    }
-    catch (...) {
-        std::cerr << "Unknown error during update" << std::endl;
-        return SDL_APP_FAILURE;
-    }
-}
-
-SDL_AppResult Engine::SDL_AppEvent(void *engine, SDL_Event *event)
-{
-    try {
-        switch (event->type)
-        {
-        case SDL_EVENT_QUIT:
-            return SDL_APP_SUCCESS;
-        }
-
-        Engine& engineRef = *static_cast<Engine*>(engine);
-        engineRef.ProcessSDLEvent(*event);
-        return SDL_APP_CONTINUE;
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error during event processing: " << e.what() << std::endl;
-        return SDL_APP_FAILURE;
-    }
-    catch (...) {
-        std::cerr << "Unknown error during event processing" << std::endl;
-        return SDL_APP_FAILURE;
-    }
-}
-
-void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
-{
-    try
-    {
-        Engine* enginePtr = static_cast<Engine*>(engine);
-        enginePtr->Cleanup();
-        delete enginePtr;
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error during app quit: " << e.what() << std::endl;
-    }
-    catch (...) {
-        std::cerr << "Unknown error during app quit" << std::endl;
-    }
-}
-
-// Protected Fields
 
 // Protected Methods
 
