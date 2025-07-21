@@ -160,8 +160,17 @@ function(add_assets_to_script TARGET_NAME ASSETS_DIR NAMESPACE SCRIPT_FILE)
             list(SORT REGULAR_FILES)
         endif()
         
+        # Create the output directory path - empty for game assets, namespace for engine assets
+        if(NAMESPACE STREQUAL "")
+            set(OUTPUT_DIR "")
+            set(DISPLAY_NAME "game")
+        else()
+            set(OUTPUT_DIR "${NAMESPACE}/")
+            set(DISPLAY_NAME "${NAMESPACE}")
+        endif()
+        
         file(APPEND "${SCRIPT_FILE}" "
-message(\"  ${NAMESPACE} assets:\")
+message(\"  ${DISPLAY_NAME} assets:\")
 ")
         
         # Add shader compilation section
@@ -173,7 +182,7 @@ message(\"    Compiling shaders:\")
                 set(SOURCE_FILE "${ASSETS_DIR}/${SHADER_REL_PATH}")
                 file(APPEND "${SCRIPT_FILE}" "
 message(\"      ${SHADER_REL_PATH} -> ${SHADER_REL_PATH}.spv\")
-compile_shader(\"${SOURCE_FILE}\" \"\${TARGET_FILE_DIR}/assets/${NAMESPACE}/${SHADER_REL_PATH}.spv\" \"${SHADER_REL_PATH}\")
+compile_shader(\"${SOURCE_FILE}\" \"\${TARGET_FILE_DIR}/assets/${OUTPUT_DIR}${SHADER_REL_PATH}.spv\" \"${SHADER_REL_PATH}\")
 ")
             endforeach()
         endif()
@@ -187,7 +196,7 @@ message(\"    Copying assets:\")
                 set(SOURCE_FILE "${ASSETS_DIR}/${ASSET_REL_PATH}")
                 file(APPEND "${SCRIPT_FILE}" "
 message(\"      ${ASSET_REL_PATH}\")
-copy_asset(\"${SOURCE_FILE}\" \"\${TARGET_FILE_DIR}/assets/${NAMESPACE}/${ASSET_REL_PATH}\" \"${ASSET_REL_PATH}\")
+copy_asset(\"${SOURCE_FILE}\" \"\${TARGET_FILE_DIR}/assets/${OUTPUT_DIR}${ASSET_REL_PATH}\" \"${ASSET_REL_PATH}\")
 ")
             endforeach()
         endif()
@@ -206,16 +215,16 @@ function(setup_asset_pipeline TARGET_NAME)
     # Create the processing script
     create_asset_processing_script(${TARGET_NAME})
     
-    # Add engine assets
+    # Add engine assets with "internal" namespace
     set(ENGINE_ASSETS_DIR "${CMAKE_SOURCE_DIR}/libs/velecs/assets")
     if(EXISTS "${ENGINE_ASSETS_DIR}")
-        add_assets_to_script(${TARGET_NAME} "${ENGINE_ASSETS_DIR}" "Engine" "${ASSET_SCRIPT_FILE}")
+        add_assets_to_script(${TARGET_NAME} "${ENGINE_ASSETS_DIR}" "internal" "${ASSET_SCRIPT_FILE}")
     endif()
     
-    # Add game assets
+    # Add game assets with empty namespace (goes directly to assets root)
     set(GAME_ASSETS_DIR "${CMAKE_SOURCE_DIR}/assets")
     if(EXISTS "${GAME_ASSETS_DIR}")
-        add_assets_to_script(${TARGET_NAME} "${GAME_ASSETS_DIR}" "Game" "${ASSET_SCRIPT_FILE}")
+        add_assets_to_script(${TARGET_NAME} "${GAME_ASSETS_DIR}" "" "${ASSET_SCRIPT_FILE}")
     endif()
     
     # Finish the script
@@ -234,13 +243,13 @@ message(\"\")
     
     # Log what we registered during configure
     set(TOTAL_REGISTERED 0)
-    if(DEFINED PROCESSED_COUNT_Engine)
-        math(EXPR TOTAL_REGISTERED "${TOTAL_REGISTERED} + ${PROCESSED_COUNT_Engine}")
-        message(STATUS "Registered ${PROCESSED_COUNT_Engine} engine assets for processing")
+    if(DEFINED PROCESSED_COUNT_internal)
+        math(EXPR TOTAL_REGISTERED "${TOTAL_REGISTERED} + ${PROCESSED_COUNT_internal}")
+        message(STATUS "Registered ${PROCESSED_COUNT_internal} engine assets for processing")
     endif()
-    if(DEFINED PROCESSED_COUNT_Game)
-        math(EXPR TOTAL_REGISTERED "${TOTAL_REGISTERED} + ${PROCESSED_COUNT_Game}")
-        message(STATUS "Registered ${PROCESSED_COUNT_Game} game assets for processing")
+    if(DEFINED PROCESSED_COUNT_)
+        math(EXPR TOTAL_REGISTERED "${TOTAL_REGISTERED} + ${PROCESSED_COUNT_}")
+        message(STATUS "Registered ${PROCESSED_COUNT_} game assets for processing")
     endif()
 endfunction()
 
