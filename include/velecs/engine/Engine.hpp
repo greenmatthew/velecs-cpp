@@ -29,6 +29,8 @@ namespace velecs::engine
     class Engine
     {
     public:
+        using EntryPointFunc = std::function<void()>;
+    
         // Enums
 
         // Public Fields
@@ -70,6 +72,11 @@ namespace velecs::engine
         /// @param resizable True to allow window resizing, false to make it fixed size
         /// @return Reference to this Engine instance for method chaining
         Engine& SetWindowResizable(const bool resizable);
+
+        /// @brief Sets the game entry point function to be called after engine initialization
+        /// @param entryPoint Function to call once engine is fully initialized
+        /// @return Reference to this Engine instance for method chaining
+        Engine& SetEntryPoint(EntryPointFunc entryPoint);
 
         SDL_AppResult Init();
 
@@ -135,6 +142,7 @@ namespace velecs::engine
         unsigned int _windowWidth{1280};
         unsigned int _windowHeight{720};
         bool _windowResizable{true};
+        EntryPointFunc _entryPoint{nullptr};
 
         SDL_Window* _window{nullptr};
 

@@ -10,19 +10,20 @@
 
 #include "velecs/engine/Engine.hpp"
 
-#include "velecs/math/Vec2.hpp"
+#include <velecs/math/Vec2.hpp>
 using namespace velecs::math;
 
-#include "velecs/input/Common.hpp"
+#include <velecs/input/Common.hpp>
 using namespace velecs::input;
 
-#include "velecs/common/Paths.hpp"
+#include <velecs/common/Paths.hpp>
 using namespace velecs::common;
-
-#include <iostream>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
+
+#include <iostream>
+#include <stdexcept>
 
 namespace velecs::engine
 {
@@ -63,23 +64,50 @@ Engine& Engine::SetWindowResizable(const bool resizable)
     return *this;
 }
 
-SDL_AppResult Engine::Init()
+Engine& Engine::SetEntryPoint(EntryPointFunc entryPoint)
 {
-    Paths::Initialize(_args[0]);
-
-    // Setup SDL window
-    SDL_AppResult result = InitWindow();
-    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-
-    _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
-    result = _renderEngine->Init();
-    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-    
-    // Setup default action profile
-    Input::CreateDefaultProfile();
-
-    return result;
+    _entryPoint = entryPoint;
+    return *this;
 }
+
+    SDL_AppResult Engine::Init()
+    {
+        Paths::Initialize(_args[0]);
+
+        // Setup SDL window
+        SDL_AppResult result = InitWindow();
+        if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+
+        _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
+        result = _renderEngine->Init();
+        if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
+        
+        // Setup default action profile
+        Input::CreateDefaultProfile();
+
+        // Entry point is required - throw clear error if not set
+        if (_entryPoint == nullptr)
+        {
+            throw std::runtime_error(
+                "Missing required application entry point. "
+                "You must call SetEntryPoint() on your Engine instance before initialization. "
+                "Example: engine.SetEntryPoint(YourGameInitFunction);"
+            );
+        }
+
+        // Call user entry point after engine is fully initialized
+        try
+        {
+            _entryPoint();
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Error in application entry point: " << e.what() << std::endl;
+            return SDL_APP_FAILURE;
+        }
+
+        return result;
+    }
 
 void Engine::Update()
 {
