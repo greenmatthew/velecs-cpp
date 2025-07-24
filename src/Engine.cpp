@@ -36,7 +36,7 @@ namespace velecs::engine
 
 Engine& Engine::SetTitle(const std::string& title)
 {
-    this->_title = title;
+    _title = title;
     return *this;
 }
 

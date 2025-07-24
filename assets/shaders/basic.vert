@@ -1,18 +1,5 @@
 #version 450
 
-// Uniform buffer
-layout(set = 0, binding = 0) uniform ObjectUniforms {
-    mat4 worldMatrix;
-    uint colorPacked;  // Note: Color32 is 4 bytes not 16 like a vec4
-} object;
-
-// Per-frame camera data (binding 1)  
-layout(set = 0, binding = 1) uniform CameraUniforms {
-    mat4 viewMatrix;
-    mat4 projectionMatrix;
-    vec3 cameraPosition;
-} camera;
-
 // Vertex inputs
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec4 inColor;
@@ -32,8 +19,8 @@ vec4 unpackColor(uint packedColor) {
 void main()
 {
     // Transform vertex by world matrix
-    gl_Position = camera.projectionMatrix * camera.viewMatrix * object.worldMatrix * vec4(inPosition, 1.0);
-    
+    gl_Position = vec4(inPosition, 1.0);
+
     // Pass vertex color to fragment shader
-    fragColor = unpackColor(object.colorPacked);
+    fragColor = inColor;
 }
