@@ -141,9 +141,11 @@ namespace velecs::engine
     private:
         // Private Fields
 
+        bool _wasInitialized{false};
+
         const std::vector<std::string> _args;
 
-        std::string _title{"Unnamed Application"};
+        std::string _title{"Untitled Velecs Engine Application"};
         bool _windowFullscreen{false};
         unsigned int _windowWidth{1280};
         unsigned int _windowHeight{720};

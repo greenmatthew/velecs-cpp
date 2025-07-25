@@ -149,12 +149,16 @@ void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
     catch (...) {
         std::cerr << "Unknown error during app quit" << std::endl;
     }
+
+    std::cout << "Exiting..." << std::endl;
 }
 
 // Protected Fields
 
 SDL_AppResult Engine::Init()
 {
+    _wasInitialized = true;
+
     Paths::Initialize(_args[0]);
 
     // Setup SDL window
@@ -337,14 +341,22 @@ Engine& Engine::Run()
 
 Engine& Engine::Cleanup()
 {
-    if (_renderEngine != nullptr)
+    // Only attempt to cleanup if initialization flag is on
+    if (_wasInitialized)
     {
-        _renderEngine->Cleanup();
-    }
+        if (_renderEngine != nullptr)
+        {
+            _renderEngine->Cleanup();
+            _renderEngine.reset();
+        }
 
-    if (_window != nullptr)
-    {
-        CleanupWindow();
+        if (_window != nullptr)
+        {
+            CleanupWindow();
+        }
+
+        // Reset initialization flag to prevent accidental double cleanups
+        _wasInitialized = false;
     }
     
     return *this;
