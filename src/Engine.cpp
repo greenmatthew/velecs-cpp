@@ -22,6 +22,8 @@ using namespace velecs::common;
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
 
+#include <imgui_impl_sdl3.h>
+
 #include <iostream>
 #include <stdexcept>
 
@@ -72,7 +74,8 @@ Engine& Engine::SetEntryPoint(EntryPointFunc entryPoint)
 
 SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, ConfigurationFunc configure)
 {
-    try {
+    try
+    {
         // Create and configure the engine
         Engine* enginePtr = Engine::Create(argc, argv);
         *engine = enginePtr;
@@ -97,7 +100,8 @@ SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, Configur
 
 SDL_AppResult Engine::SDL_AppIterate(void *engine)
 {
-    try {
+    try
+    {
         Engine& engineRef = *static_cast<Engine*>(engine);
         engineRef.Update();
         return SDL_APP_CONTINUE;
@@ -114,15 +118,20 @@ SDL_AppResult Engine::SDL_AppIterate(void *engine)
 
 SDL_AppResult Engine::SDL_AppEvent(void *engine, SDL_Event *event)
 {
-    try {
+    try
+    {
+        // Forward event to ImGUI backend
+        ImGui_ImplSDL3_ProcessEvent(event);
+
         switch (event->type)
         {
         case SDL_EVENT_QUIT:
             return SDL_APP_SUCCESS;
         }
 
-        Engine& engineRef = *static_cast<Engine*>(engine);
-        engineRef.ProcessSDLEvent(*event);
+        // Forward event to input backend
+        Input::ProcessEvent(event);
+
         return SDL_APP_CONTINUE;
     }
     catch (const std::exception& e) {
@@ -205,17 +214,6 @@ void Engine::Update()
 void PrintWindowEvent(const std::string& message)
 {
     std::cout << "[WindowEvent] " << message << std::endl;
-}
-
-void Engine::ProcessSDLEvent(const SDL_Event& event)
-{
-    // Forward event to ImGUI backend
-    // ImGui_ImplSDL2_ProcessEvent(&event);
-    
-    // Process system events
-    // OnSDLEvent(event, running);
-
-    Input::ProcessEvent(event);
 }
 
 // void Engine::OnWindowEvent(const SDL_Event event, const SDL_WindowEvent windowEvent)
@@ -304,40 +302,6 @@ void Engine::ProcessSDLEvent(const SDL_Event& event)
 //     //     break;
 //     }
 // }
-
-Engine& Engine::Run()
-{
-    bool running = true;
-    SDL_Event event;
-
-    
-
-    while (running)
-    {
-        while (SDL_PollEvent(&event))
-        {
-            // Forward event to ImGUI backend
-            // ImGui_ImplSDL2_ProcessEvent(&event);
-            
-            // Process system events
-            // OnSDLEvent(event, running);
-
-            // Forward event to velecs-input for processing keyboard, mouse, controller, and joystick type events
-            Input::ProcessEvent(event);
-        }
-
-        // velecs::rendering::RenderNextFrame();
-
-        // Always call at the END of the frame
-        // Call update once per frame after all events processed
-        Input::Update();
-
-        // Small delay to prevent 100% CPU usage
-        SDL_Delay(16); // ~60 FPS
-    }
-
-    return *this;
-}
 
 Engine& Engine::Cleanup()
 {

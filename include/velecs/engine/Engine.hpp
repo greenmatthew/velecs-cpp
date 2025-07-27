@@ -123,8 +123,6 @@ namespace velecs::engine
 
         void Update();
 
-        void ProcessSDLEvent(const SDL_Event& event);
-
         void OnWindowResized();
         inline void OnWindowMaximized() { OnWindowResized(); }
         void OnWindowMinimized();
