@@ -208,10 +208,15 @@ void Engine::Update()
 
     // 2. Process
     _sceneManager->TryProcess(nullptr);
+
     // 3. Process Rendering
+    // Needs to be called somewhere inside Draw() but before the ProcessImGUI code.
     // _sceneManager->TryProcessRendering();
+    
     // 4. Process ImGUI
-    // _sceneManager->TryProcessGUI(nullptr);
+    _renderEngine->StartGUI();
+    _sceneManager->TryProcessGUI(nullptr);
+    _renderEngine->EndGUI();
 
     // 5. Render & Present (draws game assets then draws Dear ImGui on top of that then presents)
     _renderEngine->Draw();
