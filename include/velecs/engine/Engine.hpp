@@ -11,6 +11,10 @@
 #pragma once
 
 #include <velecs/graphics/RenderEngine.hpp>
+using velecs::graphics::RenderEngine;
+
+#include <velecs/ecs/SceneManager.hpp>
+using velecs::ecs::SceneManager;
 
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_events.h>
@@ -19,6 +23,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <optional>
 
 namespace velecs::engine
 {
@@ -37,6 +42,9 @@ namespace velecs::engine
         // Public Fields
 
         // Constructors and Destructors
+
+        /// @brief Default constructor
+        Engine() = delete;
 
         /// @brief Default deconstructor.
         ~Engine() = default;
@@ -78,6 +86,15 @@ namespace velecs::engine
         /// @param entryPoint Function to call once engine is fully initialized
         /// @return Reference to this Engine instance for method chaining
         Engine& SetEntryPoint(EntryPointFunc entryPoint);
+
+        template<typename SceneType, typename = IsScene<SceneType>>
+        Engine& RegisterScene(const std::string& name)
+        {
+            _sceneManager->RegisterScene<SceneType>(name);
+            return *this;
+        }
+
+        Engine& SetStartingScene(const std::string& name);
 
         /// @brief SDL application initialization callback wrapper
         /// @param engine Pointer to an already allocated engine instance
@@ -148,17 +165,17 @@ namespace velecs::engine
         unsigned int _windowWidth{1280};
         unsigned int _windowHeight{720};
         bool _windowResizable{true};
-        EntryPointFunc _entryPoint{nullptr};
+        std::optional<std::string> _startingScene;
 
         SDL_Window* _window{nullptr};
 
-        std::unique_ptr<velecs::graphics::RenderEngine> _renderEngine;
+        std::unique_ptr<RenderEngine> _renderEngine;
+        std::unique_ptr<SceneManager> _sceneManager;
 
         // Private Methods
 
-        /// @brief Default constructor.
-        inline Engine(const std::vector<std::string>& args)
-            : _args(args) {}
+        /// @brief Main constructor
+        Engine(const std::vector<std::string>& args);
 
         SDL_AppResult InitWindow();
         void CleanupWindow();

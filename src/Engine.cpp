@@ -10,14 +10,17 @@
 
 #include "velecs/engine/Engine.hpp"
 
-#include <velecs/math/Vec2.hpp>
-using namespace velecs::math;
+#include <velecs/common/Paths.hpp>
+using namespace velecs::common;
 
 #include <velecs/input/Common.hpp>
 using namespace velecs::input;
 
-#include <velecs/common/Paths.hpp>
-using namespace velecs::common;
+#include <velecs/math/Vec2.hpp>
+using namespace velecs::math;
+
+#include <velecs/ecs/Entity.hpp>
+using namespace velecs::ecs;
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_vulkan.h>
@@ -66,9 +69,9 @@ Engine& Engine::SetWindowResizable(const bool resizable)
     return *this;
 }
 
-Engine& Engine::SetEntryPoint(EntryPointFunc entryPoint)
+Engine& Engine::SetStartingScene(const std::string& name)
 {
-    _entryPoint = entryPoint;
+    _startingScene = name;
     return *this;
 }
 
@@ -78,6 +81,7 @@ SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, Configur
     {
         // Create and configure the engine
         Engine* enginePtr = Engine::Create(argc, argv);
+        enginePtr->_wasInitialized = true;
         *engine = enginePtr;
         
         // Apply user configuration
@@ -166,40 +170,32 @@ void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
 
 SDL_AppResult Engine::Init()
 {
-    _wasInitialized = true;
-
     Paths::Initialize(_args[0]);
 
     // Setup SDL window
     SDL_AppResult result = InitWindow();
     if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
 
-    _renderEngine = std::make_unique<velecs::graphics::RenderEngine>(_window);
+    _renderEngine = std::make_unique<RenderEngine>(_window);
     result = _renderEngine->Init();
     if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
     
     // Setup default action profile
     Input::CreateDefaultProfile();
 
-    // Entry point is required - throw clear error if not set
-    if (_entryPoint == nullptr)
+    if (_startingScene.has_value())
     {
-        throw std::runtime_error(
-            "Missing required application entry point. "
-            "You must call SetEntryPoint() on your Engine instance before initialization. "
-            "Example: engine.SetEntryPoint(YourGameInitFunction);"
-        );
+        auto scene = _startingScene.value();
+        if (!_sceneManager->TryTransitionScene(scene))
+        {
+            std::cerr << "[ERROR] Not a valid scene name: '" << scene << "'" << std::endl;
+            return SDL_AppResult::SDL_APP_FAILURE;
+        }
     }
-
-    // Call user entry point after engine is fully initialized
-    try
+    else
     {
-        _entryPoint();
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Error in application entry point: " << e.what() << std::endl;
-        return SDL_APP_FAILURE;
+        std::cerr << "[ERROR] Starting scene not assigned" << std::endl;
+        return SDL_AppResult::SDL_APP_FAILURE;
     }
 
     return result;
@@ -207,8 +203,21 @@ SDL_AppResult Engine::Init()
 
 void Engine::Update()
 {
+    // 1. Finalize input processing and perform input callbacks
     Input::Update();
+
+    // 2. Process
+    _sceneManager->TryProcess(nullptr);
+    // 3. Process Rendering
+    // _sceneManager->TryProcessRendering();
+    // 4. Process ImGUI
+    // _sceneManager->TryProcessGUI(nullptr);
+
+    // 5. Render & Present (draws game assets then draws Dear ImGui on top of that then presents)
     _renderEngine->Draw();
+
+    // 6. Cleanup (destroyed marked objects)
+    _sceneManager->TryProcessEntityCleanup();
 }
 
 void PrintWindowEvent(const std::string& message)
@@ -331,6 +340,12 @@ Engine& Engine::Cleanup()
 // Private Fields
 
 // Private Methods
+
+Engine::Engine(const std::vector<std::string>& args)
+    : _args(args)
+{
+    _sceneManager = std::make_unique<SceneManager>();
+}
 
 SDL_AppResult Engine::InitWindow()
 {
