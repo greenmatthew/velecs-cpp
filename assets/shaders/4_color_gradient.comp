@@ -1,0 +1,43 @@
+#version 450
+layout (local_size_x = 16, local_size_y = 16) in;
+layout(rgba16f, set = 0, binding = 0) uniform image2D image;
+
+//push constants block
+layout( push_constant ) uniform constants
+{
+    vec4 data1; // Top-left color
+    vec4 data2; // Top-right color  
+    vec4 data3; // Bottom-left color
+    vec4 data4; // Bottom-right color
+} PushConstants;
+
+void main() 
+{
+    ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+    ivec2 size = imageSize(image);
+    
+    if(texelCoord.x < size.x && texelCoord.y < size.y)
+    {
+        // Normalize coordinates to [0,1] range
+        vec2 uv = vec2(texelCoord) / vec2(size - 1);
+        
+        // Skip colors with 0 alpha (as requested)
+        vec4 topLeft = PushConstants.data1;
+        vec4 topRight = PushConstants.data2;
+        vec4 bottomLeft = PushConstants.data3;
+        vec4 bottomRight = PushConstants.data4;
+        
+        // Bilinear interpolation between the four corners
+        vec4 top = mix(topLeft, topRight, uv.x);
+        vec4 bottom = mix(bottomLeft, bottomRight, uv.x);
+        vec4 finalColor = mix(top, bottom, uv.y);
+        
+        // Ensure alpha is 1.0 for opaque background (unless all input alphas were 0)
+        if(topLeft.a > 0.0 || topRight.a > 0.0 || bottomLeft.a > 0.0 || bottomRight.a > 0.0)
+        {
+            finalColor.a = 1.0;
+        }
+        
+        imageStore(image, texelCoord, finalColor);
+    }   
+}
