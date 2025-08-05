@@ -39,9 +39,15 @@ namespace velecs::engine
 
 // Public Methods
 
-Engine& Engine::SetTitle(const std::string& title)
+Engine& Engine::SetCompanyName(const std::string& name)
 {
-    _title = title;
+    _companyName = name;
+    return *this;
+}
+
+Engine& Engine::SetAppTitle(const std::string& title)
+{
+    _appTitle = title;
     return *this;
 }
 
@@ -170,7 +176,19 @@ void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
 
 SDL_AppResult Engine::Init()
 {
-    Paths::Initialize(_args[0]);
+    if (!_appTitle)
+    {
+        std::cerr << "[ERROR] Must assign an application title" << std::endl;
+        return SDL_AppResult::SDL_APP_FAILURE;
+    }
+    if (!_companyName)  // Changed from if (_companyName) to if (!_companyName)
+    {
+        std::cerr << "[ERROR] Must assign a company name" << std::endl;
+        return SDL_AppResult::SDL_APP_FAILURE;
+    }
+
+    Paths::Init(*_companyName, *_appTitle);
+    std::cout << "Called Pathes::Init()!" << std::endl;
 
     // Setup SDL window
     SDL_AppResult result = InitWindow();
@@ -183,9 +201,9 @@ SDL_AppResult Engine::Init()
     // Setup default action profile
     Input::CreateDefaultProfile();
 
-    if (_startingScene.has_value())
+    if (_startingScene)
     {
-        auto scene = _startingScene.value();
+        auto scene = *_startingScene;
         if (!_sceneManager->TryTransitionScene(scene))
         {
             std::cerr << "[ERROR] Not a valid scene name: '" << scene << "'" << std::endl;
@@ -368,7 +386,7 @@ SDL_AppResult Engine::InitWindow()
         return SDL_AppResult::SDL_APP_FAILURE;
     }
 
-    SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, _title.c_str());
+    SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, _appTitle.value().c_str());
     SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN, _windowFullscreen);
     SDL_SetBooleanProperty(props, SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN, true);
     SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, _windowWidth);

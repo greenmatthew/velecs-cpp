@@ -56,10 +56,19 @@ namespace velecs::engine
             return new Engine({argv, argv + argc});
         }
 
-        /// @brief Sets the application window title
-        /// @param title The title to display in the window's title bar
+        /// @brief Sets the company name for the application
+        /// @param name The company or developer name (e.g., "Epic Games", "YourStudio")
         /// @return Reference to this Engine instance for method chaining
-        Engine& SetTitle(const std::string& title);
+        /// @note This method must be called before initialization, otherwise the application will fail to startup.
+        ///       The company name is used for organizing persistent data directories.
+        Engine& SetCompanyName(const std::string& name);
+
+        /// @brief Sets the application title
+        /// @param title The application name (e.g., "MyGame", "HarvestHavoc")
+        /// @return Reference to this Engine instance for method chaining
+        /// @note This method must be called before initialization, otherwise the application will fail to startup.
+        ///       The app title is used for window titles and persistent data directories.
+        Engine& SetAppTitle(const std::string& title);
 
         /// @brief Sets whether the application will be fullscreen or windowed
         /// @param fullscreen True for fullscreen mode, false for windowed mode
@@ -160,7 +169,8 @@ namespace velecs::engine
 
         const std::vector<std::string> _args;
 
-        std::string _title{"Untitled Velecs Engine Application"};
+        std::optional<std::string> _companyName;
+        std::optional<std::string> _appTitle;
         bool _windowFullscreen{false};
         unsigned int _windowWidth{1280};
         unsigned int _windowHeight{720};
