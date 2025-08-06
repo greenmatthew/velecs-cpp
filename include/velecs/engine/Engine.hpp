@@ -56,6 +56,8 @@ namespace velecs::engine
             return new Engine({argv, argv + argc});
         }
 
+        // ---------- Pre-Init ----------
+
         /// @brief Sets the company name for the application
         /// @param name The company or developer name (e.g., "Epic Games", "YourStudio")
         /// @return Reference to this Engine instance for method chaining
@@ -91,19 +93,29 @@ namespace velecs::engine
         /// @return Reference to this Engine instance for method chaining
         Engine& SetWindowResizable(const bool resizable);
 
-        /// @brief Sets the game entry point function to be called after engine initialization
-        /// @param entryPoint Function to call once engine is fully initialized
-        /// @return Reference to this Engine instance for method chaining
-        Engine& SetEntryPoint(EntryPointFunc entryPoint);
-
         template<typename SceneType, typename = IsScene<SceneType>>
         Engine& RegisterScene(const std::string& name)
         {
+            assert(!_wasInitialized && "Cannot be called after initialization");
             _sceneManager->RegisterScene<SceneType>(name);
             return *this;
         }
 
         Engine& SetStartingScene(const std::string& name);
+
+        // ---------- Init ----------
+        
+        Engine& Init();
+
+        // ---------- Post-Init ----------
+
+        template<typename RShaderProgram>
+        Engine& RegisterRasterizationShaderProgram(const std::string& name)
+        {
+            assert(_wasInitialized && "Can only be called after initialization");
+            _renderEngine->RegisterRasterizationShaderProgram<RShaderProgram>(name);
+            return *this;
+        }
 
         /// @brief SDL application initialization callback wrapper
         /// @param engine Pointer to an already allocated engine instance
@@ -144,8 +156,6 @@ namespace velecs::engine
 
     protected:
         // Protected Fields
-
-        SDL_AppResult Init();
 
         void Update();
 

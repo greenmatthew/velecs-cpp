@@ -41,43 +41,85 @@ namespace velecs::engine
 
 Engine& Engine::SetCompanyName(const std::string& name)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _companyName = name;
     return *this;
 }
 
 Engine& Engine::SetAppTitle(const std::string& title)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _appTitle = title;
     return *this;
 }
 
 Engine& Engine::SetWindowFullscreen(const bool fullscreen)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _windowFullscreen = fullscreen;
     return *this;
 }
 
 Engine& Engine::SetWindowWidth(const unsigned int width)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _windowWidth = width;
     return *this;
 }
 
 Engine& Engine::SetWindowHeight(const unsigned int height)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _windowHeight = height;
     return *this;
 }
 
 Engine& Engine::SetWindowResizable(const bool resizable)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _windowResizable = resizable;
     return *this;
 }
 
 Engine& Engine::SetStartingScene(const std::string& name)
 {
+    assert(!_wasInitialized && "Cannot be called after initialization");
     _startingScene = name;
+    return *this;
+}
+
+Engine& Engine::Init()
+{
+    if (!_appTitle) throw std::runtime_error("Must assign an application title");
+    if (!_companyName) throw std::runtime_error("Must assign a company name");
+
+    Paths::Init(*_companyName, *_appTitle);
+
+    // Setup SDL window
+    InitWindow();
+
+    _renderEngine->Init(_window);
+    
+    // Setup default action profile
+    Input::CreateDefaultProfile();
+
+    if (_startingScene)
+    {
+        auto scene = *_startingScene;
+        if (!_sceneManager->TryTransitionScene(scene))
+        {
+            std::ostringstream oss{};
+            oss << "Not a valid scene name: '" << scene << "'";
+            throw std::runtime_error(oss.str());
+        }
+    }
+    else
+    {
+        throw std::runtime_error("Starting scene not assigned");
+    }
+
+    _wasInitialized = true;
+
     return *this;
 }
 
@@ -87,7 +129,6 @@ SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, Configur
     {
         // Create and configure the engine
         Engine* enginePtr = Engine::Create(argc, argv);
-        enginePtr->_wasInitialized = true;
         *engine = enginePtr;
         
         // Apply user configuration
@@ -95,8 +136,6 @@ SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, Configur
         {
             configure(*enginePtr);
         }
-
-        return enginePtr->Init();
     }
     catch (const std::exception& e) {
         std::cerr << "Error during initialization: " << e.what() << std::endl;
@@ -106,6 +145,8 @@ SDL_AppResult Engine::SDL_AppInit(void **engine, int argc, char** argv, Configur
         std::cerr << "Unknown error during initialization" << std::endl;
         return SDL_APP_FAILURE;
     }
+
+    return SDL_APP_CONTINUE;
 }
 
 SDL_AppResult Engine::SDL_AppIterate(void *engine)
@@ -173,51 +214,6 @@ void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
 }
 
 // Protected Fields
-
-SDL_AppResult Engine::Init()
-{
-    if (!_appTitle)
-    {
-        std::cerr << "[ERROR] Must assign an application title" << std::endl;
-        return SDL_AppResult::SDL_APP_FAILURE;
-    }
-    if (!_companyName)  // Changed from if (_companyName) to if (!_companyName)
-    {
-        std::cerr << "[ERROR] Must assign a company name" << std::endl;
-        return SDL_AppResult::SDL_APP_FAILURE;
-    }
-
-    Paths::Init(*_companyName, *_appTitle);
-    std::cout << "Called Pathes::Init()!" << std::endl;
-
-    // Setup SDL window
-    SDL_AppResult result = InitWindow();
-    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-
-    _renderEngine = std::make_unique<RenderEngine>(_window);
-    result = _renderEngine->Init();
-    if (result != SDL_AppResult::SDL_APP_CONTINUE) return result;
-    
-    // Setup default action profile
-    Input::CreateDefaultProfile();
-
-    if (_startingScene)
-    {
-        auto scene = *_startingScene;
-        if (!_sceneManager->TryTransitionScene(scene))
-        {
-            std::cerr << "[ERROR] Not a valid scene name: '" << scene << "'" << std::endl;
-            return SDL_AppResult::SDL_APP_FAILURE;
-        }
-    }
-    else
-    {
-        std::cerr << "[ERROR] Starting scene not assigned" << std::endl;
-        return SDL_AppResult::SDL_APP_FAILURE;
-    }
-
-    return result;
-}
 
 void Engine::Update()
 {
@@ -368,6 +364,7 @@ Engine::Engine(const std::vector<std::string>& args)
     : _args(args)
 {
     _sceneManager = std::make_unique<SceneManager>();
+    _renderEngine = std::make_unique<RenderEngine>();
 }
 
 SDL_AppResult Engine::InitWindow()
