@@ -96,7 +96,7 @@ namespace velecs::engine
         template<typename SceneType, typename = IsScene<SceneType>>
         Engine& RegisterScene(const std::string& name)
         {
-            assert(!_wasInitialized && "Cannot be called after initialization");
+            assert(!_initialized && "Cannot be called after initialization");
             _sceneManager->RegisterScene<SceneType>(name);
             return *this;
         }
@@ -112,7 +112,7 @@ namespace velecs::engine
         template<typename RShaderProgram>
         Engine& RegisterRasterizationShaderProgram(const std::string& name)
         {
-            assert(_wasInitialized && "Can only be called after initialization");
+            assert(_initialized && "Can only be called after initialization");
             _renderEngine->RegisterRasterizationShaderProgram<RShaderProgram>(name);
             return *this;
         }
@@ -175,7 +175,7 @@ namespace velecs::engine
     private:
         // Private Fields
 
-        bool _wasInitialized{false};
+        bool _initialized{false};
 
         const std::vector<std::string> _args;
 

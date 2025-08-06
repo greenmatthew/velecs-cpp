@@ -41,49 +41,49 @@ namespace velecs::engine
 
 Engine& Engine::SetCompanyName(const std::string& name)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _companyName = name;
     return *this;
 }
 
 Engine& Engine::SetAppTitle(const std::string& title)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _appTitle = title;
     return *this;
 }
 
 Engine& Engine::SetWindowFullscreen(const bool fullscreen)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _windowFullscreen = fullscreen;
     return *this;
 }
 
 Engine& Engine::SetWindowWidth(const unsigned int width)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _windowWidth = width;
     return *this;
 }
 
 Engine& Engine::SetWindowHeight(const unsigned int height)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _windowHeight = height;
     return *this;
 }
 
 Engine& Engine::SetWindowResizable(const bool resizable)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _windowResizable = resizable;
     return *this;
 }
 
 Engine& Engine::SetStartingScene(const std::string& name)
 {
-    assert(!_wasInitialized && "Cannot be called after initialization");
+    assert(!_initialized && "Cannot be called after initialization");
     _startingScene = name;
     return *this;
 }
@@ -118,7 +118,7 @@ Engine& Engine::Init()
         throw std::runtime_error("Starting scene not assigned");
     }
 
-    _wasInitialized = true;
+    _initialized = true;
 
     return *this;
 }
@@ -334,7 +334,7 @@ void PrintWindowEvent(const std::string& message)
 Engine& Engine::Cleanup()
 {
     // Only attempt to cleanup if initialization flag is on
-    if (_wasInitialized)
+    if (_initialized)
     {
         if (_renderEngine != nullptr)
         {
@@ -348,7 +348,7 @@ Engine& Engine::Cleanup()
         }
 
         // Reset initialization flag to prevent accidental double cleanups
-        _wasInitialized = false;
+        _initialized = false;
     }
     
     return *this;
