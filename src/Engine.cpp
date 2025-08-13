@@ -106,7 +106,7 @@ Engine& Engine::Init()
     if (_startingScene)
     {
         auto scene = *_startingScene;
-        if (!_sceneManager->TryTransitionScene(scene))
+        if (!_world->scenes->TryRequestSceneTransition(scene))
         {
             std::ostringstream oss{};
             oss << "Not a valid scene name: '" << scene << "'";
@@ -217,11 +217,13 @@ void Engine::SDL_AppQuit(void *engine, SDL_AppResult result)
 
 void Engine::Update()
 {
+    _world->scenes->Internal_TryTransitionIfRequested(nullptr);
+
     // 1. Finalize input processing and perform input callbacks
     Input::Update();
 
     // 2. Process
-    _sceneManager->TryProcess(nullptr);
+    _world->scenes->Internal_TryProcess(nullptr);
 
     // 3. Process Rendering
     // Needs to be called somewhere inside Draw() but before the ProcessImGUI code.
@@ -229,14 +231,14 @@ void Engine::Update()
     
     // 4. Process ImGUI
     _renderEngine->StartGUI();
-    _sceneManager->TryProcessGUI(nullptr);
+    _world->scenes->Internal_TryProcessGUI(nullptr);
     _renderEngine->EndGUI();
 
     // 5. Render & Present (draws game assets then draws Dear ImGui on top of that then presents)
-    _renderEngine->Draw();
+    _renderEngine->Draw(_world->scenes->GetCurrentScene());
 
     // 6. Cleanup (destroyed marked objects)
-    _sceneManager->TryProcessEntityCleanup();
+    _world->scenes->Internal_TryProcessEntityCleanup();
 }
 
 void PrintWindowEvent(const std::string& message)
@@ -363,7 +365,7 @@ Engine& Engine::Cleanup()
 Engine::Engine(const std::vector<std::string>& args)
     : _args(args)
 {
-    _sceneManager = std::make_unique<SceneManager>();
+    _world = std::make_unique<World>();
     _renderEngine = std::make_unique<RenderEngine>();
 }
 

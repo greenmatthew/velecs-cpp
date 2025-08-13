@@ -13,8 +13,8 @@
 #include <velecs/graphics/RenderEngine.hpp>
 using velecs::graphics::RenderEngine;
 
-#include <velecs/ecs/SceneManager.hpp>
-using velecs::ecs::SceneManager;
+#include <velecs/ecs/World.hpp>
+using velecs::ecs::World;
 
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_events.h>
@@ -93,11 +93,11 @@ namespace velecs::engine
         /// @return Reference to this Engine instance for method chaining
         Engine& SetWindowResizable(const bool resizable);
 
-        template<typename SceneType, typename = IsScene<SceneType>>
-        Engine& RegisterScene(const std::string& name)
+        template<typename SceneT, typename = IsScene<SceneT>>
+        Engine& RegisterScene(const std::string& name, std::optional<size_t> systemCapacity = std::nullopt)
         {
             assert(!_initialized && "Cannot be called after initialization");
-            _sceneManager->RegisterScene<SceneType>(name);
+            Scene::Create<SceneT>(_world.get(), name, systemCapacity);
             return *this;
         }
 
@@ -190,7 +190,7 @@ namespace velecs::engine
         SDL_Window* _window{nullptr};
 
         std::unique_ptr<RenderEngine> _renderEngine;
-        std::unique_ptr<SceneManager> _sceneManager;
+        std::unique_ptr<World> _world;
 
         // Private Methods
 
