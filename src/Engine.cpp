@@ -98,7 +98,7 @@ Engine& Engine::Init()
     // Setup SDL window
     InitWindow();
 
-    _renderEngine->Init(_window);
+    _renderEngine->Init(_window, _world.get());
     
     // Setup default action profile
     Input::CreateDefaultProfile();
