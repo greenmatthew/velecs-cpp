@@ -1,13 +1,3 @@
-/// @file    Engine.cpp
-/// @author  Matthew Green
-/// @date    2025-05-22 12:50:44
-///
-/// @section LICENSE
-///
-/// Copyright (c) 2025 Matthew Green - All rights reserved
-/// Unauthorized copying of this file, via any medium is strictly prohibited
-/// Proprietary and confidential
-
 #include "velecs/engine/Engine.hpp"
 
 #include <velecs/common/Paths.hpp>

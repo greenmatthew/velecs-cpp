@@ -1,13 +1,3 @@
-/// @file    Engine.hpp
-/// @author  Matthew Green
-/// @date    2025-05-22 12:50:55
-///
-/// @section LICENSE
-///
-/// Copyright (c) 2025 Matthew Green - All rights reserved
-/// Unauthorized copying of this file, via any medium is strictly prohibited
-/// Proprietary and confidential
-
 #pragma once
 
 #include <velecs/graphics/RenderEngine.hpp>
@@ -37,9 +27,7 @@ namespace velecs::engine
         using ConfigurationFunc = std::function<void(Engine&)>;
         using EntryPointFunc = std::function<void()>;
     
-        // Enums
-
-        // Public Fields
+            // Public Fields
 
         // Constructors and Destructors
 

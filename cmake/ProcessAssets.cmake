@@ -1,13 +1,3 @@
-# @file    ProcessAssets.cmake
-# @author  Matthew Green
-# @date    2025-07-13 12:45:09
-# 
-# @section LICENSE
-# 
-# Copyright (c) 2025 Matthew Green - All rights reserved
-# Unauthorized copying of this file, via any medium is strictly prohibited
-# Proprietary and confidential
-
 cmake_minimum_required(VERSION 3.16)
 
 # Find shader compilers - prefer glslc, fallback to glslangValidator
