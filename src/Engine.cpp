@@ -338,16 +338,9 @@ Engine& Engine::Cleanup()
     // Only attempt to cleanup if initialization flag is on
     if (_initialized)
     {
-        if (_renderEngine != nullptr)
-        {
-            _renderEngine->Cleanup();
-            _renderEngine.reset();
-        }
-
-        if (_window != nullptr)
-        {
-            CleanupWindow();
-        }
+        _world.reset();
+        _renderEngine.reset();
+        CleanupWindow();
 
         // Reset initialization flag to prevent accidental double cleanups
         _initialized = false;
@@ -405,13 +398,11 @@ SDL_AppResult Engine::InitWindow()
 
 void Engine::CleanupWindow()
 {
-    SDL_DestroyWindow(_window);
-
-    if (_renderEngine != nullptr)
+    if (_window != nullptr)
     {
-        _renderEngine->Cleanup();
-        _renderEngine.reset();
+        SDL_DestroyWindow(_window);
+        _window = nullptr;
     }
 }
 
-} // namespace velecs::engine2
+} // namespace velecs::engine
